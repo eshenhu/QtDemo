@@ -50,4 +50,5 @@ private:
     QBrush m_originalBrush;
 };
 
+
 #endif // CUSTOMSLICE_H

@@ -40,6 +40,7 @@ class QPushButton;
 class QCheckBox;
 class QComboBox;
 class QDoubleSpinBox;
+class QTabWidget;
 QT_END_NAMESPACE
 
 class PenTool;
@@ -48,11 +49,19 @@ class CustomSlice;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChartView;
-class QPieSeries;
-class QPieSlice;
 QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
+
+enum TestPlanEnum {
+    Distance,
+    Voltage,
+    Throttle,
+    Multiplue,
+    Aging,
+    Calibrate,
+    Manual
+};
 
 class ActionWidget : public QWidget
 {
@@ -65,40 +74,131 @@ public Q_SLOTS:
 //    void updateChartSettings();
 //    void updateSerieSettings();
 //    void updateSliceSettings();
+
     void showFontDialog();
+
 private:
-    QComboBox *m_themeComboBox;
+//    QComboBox *m_themeComboBox;
+//    QCheckBox *m_aaCheckBox;
+//    QCheckBox *m_animationsCheckBox;
+//    QCheckBox *m_legendCheckBox;
+
+    QChartView *m_chartView;
+
+    CustomSlice *m_slice;
+
+    QTabWidget *m_tabWidget;
+
+    QDialogButtonBox *m_buttonBox;
+    void createChartView();
+    void createTabWidget();
+};
+
+
+class TestTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit TestTab(QWidget *parent = 0);
+
+protected slots:
+    void updateOptionsSelection(int index);
+
+public:
+    QTabWidget *m_tabWidget;
+    QWidget* tabList[TestPlanEnum::Manual + 1];
+    QWidget* lastActiveWidget;
+
+private:
+    QComboBox *m_testSeletionComboBox;
     QCheckBox *m_aaCheckBox;
     QCheckBox *m_animationsCheckBox;
     QCheckBox *m_legendCheckBox;
 
-    QChartView *m_chartView;
-    QPieSeries *m_series;
-    CustomSlice *m_slice;
+    QDialogButtonBox* m_buttonBox;
 
-    QSpinBox *m_hPosition;
-    QSpinBox *m_vPosition;
-    QSpinBox *m_sizeFactor;
-    QSpinBox *m_startAngle;
-    QSpinBox *m_endAngle;
-    QSpinBox *m_holeSize;
+    QPushButton* m_start_btn;
+    QPushButton* m_showgraph_btn;
 
-    QDialogButtonBox *m_buttonBox;
+private:
+    void enableTestTab(TestPlanEnum);
+};
 
-    QLineEdit *m_sliceName;
-    QDoubleSpinBox *m_sliceValue;
-    QCheckBox *m_sliceLabelVisible;
-    QDoubleSpinBox *m_sliceLabelArmFactor;
-    QCheckBox *m_sliceExploded;
-    QDoubleSpinBox *m_sliceExplodedFactor;
-    QPushButton *m_brush;
-    BrushTool *m_brushTool;
-    QPushButton *m_pen;
-    PenTool *m_penTool;
-    QPushButton *m_font;
-    QPushButton *m_labelBrush;
-    QComboBox *m_labelPosition;
-    BrushTool *m_labelBrushTool;
+class ConfigTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit ConfigTab(QWidget *parent = 0);
+};
+
+class DistanceTstTab : public QWidget
+{
+    Q_OBJECT
+public:
+    QSpinBox *m_voltage;
+    QSpinBox *m_throttle;
+    QSpinBox *m_disStart;
+    QSpinBox *m_disEnd;
+    QComboBox *m_disStep;
+    QPushButton *m_apply_btn;
+
+public:
+    explicit DistanceTstTab(QWidget *parent = 0);
+
+
+private slots:
+    void validateUserInput(bool checked = false);
+};
+
+class VoltageTstTab : public QWidget
+{
+    Q_OBJECT
+private:
+    QSpinBox *m_throttle;
+    QSpinBox *m_voltage_start;
+    QSpinBox *m_voltage_end;
+    QComboBox *m_voltage_step;
+    QPushButton *m_apply_btn;
+public:
+
+    explicit VoltageTstTab(QWidget *parent = 0);
+};
+class ThrottleTstTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit ThrottleTstTab(QWidget *parent = 0);
+};
+class MultipleTstTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit MultipleTstTab(QWidget *parent = 0);
+};
+class AgingTstTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit AgingTstTab(QWidget *parent = 0);
+};
+class CalibrateTstTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit CalibrateTstTab(QWidget *parent = 0);
+};
+class ManualTstTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit ManualTstTab(QWidget *parent = 0);
 };
 
 #endif // MAINWIDGET_H
