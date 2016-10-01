@@ -125,14 +125,6 @@ private:
     void enableTestTab(TestPlanEnum);
 };
 
-class ConfigTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit ConfigTab(QWidget *parent = 0);
-};
-
 class DistanceTstTab : public QWidget
 {
     Q_OBJECT

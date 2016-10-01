@@ -48,6 +48,7 @@
 
 #include <QtGlobal>
 #include <QtWidgets/QMessageBox>
+#include <ui/configtab.h>
 
 
 QT_CHARTS_USE_NAMESPACE
@@ -251,7 +252,7 @@ TestTab::TestTab(QWidget *parent)
     seriesSettingsLayout->addRow(m_start_btn);
     seriesSettingsLayout->addRow(m_showgraph_btn);
 
-    QGroupBox *seriesSettings = new QGroupBox("Action");
+    QGroupBox *seriesSettings = new QGroupBox(tr("Action"));
     seriesSettings->setLayout(seriesSettingsLayout);
 
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -316,12 +317,6 @@ void TestTab::updateOptionsSelection(int index)
 //        m_tabWidget->removeTab(static_cast<TestPlanEnum>(tabIdx));
 //    m_tabWidget->addTab(e);
 //}
-
-ConfigTab::ConfigTab(QWidget *parent)
-    : QWidget(parent)
-{
-
-}
 
 
 DistanceTstTab::DistanceTstTab(QWidget *parent)
