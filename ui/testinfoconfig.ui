@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>244</width>
+    <width>271</width>
     <height>298</height>
    </rect>
   </property>
@@ -26,6 +26,9 @@
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
+   </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -43,7 +46,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="menufacture_LE">
         <property name="text">
          <string>同一光电</string>
         </property>
@@ -57,7 +60,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_2">
+       <widget class="QLineEdit" name="SN_LE">
         <property name="text">
          <string>SN_</string>
         </property>
@@ -71,7 +74,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="lineEdit_3">
+       <widget class="QLineEdit" name="motorModel_LE">
         <property name="text">
          <string>Motor_</string>
         </property>
@@ -85,7 +88,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="lineEdit_4">
+       <widget class="QLineEdit" name="ESCModel_LE">
         <property name="text">
          <string>ESC_</string>
         </property>
@@ -99,7 +102,13 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="ESCFreq_combox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <item>
          <property name="text">
           <string>50</string>
@@ -120,7 +129,7 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QLineEdit" name="lineEdit_5"/>
+       <widget class="QLineEdit" name="propModel_LE"/>
       </item>
       <item row="6" column="0">
        <widget class="QLabel" name="label_7">
@@ -130,7 +139,13 @@
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="propVanes_combox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <item>
          <property name="text">
           <string>1</string>
@@ -176,7 +191,7 @@
        </widget>
       </item>
       <item row="7" column="1">
-       <widget class="QLineEdit" name="lineEdit_6"/>
+       <widget class="QLineEdit" name="remark_LE"/>
       </item>
      </layout>
     </widget>

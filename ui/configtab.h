@@ -4,6 +4,7 @@
 #include <QWidget>
 
 class DeviceInfoConfig;
+class OptionsFrame;
 
 class ConfigTab : public QWidget
 {
@@ -20,8 +21,10 @@ public slots:
 
 
 public:
+   DeviceInfoConfig* m_deviceInfoWidget;
+   OptionsFrame* m_optionsWidget;
 
-   DeviceInfoConfig* deviceInfoWidget;
 };
+
 
 #endif // CONFIGTAB_H
