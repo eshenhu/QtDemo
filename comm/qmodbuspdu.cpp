@@ -42,11 +42,11 @@
 
 QT_BEGIN_NAMESPACE
 
-using ReqSizeCalc = QHash<quint8, QModbusRequest::CalcFuncPtr>;
-Q_GLOBAL_STATIC(ReqSizeCalc, requestSizeCalculators);
+using ReqSizeCalc = QHash<quint8, QModbus2Request::CalcFuncPtr>;
+Q_GLOBAL_STATIC(ReqSizeCalc, requestSizeCalculators)
 
-using ResSizeCalc = QHash<quint8, QModbusResponse::CalcFuncPtr>;
-Q_GLOBAL_STATIC(ResSizeCalc, responseSizeCalculators);
+using ResSizeCalc = QHash<quint8, QModbus2Response::CalcFuncPtr>;
+Q_GLOBAL_STATIC(ResSizeCalc, responseSizeCalculators)
 
 namespace Private {
 
@@ -55,138 +55,146 @@ enum struct Type {
     Response
 };
 
-static int minimumDataSize(const QModbusPdu &pdu, Type type)
+static int minimumDataSize(const QModbus2Pdu &pdu, Type type)
 {
     if (pdu.isException())
         return 1;
 
-    switch (pdu.functionCode()) {
-    case QModbusPdu::ReadCoils:
-    case QModbusPdu::ReadDiscreteInputs:
-        return type == Type::Request ? 4 : 2;
-    case QModbusPdu::WriteSingleCoil:
-    case QModbusPdu::WriteSingleRegister:
-        return 4;
-    case QModbusPdu::ReadHoldingRegisters:
-    case QModbusPdu::ReadInputRegisters:
-        return type == Type::Request ? 4 : 3;
-    case QModbusPdu::ReadExceptionStatus:
-        return type == Type::Request ? 0 : 1;
-    case QModbusPdu::Diagnostics:
-        return 4;
-    case QModbusPdu::GetCommEventCounter:
-        return type == Type::Request ? 0 : 4;
-    case QModbusPdu::GetCommEventLog:
-        return type == Type::Request ? 0 : 8;
-    case QModbusPdu::WriteMultipleCoils:
-        return type == Type::Request ? 6 : 4;
-    case QModbusPdu::WriteMultipleRegisters:
-        return type == Type::Request ? 7 : 4;
-    case QModbusPdu::ReportServerId:
-        return type == Type::Request ? 0 : 3;
-    case QModbusPdu::ReadFileRecord:
-        return type == Type::Request ? 8 : 5;
-    case QModbusPdu::WriteFileRecord:
-        return 10;
-    case QModbusPdu::MaskWriteRegister:
-        return 6;
-    case QModbusPdu::ReadWriteMultipleRegisters:
-        return type == Type::Request ? 11 : 3;
-    case QModbusPdu::ReadFifoQueue:
-        return type == Type::Request ? 2 : 6;
-    case QModbusPdu::EncapsulatedInterfaceTransport:
-        return 2;
-    case QModbusPdu::Invalid:
-    case QModbusPdu::UndefinedFunctionCode:
-        return -1;
-    }
-    return -1;
+    // 2 bytes HEAD
+    // 2 bytes LENGHT
+    // 2 bytes ~LENGTH
+    // 1 byte  FunctionCode
+    // 2 byte CRC
+    //return 2 + 2 + 2 + 1 + 2;
+    return 2;
+
+//    switch (pdu.functionCode()) {
+//    case QModbus2Pdu::ReadCoils:
+//    case QModbus2Pdu::ReadDiscreteInputs:
+//        return type == Type::Request ? 4 : 2;
+//    case QModbus2Pdu::WriteSingleCoil:
+//    case QModbus2Pdu::WriteSingleRegister:
+//        return 4;
+//    case QModbus2Pdu::ReadHoldingRegisters:
+//    case QModbus2Pdu::ReadInputRegisters:
+//        return type == Type::Request ? 4 : 3;
+//    case QModbus2Pdu::ReadExceptionStatus:
+//        return type == Type::Request ? 0 : 1;
+//    case QModbus2Pdu::Diagnostics:
+//        return 4;
+//    case QModbus2Pdu::GetCommEventCounter:
+//        return type == Type::Request ? 0 : 4;
+//    case QModbus2Pdu::GetCommEventLog:
+//        return type == Type::Request ? 0 : 8;
+//    case QModbus2Pdu::WriteMultipleCoils:
+//        return type == Type::Request ? 6 : 4;
+//    case QModbus2Pdu::WriteMultipleRegisters:
+//        return type == Type::Request ? 7 : 4;
+//    case QModbus2Pdu::ReportServerId:
+//        return type == Type::Request ? 0 : 3;
+//    case QModbus2Pdu::ReadFileRecord:
+//        return type == Type::Request ? 8 : 5;
+//    case QModbus2Pdu::WriteFileRecord:
+//        return 10;
+//    case QModbus2Pdu::MaskWriteRegister:
+//        return 6;
+//    case QModbus2Pdu::ReadWriteMultipleRegisters:
+//        return type == Type::Request ? 11 : 3;
+//    case QModbus2Pdu::ReadFifoQueue:
+//        return type == Type::Request ? 2 : 6;
+//    case QModbus2Pdu::EncapsulatedInterfaceTransport:
+//        return 2;
+//    case QModbus2Pdu::Invalid:
+//    case QModbus2Pdu::UndefinedFunctionCode:
+//        return -1;
+//    }
+//    return -1;
 }
 
-static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type type)
-{
-    QModbusPdu::FunctionCode code = QModbusPdu::Invalid;
-    if (stream.readRawData((char *) (&code), sizeof(quint8)) != sizeof(quint8))
-        return stream;
-    pdu.setFunctionCode(code);
+//static QDataStream &pduFromStream(QDataStream &stream, QModbus2Pdu &pdu, Type type)
+//{
+//    QModbus2Pdu::FunctionCode code = QModbus2Pdu::Invalid;
+//    if (stream.readRawData((char *) (&code), sizeof(quint8)) != sizeof(quint8))
+//        return stream;
+//    pdu.setFunctionCode(code);
 
-    auto needsAdditionalRead = [](QModbusPdu &pdu, int size) -> bool {
-        if (size < 0)
-            pdu.setFunctionCode(QModbusResponse::Invalid);
-        if (size <= 0)
-            return false;
-        return true;
-    };
+//    auto needsAdditionalRead = [](QModbus2Pdu &pdu, int size) -> bool {
+//        if (size < 0)
+//            pdu.setFunctionCode(QModbus2Response::Invalid);
+//        if (size <= 0)
+//            return false;
+//        return true;
+//    };
 
-    const bool isResponse = (type == Type::Response);
-    int size = isResponse ? QModbusResponse::minimumDataSize(pdu)
-                          : QModbusRequest::minimumDataSize(pdu);
-    if (!needsAdditionalRead(pdu, size))
-        return stream;
+//    const bool isResponse = (type == Type::Response);
+//    int size = isResponse ? QModbus2Response::minimumDataSize(pdu)
+//                          : QModbus2Request::minimumDataSize(pdu);
+//    if (!needsAdditionalRead(pdu, size))
+//        return stream;
 
-    QByteArray data(size, Qt::Uninitialized);
-    if (stream.device()->peek(data.data(), data.size()) != size)
-        return stream;
+//    QByteArray data(size, Qt::Uninitialized);
+//    if (stream.device()->peek(data.data(), data.size()) != size)
+//        return stream;
 
-    pdu.setData(data);
-    size = isResponse ? QModbusResponse::calculateDataSize(pdu)
-                      : QModbusRequest::calculateDataSize(pdu);
-    if (!needsAdditionalRead(pdu, size))
-        return stream;
+//    pdu.setData(data);
+//    size = isResponse ? QModbus2Response::calculateDataSize(pdu)
+//                      : QModbus2Request::calculateDataSize(pdu);
+//    if (!needsAdditionalRead(pdu, size))
+//        return stream;
 
-    if (isResponse && (code == QModbusPdu::EncapsulatedInterfaceTransport)) {
-        quint8 meiType;
-        pdu.decodeData(&meiType);
-        if (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) {
-            int left = size, offset = 0;
-            while ((left > 0) && (size <= 252)) { // The maximum PDU data size is 252 bytes.
-                data.resize(size);
-                const int read = stream.readRawData(data.data() + offset, size - offset);
-                if ((read < 0) || (read != (size - offset))) {
-                    size = 255; // bogus size
-                    stream.setStatus(QDataStream::ReadCorruptData);
-                    break; // error reading, bail, reset further down
-                }
-                offset += read;
-                left = QModbusResponse::calculateDataSize(QModbusResponse(code, data)) - offset;
-                size += left;
-            }
-            if ((stream.status() == QDataStream::Ok) && (size <= 252)) {
-                pdu.setData(data);
-                return stream; // early return to avoid second read
-            }
-        } else {
-            data.resize(stream.device()->size() - 1); // One byte for the function code.
-        }
-    } else if (pdu.functionCode() == QModbusPdu::Diagnostics) {
-        quint16 subCode;
-        pdu.decodeData(&subCode);
-        if (subCode == Diagnostics::ReturnQueryData)
-            data.resize(stream.device()->size() - 1); // One byte for the function code.
-    }
+//    if (isResponse && (code == QModbus2Pdu::EncapsulatedInterfaceTransport)) {
+//        quint8 meiType;
+//        pdu.decodeData(&meiType);
+//        if (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) {
+//            int left = size, offset = 0;
+//            while ((left > 0) && (size <= 252)) { // The maximum PDU data size is 252 bytes.
+//                data.resize(size);
+//                const int read = stream.readRawData(data.data() + offset, size - offset);
+//                if ((read < 0) || (read != (size - offset))) {
+//                    size = 255; // bogus size
+//                    stream.setStatus(QDataStream::ReadCorruptData);
+//                    break; // error reading, bail, reset further down
+//                }
+//                offset += read;
+//                left = QModbus2Response::calculateDataSize(QModbus2Response(code, data)) - offset;
+//                size += left;
+//            }
+//            if ((stream.status() == QDataStream::Ok) && (size <= 252)) {
+//                pdu.setData(data);
+//                return stream; // early return to avoid second read
+//            }
+//        } else {
+//            data.resize(stream.device()->size() - 1); // One byte for the function code.
+//        }
+//    } else if (pdu.functionCode() == QModbus2Pdu::Diagnostics) {
+//        quint16 subCode;
+//        pdu.decodeData(&subCode);
+//        if (subCode == Diagnostics::ReturnQueryData)
+//            data.resize(stream.device()->size() - 1); // One byte for the function code.
+//    }
 
-    // reset what we have so far, next read might fail as well
-    pdu.setData(QByteArray());
-    pdu.setFunctionCode(QModbusPdu::Invalid);
+//    // reset what we have so far, next read might fail as well
+//    pdu.setData(QByteArray());
+//    pdu.setFunctionCode(QModbus2Pdu::Invalid);
 
-    if (data.size() <= 252) { // The maximum PDU data size is 252 bytes.
-        data.resize(size);
-        if (stream.readRawData(data.data(), data.size()) == size) {
-            pdu.setData(data);
-            pdu.setFunctionCode(code);
-        }
-    }
-    return stream;
-}
+//    if (data.size() <= 252) { // The maximum PDU data size is 252 bytes.
+//        data.resize(size);
+//        if (stream.readRawData(data.data(), data.size()) == size) {
+//            pdu.setData(data);
+//            pdu.setFunctionCode(code);
+//        }
+//    }
+//    return stream;
+//}
 
 }   // namespace Private
 
 /*!
-    \class QModbusPdu
+    \class QModbus2Pdu
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief QModbusPdu is a abstract container class containing the function code and
+    \brief QModbus2Pdu is a abstract container class containing the function code and
     payload that is stored inside a Modbus ADU.
 
     The class provides access to the raw Modbus protocol packets as defined by
@@ -194,7 +202,7 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \enum QModbusPdu::ExceptionCode
+    \enum QModbus2Pdu::ExceptionCode
 
     This enum describes all the possible error conditions as defined by Modbus Exception Codes.
     They are set by the server after checking the appropriate error conditions in the reply to a
@@ -236,7 +244,7 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \enum QModbusPdu::FunctionCode
+    \enum QModbus2Pdu::FunctionCode
 
     Defines the function code and the implicit type of action required by the server. Not all
     Modbus devices can handle the same set of function codes.
@@ -279,42 +287,42 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \fn QModbusPdu::QModbusPdu()
+    \fn QModbus2Pdu::QModbus2Pdu()
 
-    Constructs an invalid QModbusPdu.
+    Constructs an invalid QModbus2Pdu.
 */
 
 /*!
-    \fn QModbusPdu::~QModbusPdu()
+    \fn QModbus2Pdu::~QModbus2Pdu()
 
-    Destroys a QModbusPdu.
+    Destroys a QModbus2Pdu.
 */
 
 /*!
-    \fn QModbusPdu::QModbusPdu(const QModbusPdu &other)
+    \fn QModbus2Pdu::QModbus2Pdu(const QModbus2Pdu &other)
 
-    Constructs a QModbusPdu that is a copy of \a other.
+    Constructs a QModbus2Pdu that is a copy of \a other.
 
 */
 
 /*!
-    \fn QModbusPdu &QModbusPdu::operator=(const QModbusPdu &other)
+    \fn QModbus2Pdu &QModbus2Pdu::operator=(const QModbus2Pdu &other)
 
-    Makes a copy of the \a other and assigns it to this QModbusPdu object.
+    Makes a copy of the \a other and assigns it to this QModbus2Pdu object.
 */
 
 /*!
-    \fn QModbusPdu::QModbusPdu(FunctionCode code, const QByteArray &data)
+    \fn QModbus2Pdu::QModbus2Pdu(FunctionCode code, const QByteArray &data)
 
-    Constructs a QModbusPdu with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Pdu with function code set to \a code and payload set to \a data.
     The data is expected to be stored in big-endian byte order already.
 */
 
 /*!
     \internal
-    \fn QModbusPdu::QModbusPdu(FunctionCode code, Args... data)
+    \fn QModbus2Pdu::QModbus2Pdu(FunctionCode code, Args... data)
 
-    Constructs a QModbusPdu with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Pdu with function code set to \a code and payload set to \a data.
     The data is converted and stored in big-endian byte order.
 
     \note Usage is limited \c quint8 and \c quint16 only. This is because
@@ -323,7 +331,7 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \fn bool QModbusPdu::isValid() const
+    \fn bool QModbus2Pdu::isValid() const
 
     Returns true if the PDU is valid; otherwise false.
 
@@ -333,7 +341,7 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \variable QModbusPdu::ExceptionByte
+    \variable QModbus2Pdu::ExceptionByte
 
     The variable is initialized to 0x80.
 
@@ -347,63 +355,63 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \fn bool QModbusPdu::isException() const
+    \fn bool QModbus2Pdu::isException() const
 
     Returns true if the PDU contains an exception code; otherwise false.
 */
 
 /*!
-    \fn QModbusPdu::ExceptionCode QModbusPdu::exceptionCode() const
+    \fn QModbus2Pdu::ExceptionCode QModbus2Pdu::exceptionCode() const
 
     Returns the response's exception code.
 */
 
 /*!
-    \fn qint16 QModbusPdu::size() const
+    \fn qint16 QModbus2Pdu::size() const
 
     Returns the PDU's full size, including function code and data size.
 */
 
 /*!
-    \fn qint16 QModbusPdu::dataSize() const
+    \fn qint16 QModbus2Pdu::dataSize() const
 
     Returns the PDU's data size, excluding the function code.
 */
 
 /*!
-    \fn FunctionCode QModbusPdu::functionCode() const
+    \fn FunctionCode QModbus2Pdu::functionCode() const
 
     Returns the PDU's function code.
 */
 
 /*!
-    \fn void QModbusPdu::setFunctionCode(FunctionCode code)
+    \fn void QModbus2Pdu::setFunctionCode(FunctionCode code)
 
     Sets the PDU's function code to \a code.
 */
 
 /*!
-    \fn QByteArray QModbusPdu::data() const
+    \fn QByteArray QModbus2Pdu::data() const
 
     Returns the PDU's payload, excluding the function code.
     The payload is stored in big-endian byte order.
 */
 
 /*!
-    \fn void QModbusPdu::setData(const QByteArray &data)
+    \fn void QModbus2Pdu::setData(const QByteArray &data)
 
     Sets the PDU's function payload to \a data. The data is expected to be stored in big-endian
     byte order already.
 */
 
 /*!
-    \fn void QModbusPdu::decodeData(Args && ... data) const
+    \fn void QModbus2Pdu::decodeData(Args && ... data) const
 
     Converts the payload into host endianness and reads it into \a data. Data can be a variable
     length argument list.
 
     \code
-        QModbusResponsePdu response(QModbusPdu::ReportServerId);
+        QModbusResponsePdu response(QModbus2Pdu::ReportServerId);
         response.encodeData(quint8(0x02), quint8(0x01), quint8(0xff));
         quint8 count, id, run;
         response.decodeData(&count, &id, &run);
@@ -415,12 +423,12 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \fn void QModbusPdu::encodeData(Args ... data)
+    \fn void QModbus2Pdu::encodeData(Args ... data)
 
     Sets the payload to \a data. The data is converted and stored in big-endian byte order.
 
     \code
-        QModbusRequestPdu request(QModbusPdu::ReadCoils);
+        QModbusRequestPdu request(QModbus2Pdu::ReadCoils);
         // starting address and quantity of coils
         request.encodeData(quint16(0x0c), quint16(0x0a));
     \endcode
@@ -431,28 +439,28 @@ static QDataStream &pduFromStream(QDataStream &stream, QModbusPdu &pdu, Type typ
 */
 
 /*!
-    \relates QModbusPdu
+    \relates QModbus2Pdu
 
     Writes the Modbus \a pdu to the \a debug stream.
 */
-QDebug operator<<(QDebug debug, const QModbusPdu &pdu)
+QDebug operator<<(QDebug debug, const QModbus2Pdu &pdu)
 {
     QDebugStateSaver _(debug);
     debug.nospace().noquote() << "0x" << hex << qSetFieldWidth(2) << qSetPadChar('0')
-        << (pdu.isException() ? pdu.functionCode() | QModbusPdu::ExceptionByte : pdu.functionCode())
+        << (pdu.isException() ? pdu.functionCode() | QModbus2Pdu::ExceptionByte : pdu.functionCode())
         << qSetFieldWidth(0) << pdu.data().toHex();
     return debug;
 }
 
 /*!
-    \relates QModbusPdu
+    \relates QModbus2Pdu
 
     Writes a \a pdu to the \a stream and returns a reference to the stream.
 */
-QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
+QDataStream &operator<<(QDataStream &stream, const QModbus2Pdu &pdu)
 {
     if (pdu.isException())
-        stream << static_cast<quint8> (pdu.functionCode() | QModbusPdu::ExceptionByte);
+        stream << static_cast<quint8> (pdu.functionCode() | QModbus2Pdu::ExceptionByte);
     else
         stream << static_cast<quint8> (pdu.functionCode());
     if (!pdu.data().isEmpty())
@@ -462,11 +470,11 @@ QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
 }
 
 /*!
-    \class QModbusRequest
+    \class QModbus2Request
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief QModbusRequest is a container class containing the function code and payload that is
+    \brief QModbus2Request is a container class containing the function code and payload that is
     stored inside a Modbus ADU.
 
     A Modbus request usually consists of a single byte describing the \c FunctionCode and N bytes
@@ -474,7 +482,7 @@ QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
 
     A typical Modbus request can looks like this:
     \code
-        QModbusRequest request(QModbusRequest::WriteMultipleCoils,
+        QModbus2Request request(QModbus2Request::WriteMultipleCoils,
             QByteArray::fromHex("0013000a02cd01"));
     \endcode
     \note When using the constructor taking the \c QByteArray, please make sure to convert the
@@ -484,27 +492,27 @@ QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
     \code
         quint16 startAddress = 19, numberOfCoils = 10;
         quint8 payloadInBytes = 2, outputHigh = 0xcd, outputLow = 0x01;
-        QModbusRequest request(QModbusRequest::WriteMultipleCoils, startAddress, numberOfCoils,
+        QModbus2Request request(QModbus2Request::WriteMultipleCoils, startAddress, numberOfCoils,
             payloadInBytes, outputHigh, outputLow);
     \endcode
 */
 
 /*!
-    \fn QModbusRequest::QModbusRequest()
+    \fn QModbus2Request::QModbus2Request()
 
-    Constructs an invalid QModbusRequest.
+    Constructs an invalid QModbus2Request.
 */
 
 /*!
-    \fn QModbusRequest::QModbusRequest(const QModbusPdu &pdu)
+    \fn QModbus2Request::QModbus2Request(const QModbus2Pdu &pdu)
 
     Constructs a copy of \a pdu.
 */
 
 /*!
-    \fn QModbusRequest::QModbusRequest(FunctionCode code, Args... data)
+    \fn QModbus2Request::QModbus2Request(FunctionCode code, Args... data)
 
-    Constructs a QModbusRequest with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Request with function code set to \a code and payload set to \a data.
     The data is converted and stored in big-endian byte order.
 
     \note Usage is limited \c quint8 and \c quint16 only. This is because
@@ -513,9 +521,9 @@ QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
 */
 
 /*!
-    \fn QModbusRequest::QModbusRequest(FunctionCode code, const QByteArray &data = QByteArray())
+    \fn QModbus2Request::QModbus2Request(FunctionCode code, const QByteArray &data = QByteArray())
 
-    Constructs a QModbusResponse with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Response with function code set to \a code and payload set to \a data.
     The data is expected to be stored in big-endian byte order already.
 */
 
@@ -523,7 +531,7 @@ QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu)
     Returns the expected minimum data size for \a request based on the
     request's function code; \c {-1} if the function code is not known.
 */
-int QModbusRequest::minimumDataSize(const QModbusRequest &request)
+int QModbus2Request::minimumDataSize(const QModbus2Request &request)
 {
     return Private::minimumDataSize(request, Private::Type::Request);
 }
@@ -536,7 +544,7 @@ int QModbusRequest::minimumDataSize(const QModbusRequest &request)
     \sa minimumDataSize
     \sa registerDataSizeCalculator
 */
-int QModbusRequest::calculateDataSize(const QModbusRequest &request)
+int QModbus2Request::calculateDataSize(const QModbus2Request &request)
 {
     if (requestSizeCalculators.exists()) {
         if (auto ptr = requestSizeCalculators()->value(request.functionCode(), nullptr))
@@ -551,81 +559,83 @@ int QModbusRequest::calculateDataSize(const QModbusRequest &request)
     if (minimum < 0)
         return size;
 
-    switch (request.functionCode()) {
-    case QModbusPdu::WriteMultipleCoils:
-        minimum -= 1; // first payload payload byte
-        if (request.dataSize() >= minimum)
-            size = minimum + request.data()[minimum - 1] /*byte count*/;
-        break;
-    case QModbusPdu::WriteMultipleRegisters:
-    case QModbusPdu::ReadWriteMultipleRegisters:
-        minimum -= 2; // first 2 payload payload bytes
-        if (request.dataSize() >= minimum)
-            size = minimum + request.data()[minimum - 1] /*byte count*/;
-        break;
-    case QModbusPdu::ReadFileRecord:
-    case QModbusPdu::WriteFileRecord:
-        if (request.dataSize() >= 1)
-            size = 1 /*byte count*/ + request.data()[0] /*actual bytes*/;
-        break;
-    case QModbusPdu::EncapsulatedInterfaceTransport: {
-        if (request.dataSize() < minimum)
-            break;  // can't calculate, let's return -1 to indicate error
-        quint8 meiType;
-        request.decodeData(&meiType);
-        // ReadDeviceIdentification -> 3 == MEI type + Read device ID + Object Id
-        size = (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) ? 3 : minimum;
-    }   break;
-    default:
-        size = minimum;
-        break;
-    }
-    return size;
+    return request.size();
+
+//    switch (request.functionCode()) {
+//    case QModbus2Pdu::WriteMultipleCoils:
+//        minimum -= 1; // first payload payload byte
+//        if (request.dataSize() >= minimum)
+//            size = minimum + request.data()[minimum - 1] /*byte count*/;
+//        break;
+//    case QModbus2Pdu::WriteMultipleRegisters:
+//    case QModbus2Pdu::ReadWriteMultipleRegisters:
+//        minimum -= 2; // first 2 payload payload bytes
+//        if (request.dataSize() >= minimum)
+//            size = minimum + request.data()[minimum - 1] /*byte count*/;
+//        break;
+//    case QModbus2Pdu::ReadFileRecord:
+//    case QModbus2Pdu::WriteFileRecord:
+//        if (request.dataSize() >= 1)
+//            size = 1 /*byte count*/ + request.data()[0] /*actual bytes*/;
+//        break;
+//    case QModbus2Pdu::EncapsulatedInterfaceTransport: {
+//        if (request.dataSize() < minimum)
+//            break;  // can't calculate, let's return -1 to indicate error
+//        quint8 meiType;
+//        request.decodeData(&meiType);
+//        // ReadDeviceIdentification -> 3 == MEI type + Read device ID + Object Id
+//        size = (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) ? 3 : minimum;
+//    }   break;
+//    default:
+//        size = minimum;
+//        break;
+//    }
+//    return size;
 }
 
 /*!
     This function registers a user-defined implementation to calculate the
     request data size for function code \a fc. It can be used to extend or
-    override the implementation inside \l QModbusRequest::calculateDataSize().
+    override the implementation inside \l QModbus2Request::calculateDataSize().
 
     The \c CalcFuncPtr is a typedef for a pointer to a custom \a calculator
     function with the following signature:
     \code
-        int myCalculateDataSize(const QModbusRequest &pdu);
+        int myCalculateDataSize(const QModbus2Request &pdu);
     \endcode
 */
-void QModbusRequest::registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr calculator)
+void QModbus2Request::registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr calculator)
 {
     requestSizeCalculators()->insert(fc, calculator);
 }
 
 /*!
-    \relates QModbusRequest
+    \relates QModbus2Request
 
     Reads a \a pdu from the \a stream and returns a reference to the stream.
 
     \note The function might fail to properly stream PDU's with function code
-    \l QModbusPdu::Diagnostics or \l QModbusPdu::EncapsulatedInterfaceTransport
+    \l QModbus2Pdu::Diagnostics or \l QModbus2Pdu::EncapsulatedInterfaceTransport
     because of the missing size indicator inside the PDU. In particular this may
     happen when the PDU is embedded into a stream that doesn't end with the
     diagnostic/encapsulated request itself.
 */
-QDataStream &operator>>(QDataStream &stream, QModbusRequest &pdu)
-{
-    return Private::pduFromStream(stream, pdu, Private::Type::Request);
-}
+//QDataStream &operator>>(QDataStream &stream, QModbus2Request &pdu)
+//{
+//    return Private::pduFromStream(stream, pdu, Private::Type::Request);
+//}
 
 /*!
-    \class QModbusResponse
+    \class QModbus2Response
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief QModbusResponse is a container class containing the function code and payload that is
+    \brief QModbus2Response is a container class containing the function code and payload that is
         stored inside a Modbus ADU.
 
     A typical Modbus response can looks like this:
     \code
-        QModbusResponse response(QModbusResponse::ReadCoils, QByteArray::fromHex("02cd01"));
+        QModbus2Response response(QModbus2Response::ReadCoils, QByteArray::fromHex("02cd01"));
     \endcode
     \note When using the constructor taking the \c QByteArray, please make sure to convert the
         containing data to big-endian byte order before creating the request.
@@ -633,26 +643,26 @@ QDataStream &operator>>(QDataStream &stream, QModbusRequest &pdu)
     The same response can be created like this, if the values are know at compile time:
     \code
         quint8 payloadInBytes = 2, outputHigh = 0xcd, outputLow = 0x01;
-        QModbusResponse response(QModbusResponse::ReadCoils, payloadInBytes, outputHigh, outputLow);
+        QModbus2Response response(QModbus2Response::ReadCoils, payloadInBytes, outputHigh, outputLow);
     \endcode
 */
 
 /*!
-    \fn QModbusResponse::QModbusResponse()
+    \fn QModbus2Response::QModbus2Response()
 
-    Constructs an invalid QModbusResponse.
+    Constructs an invalid QModbus2Response.
 */
 
 /*!
-    \fn QModbusResponse::QModbusResponse(const QModbusPdu &pdu)
+    \fn QModbus2Response::QModbus2Response(const QModbus2Pdu &pdu)
 
     Constructs a copy of \a pdu.
 */
 
 /*!
-    \fn QModbusResponse::QModbusResponse(FunctionCode code, Args... data)
+    \fn QModbus2Response::QModbus2Response(FunctionCode code, Args... data)
 
-    Constructs a QModbusResponse with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Response with function code set to \a code and payload set to \a data.
     The data is converted and stored in big-endian byte order.
 
     \note Usage is limited \c quint8 and \c quint16 only. This is because
@@ -661,9 +671,9 @@ QDataStream &operator>>(QDataStream &stream, QModbusRequest &pdu)
 */
 
 /*!
-    \fn QModbusResponse::QModbusResponse(FunctionCode code, const QByteArray &data = QByteArray())
+    \fn QModbus2Response::QModbus2Response(FunctionCode code, const QByteArray &data = QByteArray())
 
-    Constructs a QModbusResponse with function code set to \a code and payload set to \a data.
+    Constructs a QModbus2Response with function code set to \a code and payload set to \a data.
     The data is expected to be stored in big-endian byte order already.
 */
 
@@ -671,9 +681,15 @@ QDataStream &operator>>(QDataStream &stream, QModbusRequest &pdu)
     Returns the expected minimum data size for \a response based on the
     response's function code; \c {-1} if the function code is not known.
 */
-int QModbusResponse::minimumDataSize(const QModbusResponse &response)
+int QModbus2Response::minimumDataSize(const QModbus2Response &response)
 {
     return Private::minimumDataSize(response, Private::Type::Response);
+}
+
+
+int QModbus2Response::getMinDataSize()
+{
+    return 2 + 2 + 2 + 1 + 2;
 }
 
 /*!
@@ -684,7 +700,7 @@ int QModbusResponse::minimumDataSize(const QModbusResponse &response)
     \sa minimumDataSize
     \sa registerDataSizeCalculator
 */
-int QModbusResponse::calculateDataSize(const QModbusResponse &response)
+int QModbus2Response::calculateDataSize(const QModbus2Response &response)
 {
     if (responseSizeCalculators.exists()) {
         if (auto ptr = responseSizeCalculators()->value(response.functionCode(), nullptr))
@@ -699,99 +715,102 @@ int QModbusResponse::calculateDataSize(const QModbusResponse &response)
     if (minimum < 0)
         return size;
 
-    switch (response.functionCode()) {
-    case QModbusResponse::ReadCoils:
-    case QModbusResponse::ReadDiscreteInputs:
-    case QModbusResponse::ReadHoldingRegisters:
-    case QModbusResponse::ReadInputRegisters:
-    case QModbusResponse::GetCommEventLog:
-    case QModbusResponse::ReadFileRecord:
-    case QModbusResponse::WriteFileRecord:
-    case QModbusResponse::ReadWriteMultipleRegisters:
-    case QModbusResponse::ReportServerId:
-        if (response.dataSize() >= 1)
-            size = 1 /*byte count*/ + response.data()[0] /*actual bytes*/;
-        break;
-    case QModbusResponse::ReadFifoQueue: {
-        if (response.dataSize() >= 2) {
-            quint16 rawSize;
-            response.decodeData(&rawSize);
-            size = rawSize + 2; // 2 bytes size info
-        }
-    }   break;
-    case QModbusPdu::EncapsulatedInterfaceTransport: {
-        if (response.dataSize() < minimum)
-            break;  // can't calculate, let's return -1 to indicate error
 
-        quint8 meiType;
-        response.decodeData(&meiType);
+//    switch (response.functionCode()) {
+//    case QModbus2Response::ReadCoils:
+//    case QModbus2Response::ReadDiscreteInputs:
+//    case QModbus2Response::ReadHoldingRegisters:
+//    case QModbus2Response::ReadInputRegisters:
+//    case QModbus2Response::GetCommEventLog:
+//    case QModbus2Response::ReadFileRecord:
+//    case QModbus2Response::WriteFileRecord:
+//    case QModbus2Response::ReadWriteMultipleRegisters:
+//    case QModbus2Response::ReportServerId:
+//        if (response.dataSize() >= 1)
+//            size = 1 /*byte count*/ + response.data()[0] /*actual bytes*/;
+//        break;
+//    case QModbus2Response::ReadFifoQueue: {
+//        if (response.dataSize() >= 2) {
+//            quint16 rawSize;
+//            response.decodeData(&rawSize);
+//            size = rawSize + 2; // 2 bytes size info
+//        }
+//    }   break;
+//    case QModbus2Pdu::EncapsulatedInterfaceTransport: {
+//        if (response.dataSize() < minimum)
+//            break;  // can't calculate, let's return -1 to indicate error
 
-        // update size, header 6 bytes: mei type + read device id + conformity level + more follows
-        //                              + next object id + number of object
-        // response data part  2 bytes: + object id + object size of the first object -> 8
-        size = (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) ? 8 : minimum;
-        if (meiType != EncapsulatedInterfaceTransport::ReadDeviceIdentification
-            || response.dataSize() < size) {
-            break; // TODO: calculate CanOpenGeneralReference instead of break
-        }
+//        quint8 meiType;
+//        response.decodeData(&meiType);
 
-        const QByteArray data = response.data();
-        quint8 numOfObjects = quint8(data[5]);
-        quint8 objectSize = quint8(data[7]);
+//        // update size, header 6 bytes: mei type + read device id + conformity level + more follows
+//        //                              + next object id + number of object
+//        // response data part  2 bytes: + object id + object size of the first object -> 8
+//        size = (meiType == EncapsulatedInterfaceTransport::ReadDeviceIdentification) ? 8 : minimum;
+//        if (meiType != EncapsulatedInterfaceTransport::ReadDeviceIdentification
+//            || response.dataSize() < size) {
+//            break; // TODO: calculate CanOpenGeneralReference instead of break
+//        }
 
-        // 6 byte header size + (2 * n bytes fixed per object) + first object size
-        size = 6 + (2 * numOfObjects) + objectSize;
-        if ((numOfObjects == 1) || (data.size() < size))
-            break;
+//        const QByteArray data = response.data();
+//        quint8 numOfObjects = quint8(data[5]);
+//        quint8 objectSize = quint8(data[7]);
 
-        // header + object id + object size + second object id (9 bytes) + first object size
-        int nextSizeField = 9 + objectSize;
-        for (int i = 1; i < numOfObjects; ++i) {
-            if (data.size() <= nextSizeField)
-                break;
-            objectSize = data[nextSizeField];
-            size += objectSize;
-            nextSizeField += objectSize + 2; // object size + object id field + object size field
-        }
-    }   break;
-    default:
-        size = minimum;
-        break;
-    }
-    return size;
+//        // 6 byte header size + (2 * n bytes fixed per object) + first object size
+//        size = 6 + (2 * numOfObjects) + objectSize;
+//        if ((numOfObjects == 1) || (data.size() < size))
+//            break;
+
+//        // header + object id + object size + second object id (9 bytes) + first object size
+//        int nextSizeField = 9 + objectSize;
+//        for (int i = 1; i < numOfObjects; ++i) {
+//            if (data.size() <= nextSizeField)
+//                break;
+//            objectSize = data[nextSizeField];
+//            size += objectSize;
+//            nextSizeField += objectSize + 2; // object size + object id field + object size field
+//        }
+//    }   break;
+//    default:
+//        size = minimum;
+//        break;
+//    }
+
+
+//    return size;
 }
 
 /*!
     This function registers a user-defined implementation to calculate the
     response data size for function code \a fc. It can be used to extend or
-    override the implementation inside \l QModbusResponse::calculateDataSize().
+    override the implementation inside \l QModbus2Response::calculateDataSize().
 
     The \c CalcFuncPtr is a typedef for a pointer to a custom \a calculator
     function with the following signature:
     \code
-        int myCalculateDataSize(const QModbusResponse &pdu);
+        int myCalculateDataSize(const QModbus2Response &pdu);
     \endcode
 */
-void QModbusResponse::registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr calculator)
+void QModbus2Response::registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr calculator)
 {
     responseSizeCalculators()->insert(fc, calculator);
 }
 
 /*!
-    \relates QModbusResponse
+    \relates QModbus2Response
 
     Reads a \a pdu from the \a stream and returns a reference to the stream.
 
     \note The function might fail to properly stream PDU's with function code
-    \l QModbusPdu::Diagnostics or \l QModbusPdu::EncapsulatedInterfaceTransport
+    \l QModbus2Pdu::Diagnostics or \l QModbus2Pdu::EncapsulatedInterfaceTransport
     because of the missing size indicator inside the PDU. In particular this may
     happen when the PDU is embedded into a stream that doesn't end with the
     diagnostic/encapsulated request itself.
 */
-QDataStream &operator>>(QDataStream &stream, QModbusResponse &pdu)
-{
-    return Private::pduFromStream(stream, pdu, Private::Type::Response);
-}
+//QDataStream &operator>>(QDataStream &stream, QModbus2Response &pdu)
+//{
+//    return Private::pduFromStream(stream, pdu, Private::Type::Response);
+//}
 
 /*!
     \class QModbusExceptionResponse
@@ -815,7 +834,7 @@ QDataStream &operator>>(QDataStream &stream, QModbusResponse &pdu)
 */
 
 /*!
-    \fn QModbusExceptionResponse::QModbusExceptionResponse(const QModbusPdu &pdu)
+    \fn QModbusExceptionResponse::QModbusExceptionResponse(const QModbus2Pdu &pdu)
 
     Constructs a copy of \a pdu.
 */

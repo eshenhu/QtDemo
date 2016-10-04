@@ -41,8 +41,8 @@
 
 QT_BEGIN_NAMESPACE
 
-Q_DECLARE_LOGGING_CATEGORY(QT_MODBUS)
-Q_DECLARE_LOGGING_CATEGORY(QT_MODBUS_LOW)
+Q_DECLARE_LOGGING_CATEGORY(QT_MODBUS2)
+Q_DECLARE_LOGGING_CATEGORY(QT_MODBUS2_LOW)
 
 /*!
     \class QModbusRtuSerialMaster
@@ -61,7 +61,7 @@ Q_DECLARE_LOGGING_CATEGORY(QT_MODBUS_LOW)
     Constructs a serial Modbus master with the specified \a parent.
 */
 QModbus2RtuSerialMaster::QModbus2RtuSerialMaster(QObject *parent)
-    : QModbusClient(*new QModbus2RtuSerialMasterPrivate, parent)
+    : QModbus2Client(*new QModbus2RtuSerialMasterPrivate, parent)
 {
     Q_D(QModbus2RtuSerialMaster);
     d->setupSerialPort();
@@ -111,7 +111,7 @@ void QModbus2RtuSerialMaster::setInterFrameDelay(int microseconds)
     \internal
 */
 QModbus2RtuSerialMaster::QModbus2RtuSerialMaster(QModbus2RtuSerialMasterPrivate &dd, QObject *parent)
-    : QModbusClient(dd, parent)
+    : QModbus2Client(dd, parent)
 {
     Q_D(QModbus2RtuSerialMaster);
     d->setupSerialPort();
@@ -125,18 +125,18 @@ QModbus2RtuSerialMaster::QModbus2RtuSerialMaster(QModbus2RtuSerialMasterPrivate 
 */
 bool QModbus2RtuSerialMaster::open()
 {
-    if (state() == QModbusDevice::ConnectedState)
+    if (state() == QModbus2Device::ConnectedState)
         return true;
 
     Q_D(QModbus2RtuSerialMaster);
     d->setupEnvironment(); // to be done before open
     if (d->m_serialPort->open(QIODevice::ReadWrite)) {
-        setState(QModbusDevice::ConnectedState);
+        setState(QModbus2Device::ConnectedState);
         d->m_serialPort->clear(); // only possible after open
     } else {
-        setError(d->m_serialPort->errorString(), QModbusDevice::ConnectionError);
+        setError(d->m_serialPort->errorString(), QModbus2Device::ConnectionError);
     }
-    return (state() == QModbusDevice::ConnectedState);
+    return (state() == QModbus2Device::ConnectedState);
 }
 
 /*!
@@ -144,7 +144,7 @@ bool QModbus2RtuSerialMaster::open()
 */
 void QModbus2RtuSerialMaster::close()
 {
-    if (state() == QModbusDevice::UnconnectedState)
+    if (state() == QModbus2Device::UnconnectedState)
         return;
 
     Q_D(QModbus2RtuSerialMaster);
@@ -152,18 +152,18 @@ void QModbus2RtuSerialMaster::close()
         d->m_serialPort->close();
 
     if (d->m_queue.count())
-        qCDebug(QT_MODBUS_LOW) << "(RTU client) Aborted replies:" << d->m_queue.count();
+        qCDebug(QT_MODBUS2_LOW) << "(RTU client) Aborted replies:" << d->m_queue.count();
 
     while (!d->m_queue.isEmpty()) {
         // Finish each open reply and forget them
         QModbus2RtuSerialMasterPrivate::QueueElement elem = d->m_queue.dequeue();
         if (!elem.reply.isNull()) {
-            elem.reply->setError(QModbusDevice::ReplyAbortedError,
-                                 QModbusClient::tr("Reply aborted due to connection closure."));
+            elem.reply->setError(QModbus2Device::ReplyAbortedError,
+                                 QModbus2Client::tr("Reply aborted due to connection closure."));
         }
     }
 
-    setState(QModbusDevice::UnconnectedState);
+    setState(QModbus2Device::UnconnectedState);
 }
 
 QT_END_NAMESPACE

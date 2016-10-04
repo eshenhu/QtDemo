@@ -38,16 +38,16 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qiodevice.h>
-#include <QtSerialBus/qserialbusglobal.h>
+#include "qserialbusglobal.h"
 
 QT_BEGIN_NAMESPACE
 
-class QModbusDevicePrivate;
+class QModbus2DevicePrivate;
 
-class Q_SERIALBUS_EXPORT QModbusDevice : public QObject
+class Q_SERIALBUS_EXPORT QModbus2Device : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QModbusDevice)
+    Q_DECLARE_PRIVATE(QModbus2Device)
 
 public:
     enum Error {
@@ -86,8 +86,8 @@ public:
     };
     Q_ENUM(ConnectionParameter)
 
-    explicit QModbusDevice(QObject *parent = nullptr);
-    ~QModbusDevice();
+    explicit QModbus2Device(QObject *parent = nullptr);
+    ~QModbus2Device();
 
     QVariant connectionParameter(int parameter) const;
     void setConnectionParameter(int parameter, const QVariant &value);
@@ -101,21 +101,21 @@ public:
     QString errorString() const;
 
 Q_SIGNALS:
-    void errorOccurred(QModbusDevice::Error error);
-    void stateChanged(QModbusDevice::State state);
+    void errorOccurred(QModbus2Device::Error error);
+    void stateChanged(QModbus2Device::State state);
 
 protected:
-    QModbusDevice(QModbusDevicePrivate &dd, QObject *parent = nullptr);
+    QModbus2Device(QModbus2DevicePrivate &dd, QObject *parent = nullptr);
 
-    void setState(QModbusDevice::State newState);
-    void setError(const QString &errorText, QModbusDevice::Error error);
+    void setState(QModbus2Device::State newState);
+    void setError(const QString &errorText, QModbus2Device::Error error);
     virtual bool open() = 0;
     virtual void close() = 0;
 };
 
-Q_DECLARE_TYPEINFO(QModbusDevice::Error, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusDevice::State, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusDevice::ConnectionParameter, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Device::Error, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Device::State, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Device::ConnectionParameter, Q_PRIMITIVE_TYPE);
 
 QT_END_NAMESPACE
 

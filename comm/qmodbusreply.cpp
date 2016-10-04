@@ -41,51 +41,51 @@
 
 QT_BEGIN_NAMESPACE
 
-class QModbusReplyPrivate : public QObjectPrivate
+class QModbus2ReplyPrivate : public QObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QModbusReply)
+    Q_DECLARE_PUBLIC(QModbus2Reply)
 
 public:
     QModbus2DataUnit m_unit;
     int m_serverAddress = 1;
     bool m_finished = false;
-    QModbusDevice::Error m_error = QModbusDevice::NoError;
+    QModbus2Device::Error m_error = QModbus2Device::NoError;
     QString m_errorText;
-    QModbusResponse m_response;
-    QModbusReply::ReplyType m_type;
+    QModbus2Response m_response;
+    QModbus2Reply::ReplyType m_type;
 };
 
 /*!
-    \class QModbusReply
+    \class QModbus2Reply
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief The QModbusReply class contains the data for a request sent with
-    a \l QModbusClient derived class.
+    \brief The QModbus2Reply class contains the data for a request sent with
+    a \l QModbus2Client derived class.
 */
 
 /*!
-    \enum QModbusReply::ReplyType
+    \enum QModbus2Reply::ReplyType
 
     This enum describes the possible reply type.
 
     \value Raw      The reply originates from a raw Modbus request. See
-                    \l QModbusClient::sendRawRequest
+                    \l QModbus2Client::sendRawRequest
     \value Common   The reply originates from a common read, write or read/write
-                    request. See \l QModbusClient::sendReadRequest,
-                    \l QModbusClient::sendWriteRequest and \l QModbusClient::sendReadWriteRequest
+                    request. See \l QModbus2Client::sendReadRequest,
+                    \l QModbus2Client::sendWriteRequest and \l QModbus2Client::sendReadWriteRequest
 */
 
 /*!
-    Constructs a QModbusReply object with a given \a type and the specified \a parent.
+    Constructs a QModbus2Reply object with a given \a type and the specified \a parent.
 
     The reply will be send to the Modbus client represented by
     \a serverAddress.
 */
-QModbusReply::QModbusReply(ReplyType type, int serverAddress, QObject *parent)
-    : QObject(*new QModbusReplyPrivate, parent)
+QModbus2Reply::QModbus2Reply(ReplyType type, int serverAddress, QObject *parent)
+    : QObject(*new QModbus2ReplyPrivate, parent)
 {
-    Q_D(QModbusReply);
+    Q_D(QModbus2Reply);
     d->m_type = type;
     d->m_serverAddress = serverAddress;
 }
@@ -93,9 +93,9 @@ QModbusReply::QModbusReply(ReplyType type, int serverAddress, QObject *parent)
 /*!
     Returns \c true when the reply has finished or was aborted.
 */
-bool QModbusReply::isFinished() const
+bool QModbus2Reply::isFinished() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_finished;
 }
 
@@ -108,16 +108,16 @@ bool QModbusReply::isFinished() const
     If the operation completed successfully, \l setResult() should be called before
     this function. If an error occurred, \l setError() should be used instead.
 */
-void QModbusReply::setFinished(bool isFinished)
+void QModbus2Reply::setFinished(bool isFinished)
 {
-    Q_D(QModbusReply);
+    Q_D(QModbus2Reply);
     d->m_finished = isFinished;
     if (isFinished)
         emit finished();
 }
 
 /*!
-    \fn void QModbusReply::finished()
+    \fn void QModbus2Reply::finished()
 
     This signal is emitted when the reply has finished processing. The reply may still have
     returned with an error.
@@ -136,21 +136,21 @@ void QModbusReply::setFinished(bool isFinished)
     Returns the preprocessed result of a Modbus request.
 
     For read requests as well as combined read/write requests send via
-    \l QModbusClient::sendReadWriteRequest() it contains the values read
+    \l QModbus2Client::sendReadWriteRequest() it contains the values read
     from the server instance.
 
     If the request has not finished, has failed with an error or was a write
-    request then the returned \l QModbusDataUnit instance is invalid.
+    request then the returned \l QModbus2DataUnit instance is invalid.
 
-    \note If the \l type() of the reply is \l QModbusReply::Raw, the return
+    \note If the \l type() of the reply is \l QModbus2Reply::Raw, the return
     value will always be invalid.
 
     \sa type(), rawResult()
 */
-QModbus2DataUnit QModbusReply::result() const
+QModbus2DataUnit QModbus2Reply::result() const
 {
-    Q_D(const QModbusReply);
-    if (type() == QModbusReply::Common)
+    Q_D(const QModbus2Reply);
+    if (type() == QModbus2Reply::Common)
         return d->m_unit;
     return QModbus2DataUnit();
 }
@@ -159,30 +159,30 @@ QModbus2DataUnit QModbusReply::result() const
     \internal
     Sets the results of a read/write request to a Modbus register data \a unit.
 */
-void QModbusReply::setResult(const QModbus2DataUnit &unit)
+void QModbus2Reply::setResult(const QModbus2DataUnit &unit)
 {
-    Q_D(QModbusReply);
+    Q_D(QModbus2Reply);
     d->m_unit = unit;
 }
 
 /*!
     Returns the server address that this reply object targets.
 */
-int QModbusReply::serverAddress() const
+int QModbus2Reply::serverAddress() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_serverAddress;
 }
 
 /*!
-    \fn void QModbusReply::errorOccurred(QModbusDevice::Error error)
+    \fn void QModbus2Reply::errorOccurred(QModbus2Device::Error error)
 
     This signal is emitted when an error has been detected in the processing of
     this reply. The \l finished() signal will probably follow.
 
     The error will be described by the error code \a error. If errorString is
     not empty it will contain a textual description of the error. In case of a
-    \l QModbusDevice::ProtocolError the \l rawResult() function can be used to
+    \l QModbus2Device::ProtocolError the \l rawResult() function can be used to
     obtain the original Modbus exception response to get the exception code.
 
     Note: Do not delete this reply object in the slot connected to this signal.
@@ -192,9 +192,9 @@ int QModbusReply::serverAddress() const
 /*!
     Returns the error state of this reply.
 */
-QModbusDevice::Error QModbusReply::error() const
+QModbus2Device::Error QModbus2Reply::error() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_error;
 }
 
@@ -206,9 +206,9 @@ QModbusDevice::Error QModbusReply::error() const
     This will also cause the \l errorOccurred() and \l finished() signals to be emitted,
     in that order.
 */
-void QModbusReply::setError(QModbusDevice::Error error, const QString &errorText)
+void QModbus2Reply::setError(QModbus2Device::Error error, const QString &errorText)
 {
-    Q_D(QModbusReply);
+    Q_D(QModbus2Reply);
     d->m_error = error;
     d->m_errorText = errorText;
     emit errorOccurred(error);
@@ -224,9 +224,9 @@ void QModbusReply::setError(QModbusDevice::Error error, const QString &errorText
 
     \sa error(), errorOccurred()
 */
-QString QModbusReply::errorString() const
+QString QModbus2Reply::errorString() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_errorText;
 }
 
@@ -234,28 +234,28 @@ QString QModbusReply::errorString() const
 /*!
     Returns the type of the reply.
 
-    \note If the type of the reply is \l QModbusReply::Raw, the return value
+    \note If the type of the reply is \l QModbus2Reply::Raw, the return value
     of \l result() will always be invalid.
 
     \sa result(), rawResult()
 */
-QModbusReply::ReplyType QModbusReply::type() const
+QModbus2Reply::ReplyType QModbus2Reply::type() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_type;
 }
 
 /*!
     Returns the raw response of a Modbus request.
 
-    If the request has not finished then the returned \l QModbusResponse
+    If the request has not finished then the returned \l QModbus2Response
     instance is invalid.
 
     \sa type(), result()
 */
-QModbusResponse QModbusReply::rawResult() const
+QModbus2Response QModbus2Reply::rawResult() const
 {
-    Q_D(const QModbusReply);
+    Q_D(const QModbus2Reply);
     return d->m_response;
 }
 
@@ -263,9 +263,9 @@ QModbusResponse QModbusReply::rawResult() const
     \internal
     Sets the result of a Modbus request to a Modbus \a response.
 */
-void QModbusReply::setRawResult(const QModbusResponse &response)
+void QModbus2Reply::setRawResult(const QModbus2Response &response)
 {
-    Q_D(QModbusReply);
+    Q_D(QModbus2Reply);
     d->m_response = response;
 }
 

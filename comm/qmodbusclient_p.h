@@ -38,10 +38,10 @@
 #define QMODBUSCLIENT_P_H
 
 #include <QtCore/qtimer.h>
-#include <QtSerialBus/qmodbusclient.h>
-#include <QtSerialBus/qmodbuspdu.h>
+#include "qmodbusclient.h"
+#include "qmodbuspdu.h"
 
-#include <private/qmodbusdevice_p.h>
+#include "qmodbusdevice_p.h"
 
 //
 //  W A R N I N G
@@ -56,44 +56,44 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QModbusClientPrivate : public QModbusDevicePrivate
+class Q_AUTOTEST_EXPORT QModbus2ClientPrivate : public QModbus2DevicePrivate
 {
-    Q_DECLARE_PUBLIC(QModbusClient)
+    Q_DECLARE_PUBLIC(QModbus2Client)
 
 public:
-    QModbusReply *sendRequest(const QModbusRequest &request, int serverAddress,
+    QModbus2Reply *sendRequest(const QModbus2Request &request, int serverAddress,
                               const QModbus2DataUnit *const unit);
-    QModbusRequest createReadRequest(const QModbus2DataUnit &data) const;
-    QModbusRequest createWriteRequest(const QModbus2DataUnit &data) const;
-    QModbusRequest createRWRequest(const QModbus2DataUnit &read, const QModbus2DataUnit &write) const;
+    QModbus2Request createReadRequest(const QModbus2DataUnit &data) const;
+//    QModbus2Request createWriteRequest(const QModbus2DataUnit &data) const;
+//    QModbus2Request createRWRequest(const QModbus2DataUnit &read, const QModbus2DataUnit &write) const;
 
-    bool processResponse(const QModbusResponse &response, QModbus2DataUnit *data);
+    bool processResponse(const QModbus2Response &response, QModbus2DataUnit *data);
 
-    bool processReadCoilsResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool processReadDiscreteInputsResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool collateBits(const QModbusPdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
+//    bool processReadCoilsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool processReadDiscreteInputsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool collateBits(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
 
-    bool processReadHoldingRegistersResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool processReadInputRegistersResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool collateBytes(const QModbusPdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
+//    bool processReadHoldingRegistersResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool processReadInputRegistersResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool collateBytes(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
 
-    bool processWriteSingleCoilResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool processWriteSingleRegisterResponse(const QModbusResponse &response,
-                                            QModbus2DataUnit *data);
-    bool collateSingleValue(const QModbusPdu &pdu, QModbus2DataUnit::RegisterType type,
-                         QModbus2DataUnit *data);
+//    bool processWriteSingleCoilResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool processWriteSingleRegisterResponse(const QModbus2Response &response,
+//                                            QModbus2DataUnit *data);
+//    bool collateSingleValue(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type,
+//                         QModbus2DataUnit *data);
 
-    bool processWriteMultipleCoilsResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    bool processWriteMultipleRegistersResponse(const QModbusResponse &response,
-                                               QModbus2DataUnit *data);
-    bool collateMultipleValues(const QModbusPdu &pdu, QModbus2DataUnit::RegisterType type,
-                          QModbus2DataUnit *data);
+//    bool processWriteMultipleCoilsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+//    bool processWriteMultipleRegistersResponse(const QModbus2Response &response,
+//                                               QModbus2DataUnit *data);
+//    bool collateMultipleValues(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type,
+//                          QModbus2DataUnit *data);
 
-    bool processReadWriteMultipleRegistersResponse(const QModbusResponse &response,
-                                                  QModbus2DataUnit *data);
+//    bool processReadWriteMultipleRegistersResponse(const QModbus2Response &response,
+//                                                  QModbus2DataUnit *data);
 
-    virtual QModbusReply *enqueueRequest(const QModbusRequest &, int, const QModbus2DataUnit &,
-                                         QModbusReply::ReplyType) {
+    virtual QModbus2Reply *enqueueRequest(const QModbus2Request &, int, const QModbus2DataUnit &,
+                                         QModbus2Reply::ReplyType) {
         return nullptr;
     }
     // TODO: Review once we have a transport layer in place.
@@ -104,7 +104,7 @@ public:
 
     struct QueueElement {
         QueueElement() = default;
-        QueueElement(QModbusReply *r, const QModbusRequest &req, const QModbus2DataUnit &u, int num,
+        QueueElement(QModbus2Reply *r, const QModbus2Request &req, const QModbus2DataUnit &u, int num,
                 int timeout = -1)
             : reply(r), requestPdu(req), unit(u), numberOfRetries(num)
         {
@@ -119,15 +119,15 @@ public:
             return reply == other.reply;
         }
 
-        QPointer<QModbusReply> reply;
-        QModbusRequest requestPdu;
+        QPointer<QModbus2Reply> reply;
+        QModbus2Request requestPdu;
         QModbus2DataUnit unit;
         int numberOfRetries;
         QSharedPointer<QTimer> timer;
         QByteArray adu;
         qint64 bytesWritten = 0;
     };
-    void processQueueElement(const QModbusResponse &pdu, const QueueElement &element);
+    void processQueueElement(const QModbus2Response &pdu, const QueueElement &element);
 };
 
 QT_END_NAMESPACE

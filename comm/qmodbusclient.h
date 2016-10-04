@@ -38,30 +38,30 @@
 #define QMODBUSCLIENT_H
 
 #include <QtCore/qobject.h>
-#include <QtSerialBus/qmodbusdataunit.h>
-#include <QtSerialBus/qmodbusdevice.h>
-#include <QtSerialBus/qmodbuspdu.h>
-#include <QtSerialBus/qmodbusreply.h>
+#include "qmodbusdataunit.h"
+#include "qmodbusdevice.h"
+#include "qmodbuspdu.h"
+#include "qmodbusreply.h"
 
 QT_BEGIN_NAMESPACE
 
-class QModbusClientPrivate;
+class QModbus2ClientPrivate;
 
-class Q_SERIALBUS_EXPORT QModbusClient : public QModbusDevice
+class Q_SERIALBUS_EXPORT QModbus2Client : public QModbus2Device
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QModbusClient)
+    Q_DECLARE_PRIVATE(QModbus2Client)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout NOTIFY timeoutChanged)
 
 public:
-    explicit QModbusClient(QObject *parent = nullptr);
-    ~QModbusClient();
+    explicit QModbus2Client(QObject *parent = nullptr);
+    ~QModbus2Client();
 
-    QModbusReply *sendReadRequest(const QModbus2DataUnit &read, int serverAddress);
-    QModbusReply *sendWriteRequest(const QModbus2DataUnit &write, int serverAddress);
-    QModbusReply *sendReadWriteRequest(const QModbus2DataUnit &read, const QModbus2DataUnit &write,
-                                       int serverAddress);
-    QModbusReply *sendRawRequest(const QModbusRequest &request, int serverAddress);
+    QModbus2Reply *sendReadRequest(const QModbus2DataUnit &read, int serverAddress);
+//    QModbus2Reply *sendWriteRequest(const QModbus2DataUnit &write, int serverAddress);
+//    QModbus2Reply *sendReadWriteRequest(const QModbus2DataUnit &read, const QModbus2DataUnit &write,
+//                                       int serverAddress);
+    QModbus2Reply *sendRawRequest(const QModbus2Request &request, int serverAddress);
 
     int timeout() const;
     void setTimeout(int newTimeout);
@@ -73,10 +73,10 @@ Q_SIGNALS:
     void timeoutChanged(int newTimeout);
 
 protected:
-    QModbusClient(QModbusClientPrivate &dd, QObject *parent = nullptr);
+    QModbus2Client(QModbus2ClientPrivate &dd, QObject *parent = nullptr);
 
-    virtual bool processResponse(const QModbusResponse &response, QModbus2DataUnit *data);
-    virtual bool processPrivateResponse(const QModbusResponse &response, QModbus2DataUnit *data);
+    virtual bool processResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    virtual bool processPrivateResponse(const QModbus2Response &response, QModbus2DataUnit *data);
 };
 
 QT_END_NAMESPACE

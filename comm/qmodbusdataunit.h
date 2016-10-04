@@ -47,61 +47,141 @@ class QModbus2DataUnit
 {
 public:
     enum RegisterType {
-        Invalid,
-        DiscreteInputs,
-        Coils,
-        InputRegisters,
-        HoldingRegisters
+
+//        DiscreteInputs,
+//        Coils,
+//        InputRegisters,
+//        HoldingRegisters,
+        Invalid = 0x00,
+        ResetCode = 0x01,
+        HandShakeCode = 0x02,
+        FreqAdjustCode = 0x03,
+        StartBtnCode = 0x04,
+        AlarmInfoCode = 0x05,
+        MeasConfigCode = 0x06,
+        MeasStartCode = 0x07,
+        MeasEndCode = 0x08,
+        ManualMeasStartCode = 0x09,
+        ThroCalibrateCode = 0x0a,
+        QueryAlarmInfoCode = 0x0b
+    };
+
+    struct HandShakeStruct{
+        HandShakeStruct() = default;
+        quint16 randomNumLow;
+        quint16 randomNumHigh;
+    };
+
+    struct FreqAdjustStruct{
+        FreqAdjustStruct() = default;
+        quint8 freqValue;
+    };
+
+    struct MeasConfigStruct{
+        MeasConfigStruct() = default;
+        quint8 measOptions;
+        quint16 throStart;
+        quint16 throEnd;
+        quint16 throStep;
+        quint16 volStart;
+        quint16 volEnd;
+        quint16 volStep;
+        quint16 disStart;
+        quint16 disEnd;
+        quint16 disStep;
+        quint16 timeStep;
+        quint16 startDelay;
+        quint16 softDelay;
+    };
+
+    struct ManualMeasStruct{
+        ManualMeasStruct() = default;
+        quint16 vol;
+        quint16 thro;
+        quint16 distance;
+    };
+
+    struct ThroCalibrateStruct{
+        ThroCalibrateStruct() = default;
+        quint16 timeInHigh;
+        quint16 timeInLow;
+    };
+
+    union MeasDataUnion {
+        HandShakeStruct p;
+        FreqAdjustStruct q;
+        MeasConfigStruct r;
+        ManualMeasStruct s;
+        ThroCalibrateStruct t;
     };
 
     QModbus2DataUnit() = default;
 
-    explicit QModbus2DataUnit(RegisterType type)
-        : QModbus2DataUnit(type, 0, 0)
-    {}
-
-    QModbus2DataUnit(RegisterType type, int newStartAddress, quint16 newValueCount)
-        : QModbus2DataUnit(type, newStartAddress, QVector<quint16>(newValueCount))
-    {}
-
-    QModbus2DataUnit(RegisterType type, int newStartAddress, const QVector<quint16> &newValues)
+    QModbus2DataUnit(RegisterType type)
         : m_type(type)
-        , m_startAddress(newStartAddress)
-        , m_values(newValues)
-        , m_valueCount(newValues.size())
     {}
+
+//    QModbus2DataUnit(RegisterType type, quint16 newValueCount)
+//        : QModbus2DataUnit(type, QVector<quint16>(newValueCount))
+//    {}
+
+//    QModbus2DataUnit(RegisterType type, const QVector<quint16> &newValues)
+//        : m_type(type)
+//        , m_values(newValues)
+//        , m_valueCount(newValues.size())
+//    {}
+
+    QModbus2DataUnit(RegisterType type, const HandShakeStruct& v)
+        : m_type(type)
+    { m_uvalues.p = v; }
+
+    QModbus2DataUnit(RegisterType type, const FreqAdjustStruct& v)
+        : m_type(type)
+    { m_uvalues.q = v; }
+
+    QModbus2DataUnit(RegisterType type, const MeasConfigStruct& v)
+        : m_type(type)
+    { m_uvalues.r = v; }
+
+    QModbus2DataUnit(RegisterType type, const ManualMeasStruct& v)
+        : m_type(type)
+    { m_uvalues.s = v; }
+
+    QModbus2DataUnit(RegisterType type, const ThroCalibrateStruct& v)
+        : m_type(type)
+    { m_uvalues.t = v; }
+
 
     RegisterType registerType() const { return m_type; }
     void setRegisterType(RegisterType type) { m_type = type; }
 
-    inline int startAddress() const { return m_startAddress; }
-    inline void setStartAddress(int newAddress) { m_startAddress = newAddress; }
+//    inline QVector<quint16> values() const { return m_values; }
+//    inline void setValues(const QVector<quint16> &newValues)
+//    {
+//        m_values = newValues;
+//        m_valueCount = newValues.size();
+//    }
 
-    inline QVector<quint16> values() const { return m_values; }
-    inline void setValues(const QVector<quint16> &newValues)
-    {
-        m_values = newValues;
-        m_valueCount = newValues.size();
-    }
+//    inline uint valueCount() const { return m_valueCount; }
+//    inline void setValueCount(uint newCount) { m_valueCount = newCount; }
 
-    inline uint valueCount() const { return m_valueCount; }
-    inline void setValueCount(uint newCount) { m_valueCount = newCount; }
+//    inline void setValue(int index, quint16 newValue)
+//    {
+//        if (m_values.isEmpty() || index >= m_values.size())
+//            return;
+//        m_values[index] = newValue;
+//    }
+//    inline quint16 value(int index) const { return m_values.value(index); }
 
-    inline void setValue(int index, quint16 newValue)
-    {
-        if (m_values.isEmpty() || index >= m_values.size())
-            return;
-        m_values[index] = newValue;
-    }
-    inline quint16 value(int index) const { return m_values.value(index); }
+    bool isValid() const { return m_type != Invalid ;}
 
-    bool isValid() const { return m_type != Invalid && m_startAddress != -1; }
+    MeasDataUnion uvalues() const;
 
 private:
     RegisterType m_type = Invalid;
-    int m_startAddress = -1;
-    QVector<quint16> m_values;
-    uint m_valueCount = 0;
+//    QVector<quint16> m_values;
+    MeasDataUnion m_uvalues;
+//    uint m_valueCount = 0;
 };
 typedef QMap<QModbus2DataUnit::RegisterType, QModbus2DataUnit> QModbusDataUnitMap;
 
@@ -110,6 +190,6 @@ Q_DECLARE_TYPEINFO(QModbus2DataUnit::RegisterType, Q_PRIMITIVE_TYPE);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QModbusDataUnit::RegisterType)
+Q_DECLARE_METATYPE(QModbus2DataUnit::RegisterType)
 
 #endif // QMODBUSDATAUNIT_H

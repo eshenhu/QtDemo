@@ -37,7 +37,7 @@
 #ifndef QMODBUSADU_P_H
 #define QMODBUSADU_P_H
 
-#include <QtSerialBus/qmodbuspdu.h>
+#include "qmodbuspdu.h"
 
 //
 //  W A R N I N G
@@ -79,12 +79,21 @@ public:
 
     inline int serverAddress() const {
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::serverAddress()", "Empty ADU.");
-        return quint8(m_data.at(0));
+        //return quint8(m_data.at(0));
+        // big-endian little-endian problem here?
+        return quint16(quint8(m_data.at(0)) << 8 | quint8(m_data.at(1)));
     }
 
-    inline QModbusPdu pdu() const {
+    inline int pduDataSize() const
+    {
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::pdu()", "Empty ADU.");
-        return QModbusPdu(QModbusPdu::FunctionCode(m_data.at(1)), m_data.mid(2, size() - 2));
+        // big-endian little-endian problem here?
+        return quint16(quint8(m_data.at(2)) << 8 | quint8(m_data.at(3)));
+    }
+
+    inline QModbus2Pdu pdu() const {
+        Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::pdu()", "Empty ADU.");
+        return QModbus2Pdu(QModbus2Pdu::FunctionCode(m_data.at(6)), m_data.mid(7, size() - 6));
     }
 
     template <typename T>
@@ -150,11 +159,18 @@ public:
         return (crc >> 8) | (crc << 8); // swap bytes
     }
 
-    inline static QByteArray create(Type type, int serverAddress, const QModbusPdu &pdu,
+    // ADU Frame was created like this.
+    // HEAD    (16bit)  0xF0CC
+    // LENGTH  (16bit)  0x0200 (little-endian)
+    // ~LENGHT (16bit)  0xFDFF
+    // PDU
+    inline static QByteArray create(Type type, int serverAddress, const QModbus2Pdu &pdu,
                                     char delimiter = '\n') {
         QByteArray result;
         QDataStream out(&result, QIODevice::WriteOnly);
-        out << quint8(serverAddress) << pdu;
+        quint16 aduSize = pdu.size();
+
+        out << quint16(serverAddress) << aduSize << ~aduSize << pdu;
 
         if (type == Ascii) {
             out << calculateLRC(result, result.size());

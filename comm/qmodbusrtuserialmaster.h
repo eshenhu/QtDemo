@@ -37,16 +37,16 @@
 #ifndef QMODBUSRTUSERIALMASTER_H
 #define QMODBUSRTUSERIALMASTER_H
 
-#include <QtSerialBus/qmodbusclient.h>
+#include "qmodbusclient.h"
 
 QT_BEGIN_NAMESPACE
 
 class QModbus2RtuSerialMasterPrivate;
 
-class Q_SERIALBUS_EXPORT QModbus2RtuSerialMaster : public QModbusClient
+class Q_SERIALBUS_EXPORT QModbus2RtuSerialMaster : public QModbus2Client
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QModbusRtuSerialMaster)
+    Q_DECLARE_PRIVATE(QModbus2RtuSerialMaster)
 
 public:
     explicit QModbus2RtuSerialMaster(QObject *parent = nullptr);

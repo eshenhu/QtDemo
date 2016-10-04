@@ -38,11 +38,12 @@
 #define QMODBUSDEVICE_P_H
 
 #include <QtCore/qvariant.h>
-#include <QtSerialBus/qmodbusdevice.h>
+
 #include <QtSerialPort/qserialport.h>
 
-#include <private/qobject_p.h>
+#include <QtCore/private/qobject_p.h>
 
+#include "qmodbusdevice.h"
 //
 //  W A R N I N G
 //  -------------
@@ -56,13 +57,13 @@
 
 QT_BEGIN_NAMESPACE
 
-class QModbusDevicePrivate : public QObjectPrivate
+class QModbus2DevicePrivate : public QObjectPrivate
 {
-    Q_DECLARE_PUBLIC(QModbusDevice)
+    Q_DECLARE_PUBLIC(QModbus2Device)
 
 public:
-    QModbusDevice::State state = QModbusDevice::UnconnectedState;
-    QModbusDevice::Error error = QModbusDevice::NoError;
+    QModbus2Device::State state = QModbus2Device::UnconnectedState;
+    QModbus2Device::Error error = QModbus2Device::NoError;
     QString errorString;
 
     QString m_comPort;

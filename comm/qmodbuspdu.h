@@ -39,11 +39,11 @@
 #include <QtCore/qdatastream.h>
 #include <QtCore/qmetatype.h>
 #include <QtCore/qvector.h>
-#include <QtSerialBus/qserialbusglobal.h>
+#include "qserialbusglobal.h"
 
 QT_BEGIN_NAMESPACE
 
-class QModbusPdu
+class QModbus2Pdu
 {
 public:
     enum ExceptionCode {
@@ -62,43 +62,40 @@ public:
 
     enum FunctionCode {
         Invalid = 0x00,
-        ReadCoils = 0x01,
-        ReadDiscreteInputs = 0x02,
-        ReadHoldingRegisters = 0x03,
-        ReadInputRegisters = 0x04,
-        WriteSingleCoil = 0x05,
-        WriteSingleRegister = 0x06,
-        ReadExceptionStatus = 0x07,
-        Diagnostics = 0x08,
-        GetCommEventCounter = 0x0B,
-        GetCommEventLog = 0x0C,
-        WriteMultipleCoils = 0x0F,
-        WriteMultipleRegisters = 0x10,
-        ReportServerId = 0x11,
-        ReadFileRecord = 0x14,
-        WriteFileRecord = 0x15,
-        MaskWriteRegister = 0x16,
-        ReadWriteMultipleRegisters = 0x17,
-        ReadFifoQueue = 0x18,
-        EncapsulatedInterfaceTransport = 0x2B,
-        UndefinedFunctionCode = 0x100
+        ResetCode = 0x01,
+        HandShakeCode = 0x02,
+        FreqAdjustCode = 0x03,
+        StartBtnCode = 0x04,
+        AlarmInfoCode = 0x05,
+        MeasConfigCode = 0x06,
+        MeasStartCode = 0x07,
+        MeasEndCode = 0x08,
+        ManualMeasStartCode = 0x09,
+        ThroCalibrateCode = 0x0a,
+        QueryAlarmInfoCode = 0x0b
+//        Invalid = 0x00,
+//        ReadCoils = 0x01,
+//        ReadDiscreteInputs = 0x02,
+//        ReadHoldingRegisters = 0x03,
+//        ReadInputRegisters = 0x04,
+//        WriteSingleCoil = 0x05,
     };
 
-    QModbusPdu() = default;
-    virtual ~QModbusPdu() = default;
+    QModbus2Pdu() = default;
+    virtual ~QModbus2Pdu() = default;
 
     bool isValid() const {
-        return (m_code >= ReadCoils && m_code < UndefinedFunctionCode)
-                && (m_data.size() < 253);
+        return (m_data.size() < 253);
     }
 
-    static const quint8 ExceptionByte = 0x80;
-    ExceptionCode exceptionCode() const {
-        if (!m_data.size() || !isException())
-            return ExtendedException;
-        return static_cast<ExceptionCode>(m_data.at(0));
-    }
-    bool isException() const { return m_code & ExceptionByte; }
+    static const quint8 ExceptionByte = 0x00;
+//    ExceptionCode exceptionCode() const {
+//        if (!m_data.size() || !isException())
+//            return ExtendedException;
+//        return static_cast<ExceptionCode>(m_data.at(0));
+//    }
+    //bool isException() const { return m_code & ExceptionByte; }
+    bool isException() const { return false; }
 
     qint16 size() const { return dataSize() + 1; }
     qint16 dataSize() const { return m_data.size(); }
@@ -106,6 +103,11 @@ public:
     FunctionCode functionCode() const {
         return FunctionCode(quint8(m_code) &~ ExceptionByte);
     }
+
+    FunctionCode compFunctionCode() const {
+        return FunctionCode(quint8(~m_code) &~ ExceptionByte);
+    }
+
     virtual void setFunctionCode(FunctionCode code) { m_code = code; }
 
     QByteArray data() const { return m_data; }
@@ -120,16 +122,16 @@ public:
     }
 
 protected:
-    QModbusPdu(FunctionCode code, const QByteArray &newData)
+    QModbus2Pdu(FunctionCode code, const QByteArray &newData)
         : m_code(code)
         , m_data(newData)
     {}
 
-    QModbusPdu(const QModbusPdu &) = default;
-    QModbusPdu &operator=(const QModbusPdu &) = default;
+    QModbus2Pdu(const QModbus2Pdu &) = default;
+    QModbus2Pdu &operator=(const QModbus2Pdu &) = default;
 
     template <typename ... Args>
-    QModbusPdu(FunctionCode code, Args ... newData)
+    QModbus2Pdu(FunctionCode code, Args ... newData)
         : m_code(code)
     {
         encode(std::forward<Args>(newData)...);
@@ -181,87 +183,89 @@ private:
     QByteArray m_data;
     friend class QModbusSerialAdu;
 };
-Q_SERIALBUS_EXPORT QDebug operator<<(QDebug debug, const QModbusPdu &pdu);
-Q_SERIALBUS_EXPORT QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu);
+Q_SERIALBUS_EXPORT QDebug operator<<(QDebug debug, const QModbus2Pdu &pdu);
+Q_SERIALBUS_EXPORT QDataStream &operator<<(QDataStream &stream, const QModbus2Pdu &pdu);
 
-class QModbusRequest : public QModbusPdu
+class QModbus2Request : public QModbus2Pdu
 {
 public:
-    QModbusRequest() = default;
-    QModbusRequest(const QModbusPdu &pdu)
-        : QModbusPdu(pdu)
+    QModbus2Request() = default;
+    QModbus2Request(const QModbus2Pdu &pdu)
+        : QModbus2Pdu(pdu)
     {}
 
-    explicit QModbusRequest(FunctionCode code, const QByteArray &newData = QByteArray())
-        : QModbusPdu(code, newData)
+    explicit QModbus2Request(FunctionCode code, const QByteArray &newData = QByteArray())
+        : QModbus2Pdu(code, newData)
     {}
 
-    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbusRequest &pdu);
-    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbusRequest &pdu);
+    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbus2Request &pdu);
+    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbus2Request &pdu);
 
     using CalcFuncPtr = decltype(&calculateDataSize);
     Q_SERIALBUS_EXPORT static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
 
     template <typename ... Args>
-    QModbusRequest(FunctionCode code, Args ... newData)
-        : QModbusPdu(code, newData...)
+    QModbus2Request(FunctionCode code, Args ... newData)
+        : QModbus2Pdu(code, newData...)
     {}
 };
-Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbusRequest &pdu);
+Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbus2Request &pdu);
 
-class QModbusResponse : public QModbusPdu
+class QModbus2Response : public QModbus2Pdu
 {
 public:
-    QModbusResponse() = default;
-    QModbusResponse(const QModbusPdu &pdu)
-        : QModbusPdu(pdu)
+    QModbus2Response() = default;
+    QModbus2Response(const QModbus2Pdu &pdu)
+        : QModbus2Pdu(pdu)
     {}
 
-    explicit QModbusResponse(FunctionCode code, const QByteArray &newData = QByteArray())
-        : QModbusPdu(code, newData)
+    explicit QModbus2Response(FunctionCode code, const QByteArray &newData = QByteArray())
+        : QModbus2Pdu(code, newData)
     {}
 
-    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbusResponse &pdu);
-    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbusResponse &pdu);
+    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbus2Response &pdu);
+    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbus2Response &pdu);
+    Q_SERIALBUS_EXPORT static int getMinDataSize();
+    Q_SERIALBUS_EXPORT static int validateAduDataSize(const QModbus2Response &pdu);
 
     using CalcFuncPtr = decltype(&calculateDataSize);
     Q_SERIALBUS_EXPORT static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
 
     template <typename ... Args>
-    QModbusResponse(FunctionCode code, Args ... newData)
-        : QModbusPdu(code, newData...)
+    QModbus2Response(FunctionCode code, Args ... newData)
+        : QModbus2Pdu(code, newData...)
     {}
 };
 
-class QModbusExceptionResponse : public QModbusResponse
+class QModbus2ExceptionResponse : public QModbus2Response
 {
 public:
-    QModbusExceptionResponse() = default;
-    QModbusExceptionResponse(const QModbusPdu &pdu)
-        : QModbusResponse(pdu)
+    QModbus2ExceptionResponse() = default;
+    QModbus2ExceptionResponse(const QModbus2Pdu &pdu)
+        : QModbus2Response(pdu)
     {}
-    QModbusExceptionResponse(FunctionCode fc, ExceptionCode ec)
-        : QModbusResponse(FunctionCode(quint8(fc) | ExceptionByte), static_cast<quint8> (ec))
+    QModbus2ExceptionResponse(FunctionCode fc, ExceptionCode ec)
+        : QModbus2Response(FunctionCode(quint8(fc) | ExceptionByte), static_cast<quint8> (ec))
     {}
 
     void setFunctionCode(FunctionCode c) {
-        QModbusPdu::setFunctionCode(FunctionCode(quint8(c) | ExceptionByte));
+        QModbus2Pdu::setFunctionCode(FunctionCode(quint8(c) | ExceptionByte));
     }
-    void setExceptionCode(ExceptionCode ec) { QModbusPdu::encodeData(quint8(ec)); }
+    void setExceptionCode(ExceptionCode ec) { QModbus2Pdu::encodeData(quint8(ec)); }
 };
-Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbusResponse &pdu);
+Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbus2Response &pdu);
 
-Q_DECLARE_TYPEINFO(QModbusPdu, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusPdu::ExceptionCode, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusPdu::FunctionCode, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Pdu, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Pdu::ExceptionCode, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Pdu::FunctionCode, Q_PRIMITIVE_TYPE);
 
-Q_DECLARE_TYPEINFO(QModbusRequest, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusResponse, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(QModbusExceptionResponse, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Request, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Response, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2ExceptionResponse, Q_MOVABLE_TYPE);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QModbusPdu::ExceptionCode)
-Q_DECLARE_METATYPE(QModbusPdu::FunctionCode)
+Q_DECLARE_METATYPE(QModbus2Pdu::ExceptionCode)
+Q_DECLARE_METATYPE(QModbus2Pdu::FunctionCode)
 
 #endif // QMODBUSPDU_H

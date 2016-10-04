@@ -43,39 +43,39 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QModbusDevice
+    \class QModbus2Device
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief The QModbusDevice class is the base class for Modbus classes, \l QModbusServer
-    and \l QModbusClient.
+    \brief The QModbus2Device class is the base class for Modbus classes, \l QModbusServer
+    and \l QModbus2Client.
 */
 
 /*!
     Constructs a Modbus device with the specified \a parent.
 */
-QModbusDevice::QModbusDevice(QObject *parent)
- : QObject(*new QModbusDevicePrivate, parent)
+QModbus2Device::QModbus2Device(QObject *parent)
+ : QObject(*new QModbus2DevicePrivate, parent)
 {
 }
 
 /*!
     \internal
 */
-QModbusDevice::QModbusDevice(QModbusDevicePrivate &dd, QObject *parent)
+QModbus2Device::QModbus2Device(QModbus2DevicePrivate &dd, QObject *parent)
  : QObject(dd, parent)
 {
 }
 
 /*!
-    Destroys the QModbusDevice instance
+    Destroys the QModbus2Device instance
 */
-QModbusDevice::~QModbusDevice()
+QModbus2Device::~QModbus2Device()
 {
 }
 
 /*!
-    \enum QModbusDevice::ConnectionParameter
+    \enum QModbus2Device::ConnectionParameter
 
     This enum describes the possible values that can be set for a Modbus device
     connection.
@@ -106,7 +106,7 @@ QModbusDevice::~QModbusDevice()
     Returns the value associated with the given connection \a parameter. The
     returned value can be empty.
 
-    By default the \c QModbusDevice is initialized with some common values. The
+    By default the \c QModbus2Device is initialized with some common values. The
     serial port settings are even parity, a baud rate of 19200 bits per second,
     eight data bits and one stop bit. The network settings for the host address
     is set to local host and port to 502.
@@ -120,9 +120,9 @@ QModbusDevice::~QModbusDevice()
 
     \sa ConnectionParameter
 */
-QVariant QModbusDevice::connectionParameter(int parameter) const
+QVariant QModbus2Device::connectionParameter(int parameter) const
 {
-    Q_D(const QModbusDevice);
+    Q_D(const QModbus2Device);
     switch (parameter) {
     case SerialPortNameParameter:
         return d->m_comPort;
@@ -152,9 +152,9 @@ QVariant QModbusDevice::connectionParameter(int parameter) const
     \sa ConnectionParameter
     \sa connectionParameter()
 */
-void QModbusDevice::setConnectionParameter(int parameter, const QVariant &value)
+void QModbus2Device::setConnectionParameter(int parameter, const QVariant &value)
 {
-    Q_D(QModbusDevice);
+    Q_D(QModbus2Device);
     switch (parameter) {
     case SerialPortNameParameter:
         d->m_comPort = value.toString();
@@ -184,7 +184,7 @@ void QModbusDevice::setConnectionParameter(int parameter, const QVariant &value)
 }
 
 /*!
-    \enum QModbusDevice::Error
+    \enum QModbus2Device::Error
     This enum describes all the possible error conditions.
 
     \value NoError              No errors have occurred.
@@ -203,7 +203,7 @@ void QModbusDevice::setConnectionParameter(int parameter, const QVariant &value)
 */
 
 /*!
-    \enum QModbusDevice::State
+    \enum QModbus2Device::State
     This enum describes all possible device states.
 
     \value UnconnectedState The device is disconnected.
@@ -213,13 +213,13 @@ void QModbusDevice::setConnectionParameter(int parameter, const QVariant &value)
 */
 
 /*!
-    \fn QModbusDevice::errorOccurred(QModbusDevice::Error error)
+    \fn QModbus2Device::errorOccurred(QModbus2Device::Error error)
 
     This signal is emitted when an error of the type, \a error, occurs.
 */
 
 /*!
-    \fn void QModbusDevice::stateChanged(QModbusDevice::State state)
+    \fn void QModbus2Device::stateChanged(QModbus2Device::State state)
 
     This signal is emitted every time the state of the device changes.
     The new state is represented by \a state.
@@ -233,11 +233,11 @@ void QModbusDevice::setConnectionParameter(int parameter, const QVariant &value)
 
     This function calls \l open() as part of its implementation.
 */
-bool QModbusDevice::connectDevice()
+bool QModbus2Device::connectDevice()
 {
-    Q_D(QModbusDevice);
+    Q_D(QModbus2Device);
 
-    if (d->state != QModbusDevice::UnconnectedState)
+    if (d->state != QModbus2Device::UnconnectedState)
         return false;
 
     setState(ConnectingState);
@@ -256,9 +256,9 @@ bool QModbusDevice::connectDevice()
 
     This function calls \l close() as part of its implementation.
 */
-void QModbusDevice::disconnectDevice()
+void QModbus2Device::disconnectDevice()
 {
-    setState(QModbusDevice::ClosingState);
+    setState(QModbus2Device::ClosingState);
 
     //Unconnected is set by backend -> might be delayed by event loop
     close();
@@ -268,9 +268,9 @@ void QModbusDevice::disconnectDevice()
     Sets the state of the device to \a newState. Modbus device implementations
     must use this function to update the device state.
 */
-void QModbusDevice::setState(QModbusDevice::State newState)
+void QModbus2Device::setState(QModbus2Device::State newState)
 {
-    Q_D(QModbusDevice);
+    Q_D(QModbus2Device);
 
     if (newState == d->state)
         return;
@@ -284,7 +284,7 @@ void QModbusDevice::setState(QModbusDevice::State newState)
 
     \sa setState(), stateChanged()
 */
-QModbusDevice::State QModbusDevice::state() const
+QModbus2Device::State QModbus2Device::state() const
 {
     return d_func()->state;
 }
@@ -294,11 +294,11 @@ QModbusDevice::State QModbusDevice::state() const
     must use this function in case of an error to set the \a error type and
     a descriptive \a errorText.
 
-    \sa QModbusDevice::Error
+    \sa QModbus2Device::Error
 */
-void QModbusDevice::setError(const QString &errorText, QModbusDevice::Error error)
+void QModbus2Device::setError(const QString &errorText, QModbus2Device::Error error)
 {
-    Q_D(QModbusDevice);
+    Q_D(QModbus2Device);
 
     d->error = error;
     d->errorString = errorText;
@@ -308,9 +308,9 @@ void QModbusDevice::setError(const QString &errorText, QModbusDevice::Error erro
 /*!
     Returns the error state of the device.
 
-    \sa QModbusDevice::Error
+    \sa QModbus2Device::Error
 */
-QModbusDevice::Error QModbusDevice::error() const
+QModbus2Device::Error QModbus2Device::error() const
 {
     return d_func()->error;
 }
@@ -318,38 +318,38 @@ QModbusDevice::Error QModbusDevice::error() const
 /*!
     Returns descriptive error text for the device error.
 
-    \sa QModbusDevice::Error
+    \sa QModbus2Device::Error
 */
-QString QModbusDevice::errorString() const
+QString QModbus2Device::errorString() const
 {
     return d_func()->errorString;
 }
 
 /*!
-    \fn bool QModbusDevice::open()
+    \fn bool QModbus2Device::open()
 
     This function is called by connectDevice(). Subclasses must provide
     an implementation that returns \c true on successful Modbus connection
     or \c false otherwise.
 
     The implementation must ensure that the instance's \l state()
-    is set to \l QModbusDevice::ConnectedState upon success; otherwise
-    \l QModbusDevice::UnconnectedState.
+    is set to \l QModbus2Device::ConnectedState upon success; otherwise
+    \l QModbus2Device::UnconnectedState.
 
     \sa connectDevice()
 */
 
 /*!
-    \fn void QModbusDevice::close()
+    \fn void QModbus2Device::close()
 
     This function is responsible for closing the Modbus connection.
     The implementation must ensure that the instance's
-    \l state() is set to \l QModbusDevice::UnconnectedState.
+    \l state() is set to \l QModbus2Device::UnconnectedState.
 
     \sa disconnectDevice()
 */
 
-Q_LOGGING_CATEGORY(QT_MODBUS, "qt.modbus")
-Q_LOGGING_CATEGORY(QT_MODBUS_LOW, "qt.modbus.lowlevel")
+Q_LOGGING_CATEGORY(QT_MODBUS2, "qt.modbus")
+Q_LOGGING_CATEGORY(QT_MODBUS2_LOW, "qt.modbus.lowlevel")
 
 QT_END_NAMESPACE

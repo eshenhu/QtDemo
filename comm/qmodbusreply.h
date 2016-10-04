@@ -37,18 +37,18 @@
 #ifndef QMODBUSREPLY_H
 #define QMODBUSREPLY_H
 
-#include <QtSerialBus/qmodbusdataunit.h>
-#include <QtSerialBus/qmodbusdevice.h>
-#include <QtSerialBus/qmodbuspdu.h>
+#include "qmodbusdataunit.h"
+#include "qmodbusdevice.h"
+#include "qmodbuspdu.h"
 
 QT_BEGIN_NAMESPACE
 
-class QModbusReplyPrivate;
+class QModbus2ReplyPrivate;
 
-class Q_SERIALBUS_EXPORT QModbusReply : public QObject
+class Q_SERIALBUS_EXPORT QModbus2Reply : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QModbusReply)
+    Q_DECLARE_PRIVATE(QModbus2Reply)
 
 public:
     enum ReplyType {
@@ -57,7 +57,7 @@ public:
     };
     Q_ENUM(ReplyType)
 
-    QModbusReply(ReplyType type, int serverAddress, QObject *parent = nullptr);
+    QModbus2Reply(ReplyType type, int serverAddress, QObject *parent = nullptr);
 
     ReplyType type() const;
     int serverAddress() const;
@@ -65,22 +65,22 @@ public:
     bool isFinished() const;
 
     QModbus2DataUnit result() const;
-    QModbusResponse rawResult() const;
+    QModbus2Response rawResult() const;
 
     QString errorString() const;
-    QModbusDevice::Error error() const;
+    QModbus2Device::Error error() const;
 
     void setResult(const QModbus2DataUnit &unit);
-    void setRawResult(const QModbusResponse &unit);
+    void setRawResult(const QModbus2Response &unit);
 
     void setFinished(bool isFinished);
-    void setError(QModbusDevice::Error error, const QString &errorText);
+    void setError(QModbus2Device::Error error, const QString &errorText);
 
 Q_SIGNALS:
     void finished();
-    void errorOccurred(QModbusDevice::Error error);
+    void errorOccurred(QModbus2Device::Error error);
 };
-Q_DECLARE_TYPEINFO(QModbusReply::ReplyType, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(QModbus2Reply::ReplyType, Q_PRIMITIVE_TYPE);
 
 QT_END_NAMESPACE
 

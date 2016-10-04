@@ -1,6 +1,6 @@
 QT += core gui
 QT += charts
-QT += serialbus serialport widgets
+QT += serialport widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,7 +18,6 @@ SOURCES += main.cpp \
     ui/configtab.cpp \
     ui/testinfoconfig.cpp \
     ui/optionsframe.cpp \
-    comm/doc/snippets/snippetmain.cpp \
     comm/qmodbusclient.cpp \
     comm/qmodbusdataunit.cpp \
     comm/qmodbusdevice.cpp \
@@ -26,7 +25,6 @@ SOURCES += main.cpp \
     comm/qmodbuspdu.cpp \
     comm/qmodbusreply.cpp \
     comm/qmodbusrtuserialmaster.cpp \
-    ui/commsettingclz copy.cpp \
     driver/automationmodeldriverclz.cpp \
     driver/basedmodeldriverclz.cpp
 
@@ -54,7 +52,6 @@ HEADERS += \
     comm/qmodbusrtuserialmaster.h \
     comm/qmodbusrtuserialmaster_p.h \
     comm/qserialbusglobal.h \
-    ui/commsettingclz copy.h \
     driver/automationmodeldriverclz.h \
     driver/basedmodeldriverclz.h
 
@@ -68,14 +65,3 @@ SUBDIRS += \
     comm/serialbus.pro
 
 DISTFILES += \
-    comm/doc/images/can-example.png \
-    comm/doc/qtserialbus.qdocconf \
-    comm/doc/src/examples/can.qdoc \
-    comm/doc/src/examples/qtserialbus-examples.qdoc \
-    comm/doc/src/peakcan.qdoc \
-    comm/doc/src/qtcanbus-backends.qdoc \
-    comm/doc/src/qtmodbus-backends.qdoc \
-    comm/doc/src/qtserialbus-index.qdoc \
-    comm/doc/src/qtserialbus-module-cpp.qdoc \
-    comm/doc/src/socketcan.qdoc \
-    comm/doc/src/tinycan.qdoc

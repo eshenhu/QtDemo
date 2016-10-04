@@ -39,26 +39,26 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QModbusDataUnit
+    \class QModbus2DataUnit
     \inmodule QtSerialBus
     \since 5.6
 
-    \brief QModbusDataUnit is a container class representing single bit and
+    \brief QModbus2DataUnit is a container class representing single bit and
     \c 16 bit word entries in the Modbus register.
 
-    \l QModbusDataUnit can be used for read and write operations. The entries
+    \l QModbus2DataUnit can be used for read and write operations. The entries
     are addressed via \l startAddress() and the \l valueCount() number of
     contiguous entries. \l registerType() determines which register is used for
     the operations. Note that some registers are read-only registers.
 
     The actual \l values() are either single bit or \c 16 bit based.
-    \l QModbusDataUnit::DiscreteInputs and \l QModbusDataUnit::Coils
+    \l QModbus2DataUnit::DiscreteInputs and \l QModbus2DataUnit::Coils
     only accept single bits. Therefore \c 0 is interpreted as \c 0 and anything
     else \c 1.
 */
 
 /*!
-    \enum QModbusDataUnit::RegisterType
+    \enum QModbus2DataUnit::RegisterType
 
     This enum describes all supported register types.
 
@@ -74,21 +74,21 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QModbusDataUnit::QModbusDataUnit()
+    \fn QModbus2DataUnit::QModbus2DataUnit()
 
-    Constructs an empty, invalid QModbusDataUnit. Start address is set to \c -1
-    and the \l registerType is set to \l QModbusDataUnit::Invalid.
+    Constructs an empty, invalid QModbus2DataUnit. Start address is set to \c -1
+    and the \l registerType is set to \l QModbus2DataUnit::Invalid.
 */
 
 /*!
-    \fn QModbusDataUnit::QModbusDataUnit(RegisterType type)
+    \fn QModbus2DataUnit::QModbus2DataUnit(RegisterType type)
 
     Constructs a unit of data for register \a type. Start address is set to
     \c 0, data range and data values are empty.
 */
 
 /*!
-    \fn QModbusDataUnit::QModbusDataUnit(RegisterType type, int address,
+    \fn QModbus2DataUnit::QModbus2DataUnit(RegisterType type, int address,
                                          quint16 size)
 
     Constructs a unit of data for register\a type. Start address of the data is
@@ -97,7 +97,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QModbusDataUnit::QModbusDataUnit(RegisterType type, int address,
+    \fn QModbus2DataUnit::QModbus2DataUnit(RegisterType type, int address,
                                          const QVector<quint16> &data)
 
     Constructs a unit of data for register\a type. Start address of the data is
@@ -106,23 +106,23 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QModbusDataUnit::setRegisterType(QModbusDataUnit::RegisterType type)
+    \fn void QModbus2DataUnit::setRegisterType(QModbus2DataUnit::RegisterType type)
 
     Sets the register \a type.
 
-    \sa registerType(), QModbusDataUnit::RegisterType
+    \sa registerType(), QModbus2DataUnit::RegisterType
 */
 
 /*!
-    \fn QModbusDataUnit::RegisterType QModbusDataUnit::registerType() const
+    \fn QModbus2DataUnit::RegisterType QModbus2DataUnit::registerType() const
 
     Returns the type of the register.
 
-    \sa setRegisterType(), QModbusDataUnit::RegisterType
+    \sa setRegisterType(), QModbus2DataUnit::RegisterType
 */
 
 /*!
-    \fn void QModbusDataUnit::setStartAddress(int address)
+    \fn void QModbus2DataUnit::setStartAddress(int address)
 
     Sets the start \a address of the data unit.
 
@@ -130,7 +130,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QModbusDataUnit::startAddress() const
+    \fn int QModbus2DataUnit::startAddress() const
 
     Returns the start address of data unit in the register.
 
@@ -138,27 +138,27 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QModbusDataUnit::setValues(const QVector<quint16> &values)
+    \fn void QModbus2DataUnit::setValues(const QVector<quint16> &values)
 
-    Sets the \a values of the data unit. \l QModbusDataUnit::DiscreteInputs
-    and \l QModbusDataUnit::Coils tables only accept single bit value, so \c 0
+    Sets the \a values of the data unit. \l QModbus2DataUnit::DiscreteInputs
+    and \l QModbus2DataUnit::Coils tables only accept single bit value, so \c 0
     is interpreted as \c 0 and anything else as \c 1.
 
     \sa values()
 */
 
 /*!
-    \fn QVector<quint16> QModbusDataUnit::values() const
+    \fn QVector<quint16> QModbus2DataUnit::values() const
 
-    Returns the data in the data unit. \l QModbusDataUnit::DiscreteInputs
-    and \l QModbusDataUnit::Coils tables only accept single bit value, so \c 0
+    Returns the data in the data unit. \l QModbus2DataUnit::DiscreteInputs
+    and \l QModbus2DataUnit::Coils tables only accept single bit value, so \c 0
     is interpreted as \c 0 and anything else as \c 1.
 
     \sa setValues()
 */
 
 /*!
-    \fn uint QModbusDataUnit::valueCount() const
+    \fn uint QModbus2DataUnit::valueCount() const
 
     Returns the size of the requested register's data block or the size of data
     read from the device.
@@ -173,7 +173,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QModbusDataUnit::setValueCount(uint newCount)
+    \fn void QModbus2DataUnit::setValueCount(uint newCount)
 
     Sets the size of the requested register's data block to \a newCount.
 
@@ -183,32 +183,37 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QModbusDataUnit::setValue(int index, quint16 value)
+    \fn void QModbus2DataUnit::setValue(int index, quint16 value)
 
     Sets the register at position \a index to \a value.
 */
 
 /*!
-    \fn quint16 QModbusDataUnit::value(int index) const
+    \fn quint16 QModbus2DataUnit::value(int index) const
 
     Return the value at position \a index.
 */
 
 /*!
-    \fn bool QModbusDataUnit::isValid() const
+    \fn bool QModbus2DataUnit::isValid() const
 
-    Returns \c true if the \c QModbusDataUnit is valid; otherwise \c false.
-    A \c QModbusDataUnit is considered valid if the \l registerType() is not
-    \l QModbusDataUnit::Invalid and the \l startAddress() is greater than or
+    Returns \c true if the \c QModbus2DataUnit is valid; otherwise \c false.
+    A \c QModbus2DataUnit is considered valid if the \l registerType() is not
+    \l QModbus2DataUnit::Invalid and the \l startAddress() is greater than or
     equal to \c 0.
 */
 
 /*!
     \typedef QModbusDataUnitMap
-    \relates QModbusDataUnit
+    \relates QModbus2DataUnit
     \since 5.6
 
-    Synonym for QMap<QModbusDataUnit::RegisterType, QModbusDataUnit>.
+    Synonym for QMap<QModbus2DataUnit::RegisterType, QModbus2DataUnit>.
 */
 
 QT_END_NAMESPACE
+
+QModbus2DataUnit::MeasDataUnion QModbus2DataUnit::uvalues() const
+{
+    return m_uvalues;
+}
