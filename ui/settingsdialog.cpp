@@ -40,12 +40,16 @@
 
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
+#include "qserialportinfo.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    const auto infos = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &info : infos)
+        ui->comCombo->addItem(info.portName());
 
     ui->parityCombo->setCurrentIndex(1);
     ui->baudCombo->setCurrentText(QString::number(m_settings.baud));
@@ -55,6 +59,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->retriesSpinner->setValue(m_settings.numberOfRetries);
 
     connect(ui->applyButton, &QPushButton::clicked, [this]() {
+        m_settings.name = ui->comCombo->currentText();
         m_settings.parity = ui->parityCombo->currentIndex();
         if (m_settings.parity > 0)
             m_settings.parity++;

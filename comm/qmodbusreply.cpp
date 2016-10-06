@@ -39,6 +39,8 @@
 #include <QtCore/qobject.h>
 #include <private/qobject_p.h>
 
+#include "qmodbusdataunit.h"
+
 QT_BEGIN_NAMESPACE
 
 class QModbus2ReplyPrivate : public QObjectPrivate

@@ -46,22 +46,13 @@ QT_END_NAMESPACE
 class PenTool;
 class BrushTool;
 class CustomSlice;
+class SettingsDialog;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChartView;
 QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
-
-enum TestPlanEnum {
-    Distance,
-    Voltage,
-    Throttle,
-    Multiplue,
-    Aging,
-    Calibrate,
-    Manual
-};
 
 class ActionWidget : public QWidget
 {
@@ -70,9 +61,12 @@ class ActionWidget : public QWidget
 public:
     explicit ActionWidget(QWidget *parent = 0);
 
+    void setSettingDialog(SettingsDialog *settingDialog);
+    SettingsDialog *settingDialog() const;
+
 public Q_SLOTS:
-//    void updateChartSettings();
-//    void updateSerieSettings();
+    //    void updateChartSettings();
+    //    void updateSerieSettings();
 //    void updateSliceSettings();
 
     void showFontDialog();
@@ -84,113 +78,11 @@ private:
 //    QCheckBox *m_legendCheckBox;
 
     QChartView *m_chartView;
-
     CustomSlice *m_slice;
-
     QTabWidget *m_tabWidget;
-
     QDialogButtonBox *m_buttonBox;
+    SettingsDialog *m_settingDialog;
     void createChartView();
     void createTabWidget();
 };
-
-
-class TestTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit TestTab(QWidget *parent = 0);
-
-protected slots:
-    void updateOptionsSelection(int index);
-
-public:
-    QTabWidget *m_tabWidget;
-    QWidget* tabList[TestPlanEnum::Manual + 1];
-    QWidget* lastActiveWidget;
-
-private:
-    QComboBox *m_testSeletionComboBox;
-    QCheckBox *m_aaCheckBox;
-    QCheckBox *m_animationsCheckBox;
-    QCheckBox *m_legendCheckBox;
-
-    QDialogButtonBox* m_buttonBox;
-
-    QPushButton* m_start_btn;
-    QPushButton* m_showgraph_btn;
-
-private:
-    void enableTestTab(TestPlanEnum);
-};
-
-class DistanceTstTab : public QWidget
-{
-    Q_OBJECT
-public:
-    QSpinBox *m_voltage;
-    QSpinBox *m_throttle;
-    QSpinBox *m_disStart;
-    QSpinBox *m_disEnd;
-    QComboBox *m_disStep;
-    QPushButton *m_apply_btn;
-
-public:
-    explicit DistanceTstTab(QWidget *parent = 0);
-
-
-private slots:
-    void validateUserInput(bool checked = false);
-};
-
-class VoltageTstTab : public QWidget
-{
-    Q_OBJECT
-private:
-    QSpinBox *m_throttle;
-    QSpinBox *m_voltage_start;
-    QSpinBox *m_voltage_end;
-    QComboBox *m_voltage_step;
-    QPushButton *m_apply_btn;
-public:
-
-    explicit VoltageTstTab(QWidget *parent = 0);
-};
-class ThrottleTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit ThrottleTstTab(QWidget *parent = 0);
-};
-class MultipleTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit MultipleTstTab(QWidget *parent = 0);
-};
-class AgingTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit AgingTstTab(QWidget *parent = 0);
-};
-class CalibrateTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit CalibrateTstTab(QWidget *parent = 0);
-};
-class ManualTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit ManualTstTab(QWidget *parent = 0);
-};
-
 #endif // MAINWIDGET_H

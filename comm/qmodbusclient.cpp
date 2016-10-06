@@ -37,7 +37,7 @@
 #include "qmodbusclient.h"
 #include "qmodbusclient_p.h"
 #include "qmodbus_symbols_p.h"
-
+#include "qmodbusdataunit.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qloggingcategory.h>
 
@@ -277,14 +277,14 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
 
     case QModbus2DataUnit::HandShakeCode:
     {
-        QModbus2DataUnit::HandShakeStruct cast_p = data.uvalues().p;
+        const QModbus2DataUnit::HandShakeStruct& cast_p = data.uvalues().s.p;
         return QModbus2Request(QModbus2Request::HandShakeCode, cast_p.randomNumLow, cast_p.randomNumHigh);
     }
         break;
 
     case QModbus2DataUnit::FreqAdjustCode:
     {
-        QModbus2DataUnit::FreqAdjustStruct cast_q = data.uvalues().q;
+        const QModbus2DataUnit::FreqAdjustStruct& cast_q = data.uvalues().s.q;
         return QModbus2Request(QModbus2Request::FreqAdjustCode, cast_q.freqValue);
     }
         break;
@@ -299,7 +299,7 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
 
     case QModbus2DataUnit::MeasConfigCode:
     {
-        QModbus2DataUnit::MeasConfigStruct cast_r = data.uvalues().r;
+        const QModbus2DataUnit::MeasConfigStruct& cast_r = data.uvalues().s.r;
         return QModbus2Request(QModbus2Request::MeasConfigCode, cast_r.measOptions,
                                cast_r.throStart, cast_r.throEnd, cast_r.throStep,
                                cast_r.volStart, cast_r.volEnd, cast_r.volStep,
@@ -318,7 +318,7 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
 
     case QModbus2DataUnit::ManualMeasStartCode:
     {
-        QModbus2DataUnit::ManualMeasStruct cast_s = data.uvalues().s;
+        const QModbus2DataUnit::ManualMeasStruct& cast_s = data.uvalues().s.s;
         return QModbus2Request(QModbus2Request::ManualMeasStartCode,
                                cast_s.vol, cast_s.thro, cast_s.distance);
     }
@@ -326,7 +326,7 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
 
     case QModbus2DataUnit::ThroCalibrateCode:
     {
-        QModbus2DataUnit::ThroCalibrateStruct cast_t = data.uvalues().t;
+        const QModbus2DataUnit::ThroCalibrateStruct& cast_t = data.uvalues().s.t;
         return QModbus2Request(QModbus2Request::ThroCalibrateCode,
                                cast_t.timeInHigh, cast_t.timeInLow);
     }
@@ -428,38 +428,32 @@ void QModbus2ClientPrivate::processQueueElement(const QModbus2Response &pdu,
 
 bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QModbus2DataUnit *data)
 {
+//    if (!isValid(response, response.functionCode()))
+//        return false;
+
     switch (response.functionCode()) {
-//    case QModbus2Request::ReadCoils:
-//        return processReadCoilsResponse(response, data);
-//    case QModbus2Request::ReadDiscreteInputs:
-//        return processReadDiscreteInputsResponse(response, data);
-//    case QModbus2Request::ReadHoldingRegisters:
-//        return processReadHoldingRegistersResponse(response, data);
-//    case QModbus2Request::ReadInputRegisters:
-//        return processReadInputRegistersResponse(response, data);
-//    case QModbus2Request::WriteSingleCoil:
-//        return processWriteSingleCoilResponse(response, data);
-//    case QModbus2Request::WriteSingleRegister:
-//        return processWriteSingleRegisterResponse(response, data);
-//    case QModbus2Request::ReadExceptionStatus:
-//    case QModbus2Request::Diagnostics:
-//    case QModbus2Request::GetCommEventCounter:
-//    case QModbus2Request::GetCommEventLog:
-//        return false;   // Return early, it's not a private response.
-//    case QModbus2Request::WriteMultipleCoils:
-//        return processWriteMultipleCoilsResponse(response, data);
-//    case QModbus2Request::WriteMultipleRegisters:
-//        return processWriteMultipleRegistersResponse(response, data);
-//    case QModbus2Request::ReportServerId:
-//    case QModbus2Request::ReadFileRecord:
-//    case QModbus2Request::WriteFileRecord:
-//    case QModbus2Request::MaskWriteRegister:
-//        return false;   // Return early, it's not a private response.
-//    case QModbus2Request::ReadWriteMultipleRegisters:
-//        return processReadWriteMultipleRegistersResponse(response, data);
-//    case QModbus2Request::ReadFifoQueue:
-//    case QModbus2Request::EncapsulatedInterfaceTransport:
-//        return false;   // Return early, it's not a private response.
+    case QModbus2Request::ResetCode:
+        return processReadRestCodeResponse(response, data);
+    case QModbus2Request::HandShakeCode:
+        return processReadHandShakeCodeResponse(response, data);
+    case QModbus2Request::FreqAdjustCode:
+        return processReadFreqAdjustCodeResponse(response, data);
+    case QModbus2Request::StartBtnCode:
+        return processReadStartBtnCodeResponse(response, data);
+    case QModbus2Request::AlarmInfoCode:
+        return processReadAlarmInfoCodeResponse(response, data);
+    case QModbus2Request::MeasConfigCode:
+        return processReadMeasConfigCodeResponse(response, data);
+    case QModbus2Request::MeasStartCode:
+        return processReadMeasStartCodeResponse(response, data);
+    case QModbus2Request::MeasEndCode:
+        return processReadMeasEndCodeResponse(response, data);
+    case QModbus2Request::ManualMeasStartCode:
+        return processReadManualMeasStartCodeResponse(response, data);
+    case QModbus2Request::ThroCalibrateCode:
+        return processReadThroCalibrateCodeResponse(response, data);
+    case QModbus2Request::QueryAlarmInfoCode:
+        return processReadQueryAlarmInfoCodeResponse(response, data);
     default:
         break;
     }
@@ -477,21 +471,167 @@ static bool isValid(const QModbus2Response &response, QModbus2Response::Function
     return true;
 }
 
-//bool QModbus2ClientPrivate::processReadCoilsResponse(const QModbus2Response &response,
-//                                                    QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::ReadCoils))
+bool QModbus2ClientPrivate::processReadRestCodeResponse(const QModbus2Response &response,
+                                                        QModbus2DataUnit *data)
+{
+    // we will improve it later //eshenhu
+//    if (response.dataSize() < QModbus2Response::minimumDataSize(response))
 //        return false;
-//    return collateBits(response, QModbus2DataUnit::Coils, data);
-//}
 
-//bool QModbus2ClientPrivate::processReadDiscreteInputsResponse(const QModbus2Response &response,
-//                                                             QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::ReadDiscreteInputs))
+//    // byte count needs to match available bytes
+//    const quint8 byteCount = response.data()[0];
+//    if ((response.dataSize() - 1) != byteCount)
 //        return false;
-//    return collateBits(response, QModbus2DataUnit::DiscreteInputs, data);
-//}
+
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.p.status;
+        data->setRegisterType(QModbus2DataUnit::ResetCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadHandShakeCodeResponse(const QModbus2Response &response,
+                                                             QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.q.mainboardHWRev
+                >> data->m_uvalues.r.q.mainboardFirmwareRev
+                  >> data->m_uvalues.r.q.sampleboardHWRev
+                  >> data->m_uvalues.r.q.sampleboardFirmwareRev
+                  >> data->m_uvalues.r.q.volSpan
+                  >> data->m_uvalues.r.q.currentSpan
+                  >> data->m_uvalues.r.q.forceSpanL;
+
+        // to be continue //eshenhu
+        data->setRegisterType(QModbus2DataUnit::HandShakeCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadFreqAdjustCodeResponse(const QModbus2Response &response,
+                                                              QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.r.freqValue;
+        data->setRegisterType(QModbus2DataUnit::FreqAdjustCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadStartBtnCodeResponse(const QModbus2Response &response,
+                                                            QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.s.status;
+        data->setRegisterType(QModbus2DataUnit::StartBtnCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Response &response,
+                                                             QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.t.status;
+        data->setRegisterType(QModbus2DataUnit::AlarmInfoCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadMeasConfigCodeResponse(const QModbus2Response &response,
+                                                              QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.u.options;
+        data->setRegisterType(QModbus2DataUnit::MeasConfigCode);
+    }
+    return true;
+}
+
+bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Response &response,
+                                                             QModbus2DataUnit *data)
+{
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.v.sequenceNum
+                >> data->m_uvalues.r.v.vol
+                >> data->m_uvalues.r.v.cur1
+                >> data->m_uvalues.r.v.cur2
+                >> data->m_uvalues.r.v.forceL
+                >> data->m_uvalues.r.v.forceM
+                >> data->m_uvalues.r.v.forceH
+                >> data->m_uvalues.r.v.torqueL
+                >> data->m_uvalues.r.v.torqueM
+                >> data->m_uvalues.r.v.torqueH
+                >> data->m_uvalues.r.v.speedL
+                >> data->m_uvalues.r.v.speedH
+                >> data->m_uvalues.r.v.force2L
+                >> data->m_uvalues.r.v.force2M
+                >> data->m_uvalues.r.v.force2H
+                >> data->m_uvalues.r.v.torque2L
+                >> data->m_uvalues.r.v.torque2M
+                >> data->m_uvalues.r.v.torque2H
+                >> data->m_uvalues.r.v.speed2L
+                >> data->m_uvalues.r.v.speed2H
+                >> data->m_uvalues.r.v.temp1
+                >> data->m_uvalues.r.v.temp2
+                >> data->m_uvalues.r.v.temp3
+                >> data->m_uvalues.r.v.temp4
+                >> data->m_uvalues.r.v.shock1X
+                >> data->m_uvalues.r.v.shock1Y
+                >> data->m_uvalues.r.v.shock1Z
+                >> data->m_uvalues.r.v.shock2X
+                >> data->m_uvalues.r.v.shock2Y
+                >> data->m_uvalues.r.v.shock2Z
+                >> data->m_uvalues.r.v.fuelL
+                >> data->m_uvalues.r.v.fuelM
+                >> data->m_uvalues.r.v.fuelH
+                >> data->m_uvalues.r.v.expand1
+                >> data->m_uvalues.r.v.expand2
+                >> data->m_uvalues.r.v.expand3
+                >> data->m_uvalues.r.v.errorL
+                >> data->m_uvalues.r.v.errorM
+                >> data->m_uvalues.r.v.errorH;
+
+        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
+    }
+    return true;
+
+}
+
+bool QModbus2ClientPrivate::processReadMeasEndCodeResponse(const QModbus2Response &response,
+                                                           QModbus2DataUnit *data)
+{
+    if (data) {
+        data->setRegisterType(QModbus2DataUnit::MeasEndCode);
+    }
+    return true;
+
+}
+
+bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus2Response &response,
+                                                                   QModbus2DataUnit *data)
+{
+
+}
+
+bool QModbus2ClientPrivate::processReadThroCalibrateCodeResponse(const QModbus2Response &response,
+                                                                 QModbus2DataUnit *data)
+{
+
+}
+
+bool QModbus2ClientPrivate::processReadQueryAlarmInfoCodeResponse(const QModbus2Response &response,
+                                                                  QModbus2DataUnit *data)
+{
+
+}
 
 //bool QModbus2ClientPrivate::collateBits(const QModbus2Pdu &response,
 //                                     QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data)
@@ -524,14 +664,6 @@ static bool isValid(const QModbus2Response &response, QModbus2Response::Function
 //    return collateBytes(response, QModbus2DataUnit::HoldingRegisters, data);
 //}
 
-//bool QModbus2ClientPrivate::processReadInputRegistersResponse(const QModbus2Response &response,
-//                                                             QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::ReadInputRegisters))
-//        return false;
-//    return collateBytes(response, QModbus2DataUnit::InputRegisters, data);
-//}
-
 //bool QModbus2ClientPrivate::collateBytes(const QModbus2Pdu &response,
 //                                      QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data)
 //{
@@ -561,86 +693,6 @@ static bool isValid(const QModbus2Response &response, QModbus2Response::Function
 //        data->setRegisterType(type);
 //    }
 //    return true;
-//}
-
-//bool QModbus2ClientPrivate::processWriteSingleCoilResponse(const QModbus2Response &response,
-//    QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::WriteSingleCoil))
-//        return false;
-//    return collateSingleValue(response, QModbus2DataUnit::Coils, data);
-//}
-
-//bool QModbus2ClientPrivate::processWriteSingleRegisterResponse(const QModbus2Response &response,
-//    QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::WriteSingleRegister))
-//        return false;
-//    return collateSingleValue(response, QModbus2DataUnit::HoldingRegisters, data);
-//}
-
-//bool QModbus2ClientPrivate::collateSingleValue(const QModbus2Pdu &response,
-//                                       QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data)
-//{
-//    if (response.dataSize() != QModbus2Response::minimumDataSize(response))
-//        return false;
-
-//    quint16 address, value;
-//    response.decodeData(&address, &value);
-//    if ((type == QModbus2DataUnit::Coils) && (value != Coil::Off) && (value != Coil::On))
-//        return false;
-
-//    if (data) {
-//        data->setRegisterType(type);
-//        data->setStartAddress(address);
-//        data->setValues(QVector<quint16>{ value });
-//    }
-//    return true;
-//}
-
-//bool QModbus2ClientPrivate::processWriteMultipleCoilsResponse(const QModbus2Response &response,
-//                                                             QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::WriteMultipleCoils))
-//        return false;
-//    return collateMultipleValues(response, QModbus2DataUnit::Coils, data);
-//}
-
-//bool QModbus2ClientPrivate::processWriteMultipleRegistersResponse(const QModbus2Response &response,
-//                                                                 QModbus2DataUnit *data)
-//{
-//    if (!isValid(response, QModbus2Response::WriteMultipleRegisters))
-//        return false;
-//    return collateMultipleValues(response, QModbus2DataUnit::HoldingRegisters, data);
-//}
-
-//bool QModbus2ClientPrivate::collateMultipleValues(const QModbus2Pdu &response,
-//                                      QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data)
-//{
-//    if (response.dataSize() != QModbus2Response::minimumDataSize(response))
-//        return false;
-
-//    quint16 address, count;
-//    response.decodeData(&address, &count);
-
-//    // number of registers to write is 1-123 per request
-//    if ((type == QModbus2DataUnit::HoldingRegisters) && (count < 1 || count > 123))
-//        return false;
-
-//    if (data) {
-//        data->setValueCount(count);
-//        data->setRegisterType(type);
-//        data->setStartAddress(address);
-//    }
-//    return true;
-//}
-
-//bool QModbus2ClientPrivate::processReadWriteMultipleRegistersResponse(const QModbus2Response &resp,
-//                                                                     QModbus2DataUnit *data)
-//{
-//    if (!isValid(resp, QModbus2Response::ReadWriteMultipleRegisters))
-//        return false;
-//    return collateBytes(resp, QModbus2DataUnit::HoldingRegisters, data);
 //}
 
 QT_END_NAMESPACE

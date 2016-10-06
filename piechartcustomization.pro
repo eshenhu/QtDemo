@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     comm/qmodbusreply.cpp \
     comm/qmodbusrtuserialmaster.cpp \
     driver/automationmodeldriverclz.cpp \
-    driver/basedmodeldriverclz.cpp
+    driver/basedmodeldriverclz.cpp \
+    ui/testtab.cpp
 
 HEADERS += \
     pentool.h \
@@ -53,7 +54,8 @@ HEADERS += \
     comm/qmodbusrtuserialmaster_p.h \
     comm/qserialbusglobal.h \
     driver/automationmodeldriverclz.h \
-    driver/basedmodeldriverclz.h
+    driver/basedmodeldriverclz.h \
+    ui/testtab.h
 
 FORMS += \
     ui/settingsdialog.ui \

@@ -49,6 +49,7 @@
 #include "qmodbusadu_p.h"
 #include "qmodbusclient_p.h"
 #include "qmodbus_symbols_p.h"
+#include "qmodbusdataunit.h"
 
 //
 //  W A R N I N G
@@ -110,8 +111,6 @@ public:
                 return;
             }
 
-
-
 //            const QModbusSerialAdu tmpAdu(QModbusSerialAdu::Rtu, responseBuffer);
 
 //            int pduSizeWithoutFcode = QModbus2Response::calculateDataSize(tmpAdu.pdu());
@@ -127,23 +126,6 @@ public:
 //            if (tmpAdu.rawSize() < aduSize) {
 //                qCDebug(QT_MODBUS2) << "(RTU client) Incomplete ADU received, ignoring";
 //                return;
-//            }
-
-//            // Special case for Diagnostics:ReturnQueryData. The response has no
-//            // length indicator and is just a simple echo of what we have send.
-//            if (tmpAdu.pdu().functionCode() == QModbus2Pdu::Diagnostics) {
-//                const QModbus2Response response = tmpAdu.pdu();
-//                if (canMatchRequestAndResponse(response, tmpAdu.serverAddress())) {
-//                    quint16 subCode = 0xffff;
-//                    response.decodeData(&subCode);
-//                    if (subCode == Diagnostics::ReturnQueryData) {
-//                        if (response.data() != m_current.requestPdu.data())
-//                            return; // echo does not match request yet
-//                        aduSize = 2 + response.dataSize() + 2;
-//                        if (tmpAdu.rawSize() < aduSize)
-//                            return; // echo matches, probably checksum missing
-//                    }
-//                }
 //            }
 
             qint32 aduSize = 2 + 2 + 2 + pduSize + 2;

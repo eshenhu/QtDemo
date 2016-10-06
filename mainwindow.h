@@ -5,6 +5,7 @@
 #include <qlabel.h>
 
 class ActionWidget;
+class SettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -12,6 +13,7 @@ class MainWindow : public QMainWindow
 
 private:
     void createStatusBar();
+    void createActions();
 
 public:
     explicit MainWindow(QWidget* parent = nullptr);
@@ -19,7 +21,9 @@ public:
 private:
     ActionWidget* m_widget;
     QLabel *statusIndLabel;
+    SettingsDialog* settingDialog;
 
+    void configCOM();
 signals:
 
 public slots:

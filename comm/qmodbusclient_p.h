@@ -43,6 +43,7 @@
 
 #include "qmodbusdevice_p.h"
 
+#include "qmodbusdataunit.h"
 //
 //  W A R N I N G
 //  -------------
@@ -68,29 +69,6 @@ public:
 //    QModbus2Request createRWRequest(const QModbus2DataUnit &read, const QModbus2DataUnit &write) const;
 
     bool processResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-
-//    bool processReadCoilsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool processReadDiscreteInputsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool collateBits(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
-
-//    bool processReadHoldingRegistersResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool processReadInputRegistersResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool collateBytes(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type, QModbus2DataUnit *data);
-
-//    bool processWriteSingleCoilResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool processWriteSingleRegisterResponse(const QModbus2Response &response,
-//                                            QModbus2DataUnit *data);
-//    bool collateSingleValue(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type,
-//                         QModbus2DataUnit *data);
-
-//    bool processWriteMultipleCoilsResponse(const QModbus2Response &response, QModbus2DataUnit *data);
-//    bool processWriteMultipleRegistersResponse(const QModbus2Response &response,
-//                                               QModbus2DataUnit *data);
-//    bool collateMultipleValues(const QModbus2Pdu &pdu, QModbus2DataUnit::RegisterType type,
-//                          QModbus2DataUnit *data);
-
-//    bool processReadWriteMultipleRegistersResponse(const QModbus2Response &response,
-//                                                  QModbus2DataUnit *data);
 
     virtual QModbus2Reply *enqueueRequest(const QModbus2Request &, int, const QModbus2DataUnit &,
                                          QModbus2Reply::ReplyType) {
@@ -128,6 +106,20 @@ public:
         qint64 bytesWritten = 0;
     };
     void processQueueElement(const QModbus2Response &pdu, const QueueElement &element);
+private:
+    bool processReadRestCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadHandShakeCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadStartBtnCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadAlarmInfoCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadMeasConfigCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadMeasStartCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadMeasEndCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadManualMeasStartCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadThroCalibrateCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadFreqAdjustCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+    bool processReadQueryAlarmInfoCodeResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+public:
+//    static bool isValid(const QModbus2Response &response, QModbus2Response::FunctionCode fc);
 };
 
 QT_END_NAMESPACE

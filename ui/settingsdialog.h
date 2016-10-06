@@ -44,6 +44,8 @@
 #include <QDialog>
 #include <QSerialPort>
 
+class QString;
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -58,6 +60,7 @@ class SettingsDialog : public QDialog
 
 public:
     struct Settings {
+        QString name = "";
         int parity = QSerialPort::EvenParity;
         int baud = QSerialPort::Baud19200;
         int dataBits = QSerialPort::Data8;

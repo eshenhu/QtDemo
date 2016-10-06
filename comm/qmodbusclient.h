@@ -77,6 +77,7 @@ protected:
 
     virtual bool processResponse(const QModbus2Response &response, QModbus2DataUnit *data);
     virtual bool processPrivateResponse(const QModbus2Response &response, QModbus2DataUnit *data);
+
 };
 
 QT_END_NAMESPACE
