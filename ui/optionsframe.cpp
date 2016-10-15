@@ -1,9 +1,11 @@
 #include "optionsframe.h"
 #include "ui_optionsframe.h"
+#include "cfg/cfgreshandler.h"
 
-OptionsFrame::OptionsFrame(QWidget *parent) :
+OptionsFrame::OptionsFrame(CfgMotorBootCfgModel* cfg, QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::OptionsFrame)
+    ui(new Ui::OptionsFrame),
+    m_cfg(cfg)
 {
     ui->setupUi(this);
 
@@ -12,18 +14,13 @@ OptionsFrame::OptionsFrame(QWidget *parent) :
     ui->stopdelay_comboBox->setCurrentIndex(2);
 
     connect(ui->apply_button, &QPushButton::clicked, [this](){
-        m_setting.duration = ui->duration_comboBox->currentText().toInt();
-        m_setting.softDelay = ui->startdelay_comboBox->currentText().toInt();
-        m_setting.startDelay = ui->startdelay_comboBox->currentText().toInt();
+        m_cfg->set_boot_delay(ui->startdelay_comboBox->currentText().toInt());
+        m_cfg->set_boot_rape(ui->startdelay_comboBox->currentText().toInt());
+        m_cfg->set_duration(ui->duration_comboBox->currentText().toInt());
     });
 }
 
 OptionsFrame::~OptionsFrame()
 {
     delete ui;
-}
-
-OptionsFrame::Settings OptionsFrame::setting() const
-{
-    return m_setting;
 }

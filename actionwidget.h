@@ -54,12 +54,15 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
+class CfgResHandler;
+
 class ActionWidget : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit ActionWidget(QWidget *parent = 0);
+    ~ActionWidget();
 
     void setSettingDialog(SettingsDialog *settingDialog);
     SettingsDialog *settingDialog() const;
@@ -82,6 +85,9 @@ private:
     QTabWidget *m_tabWidget;
     QDialogButtonBox *m_buttonBox;
     SettingsDialog *m_settingDialog;
+
+    CfgResHandler* m_cfgHandler;
+
     void createChartView();
     void createTabWidget();
 };

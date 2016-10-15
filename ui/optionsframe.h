@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+class CfgMotorBootCfgModel;
+
 namespace Ui {
 class OptionsFrame;
 }
@@ -26,14 +28,13 @@ public:
     };
 
 public:
-    explicit OptionsFrame(QWidget *parent = 0);
+    explicit OptionsFrame(CfgMotorBootCfgModel* cfg, QWidget *parent = 0);
     ~OptionsFrame();
-
-    Settings setting() const;
 
 private:
     Ui::OptionsFrame *ui;
-    Settings m_setting;
+    CfgMotorBootCfgModel* m_cfg;
+
 };
 
 #endif // OPTIONSFRAME_H

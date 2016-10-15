@@ -82,7 +82,7 @@ TestTab::TestTab(QWidget *parent)
     QGroupBox *chartSettings = new QGroupBox("Chart");
     chartSettings->setLayout(chartSettingsLayout);
 
-    connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
+    //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
 
 
     m_start_btn = new QPushButton(tr("Start"));
@@ -98,6 +98,7 @@ TestTab::TestTab(QWidget *parent)
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
     m_tabWidget = new QTabWidget;
+    m_tabWidget->setTabPosition(QTabWidget::West);
     tabList[TestPlanEnum::Distance] = new DistanceTstTab();
     tabList[TestPlanEnum::Voltage] = new VoltageTstTab();
     tabList[TestPlanEnum::Throttle] = new ThrottleTstTab();
@@ -106,15 +107,26 @@ TestTab::TestTab(QWidget *parent)
     tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
     tabList[TestPlanEnum::Manual] = new ManualTstTab();
 
-    m_tabWidget->insertTab(0, tabList[TestPlanEnum::Distance], tr("Distance"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Voltage], tr("Voltage"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Throttle], tr("Throttle"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
+    m_tabWidget->addTab(tabList[TestPlanEnum::Manual], tr("Manual"));
 
-    QGridLayout *settingsLayout = new QGridLayout();
-    settingsLayout->addWidget(chartSettings, 0, 0);
-    settingsLayout->setColumnStretch(0, 0);
-    settingsLayout->addWidget(m_tabWidget, 0, 1);
-    settingsLayout->setColumnStretch(1, 1);
-    settingsLayout->addWidget(seriesSettings, 0, 2);
-    settingsLayout->setColumnStretch(2, 0);
+
+//    QGridLayout *settingsLayout = new QGridLayout();
+//    settingsLayout->addWidget(chartSettings, 0, 0);
+//    settingsLayout->setColumnStretch(0, 0);
+//    settingsLayout->addWidget(m_tabWidget, 0, 1);
+//    settingsLayout->setColumnStretch(1, 1);
+//    settingsLayout->addWidget(seriesSettings, 0, 2);
+//    settingsLayout->setColumnStretch(2, 0);
+    QVBoxLayout *settingsLayout = new QVBoxLayout();
+    settingsLayout->addWidget(chartSettings, 0);
+    settingsLayout->addWidget(m_tabWidget, 1);
+    settingsLayout->addWidget(seriesSettings, 0);
 
     setLayout(settingsLayout);
 }

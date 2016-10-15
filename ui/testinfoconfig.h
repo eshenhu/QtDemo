@@ -10,14 +10,16 @@ class DeviceInfoConfig;
 }
 QT_END_NAMESPACE
 
+class CfgDeviceCfgModel;
+
 class DeviceInfoConfig : public QFrame
 {
     Q_OBJECT
 
 public:
     enum Freq {
-        B50HZ,
-        B400HZ
+        B50HZ = 50,
+        B400HZ = 400
     };
     Q_ENUMS(Freq)
 
@@ -44,7 +46,7 @@ public:
     };
 
 public:
-    explicit DeviceInfoConfig(QWidget *parent = 0);
+    explicit DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent = 0);
     ~DeviceInfoConfig();
 
 private:
@@ -52,6 +54,7 @@ private:
 
     Q_PROPERTY(Settings setting READ get_setting WRITE set_setting)
     Settings m_setting;
+    CfgDeviceCfgModel* const m_model;
 
 public:
     Settings get_setting() const

@@ -50,7 +50,7 @@
 #include <QtWidgets/QMessageBox>
 #include <ui/configtab.h>
 #include "ui/testtab.h"
-
+#include "cfg/cfgreshandler.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -112,7 +112,7 @@ void ActionWidget::createTabWidget()
     m_tabWidget->setTabPosition(QTabWidget::West);
     m_tabWidget->setTabBarAutoHide(true);
     m_tabWidget->addTab(new TestTab(), tr("Test"));
-    m_tabWidget->addTab(new ConfigTab(), tr("Config"));
+    m_tabWidget->addTab(new ConfigTab(m_cfgHandler), tr("Config"));
 }
 
 
@@ -120,19 +120,32 @@ ActionWidget::ActionWidget(QWidget *parent)
     : QWidget(parent),
       m_slice(0)
 {
+
+    m_cfgHandler = new CfgResHandler();
     createChartView();
     createTabWidget();
 
-    QGridLayout *baseLayout = new QGridLayout();
-    baseLayout->addWidget(m_chartView, 0, 0);
-    baseLayout->setRowStretch(0, 1);
-    baseLayout->addWidget(m_tabWidget, 1, 0);
-    baseLayout->setRowStretch(1, 0);
+//    QGridLayout *baseLayout = new QGridLayout();
+//    baseLayout->addWidget(m_chartView, 0, 0);
+//    baseLayout->setRowStretch(0, 1);
+//    baseLayout->addWidget(m_tabWidget, 0, 0);
+//    baseLayout->setRowStretch(1, 0);
 
+
+    QHBoxLayout *baseLayout = new QHBoxLayout();
+    baseLayout->addWidget(m_tabWidget, 0);
+    baseLayout->addWidget(m_chartView, 1);
     setLayout(baseLayout);
 
 //    updateSerieSettings();
-//    updateChartSettings();
+    //    updateChartSettings();
+}
+
+ActionWidget::~ActionWidget()
+{
+    if(m_cfgHandler)
+        delete m_cfgHandler;
+
 }
 
 

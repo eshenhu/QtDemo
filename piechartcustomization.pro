@@ -27,7 +27,9 @@ SOURCES += main.cpp \
     comm/qmodbusrtuserialmaster.cpp \
     driver/automationmodeldriverclz.cpp \
     driver/basedmodeldriverclz.cpp \
-    ui/testtab.cpp
+    ui/testtab.cpp \
+    cfg/cfgreshandler.cpp \
+    driver/measdataformat.cpp
 
 HEADERS += \
     pentool.h \
@@ -55,7 +57,11 @@ HEADERS += \
     comm/qserialbusglobal.h \
     driver/automationmodeldriverclz.h \
     driver/basedmodeldriverclz.h \
-    ui/testtab.h
+    ui/testtab.h \
+    cfg/cfgreshandler.h \
+    cfg/cfgreshandlerinf.h \
+    driver/modelpoctype.h \
+    driver/measdataformat.h
 
 FORMS += \
     ui/settingsdialog.ui \

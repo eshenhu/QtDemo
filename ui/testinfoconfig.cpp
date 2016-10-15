@@ -1,9 +1,12 @@
 #include "testinfoconfig.h"
 #include "ui_testinfoconfig.h"
+#include "cfg/cfgreshandler.h"
 
-DeviceInfoConfig::DeviceInfoConfig(QWidget *parent) :
+DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::DeviceInfoConfig)
+    ui(new Ui::DeviceInfoConfig),
+    m_model(model)
+
 {
     ui->setupUi(this);
 
@@ -27,19 +30,23 @@ DeviceInfoConfig::DeviceInfoConfig(QWidget *parent) :
 //        hide();
 //    });
     //connect(ui->ESCFreq_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFreqChanged(int)));
+
+    m_model->setHZ(ui->ESCFreq_combox->currentText().toInt());
+    m_model->setVane(ui->propVanes_combox->currentText().toInt());
+
     connect(ui->ESCFreq_combox,
             static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged),
             [this](int index){
         if(index == 0)
-            m_setting.freq = DeviceInfoConfig::Freq::B50HZ;
+            m_model->setHZ(DeviceInfoConfig::Freq::B50HZ);
         else
-            m_setting.freq = DeviceInfoConfig::Freq::B400HZ;
+            m_model->setHZ(DeviceInfoConfig::Freq::B400HZ);
     });
 
     connect(ui->propVanes_combox,
             static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged),
             [this](int index){
-        m_setting.propIndex = static_cast<DeviceInfoConfig::Vanes>(index);
+        m_model->setVane(static_cast<DeviceInfoConfig::Vanes>(index));
     });
 }
 
