@@ -6,10 +6,15 @@
 #include <QTimer>
 #include "ui/settingsdialog.h"
 #include "comm/qmodbusdataunit.h"
+#include "driver/signaloverline.h"
 
 class QModbus2Client;
 class QModbus2Reply;
 class CharDataFormat;
+
+class MeasDataFormat;
+class CfgResHandlerInf;
+class MeasDataUpdateInf;
 
 class AutomationModelDriverClz : public BasedModelDriverClz
 {
@@ -23,15 +28,16 @@ class AutomationModelDriverClz : public BasedModelDriverClz
         AlarmQueryState,
         MeasOptionsState,
         MeasRunningState,
-        MeasStopState,
+        MeasFinishedState,
     };
 
     enum QModBusState {
         Connected,
         Disconnected
     };
+
     const int fixedServerAddress = 0xF077;
-    const int msecTimeInterval = 200;  //ms
+    const int msecTimeInterval = 500;  //ms
 
 public:
     explicit AutomationModelDriverClz(QObject *parent = 0);
@@ -43,6 +49,9 @@ private:
     State state = State::InitState;
     SettingsDialog::Settings m_settingDialog;
 
+    MeasDataFormat* mp_data;
+    CfgResHandlerInf* mp_cfgRes;
+    MeasDataUpdateInf* mp_refresh;
 
     //ChartDataFormat data;
     QModbus2Reply *lastRequest = nullptr;
@@ -58,20 +67,22 @@ public slots:
 private:
     void connect();
 
-    void processReceivedDataUnit(const QModbus2DataUnit& data);
 
     void processSendTimeout();
     void setupModbusDevice();
-    void sendRequestCmd(QModbus2DataUnit writeUnit);
-    void processDataHandlerSingleShot();
+    void sendRequestCmd(const QModbus2DataUnit& writeUnit);
+
     void sendResetCmd();
     void sendHandShakeCmd();
-    void sendAlarmQueryCmd();
-    void sendMeasStartOptionsCmd();
-    void sendMeasStartCmd();
-    void sendMeasStopCmd();
     void sendFreqAdjustCmd();
-    void sendStartBtnQueryCmd();
+    void sendAlarmQueryCmd();
+    void sendMeasStartCmd();
+
+    void processDataHandlerSingleShot(const SignalOverLine& signal);
+    void processReceivedDataUnit(const QModbus2DataUnit& data);
+    bool processReceivedHandShakeDataUnit(const QModbus2DataUnit* data);
+    bool processReceivedMeasDataUnit(const QModbus2DataUnit* const data);
+
 };
 
 #endif // AUTOMATIONMODELDRIVERCLZ_H

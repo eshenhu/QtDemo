@@ -7,7 +7,6 @@ namespace ModelPOC
 {
     struct DistanceModelPoc
     {
-
     };
 
     struct VoltageModelPoc

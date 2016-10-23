@@ -6,12 +6,18 @@ CfgResHandler::CfgResHandler(QObject *parent) : QObject(parent),
     m_setting("mpth", "meas")
 {
     m_bootCfg = new CfgMotorBootCfgModel(m_setting);
+    m_deviceCfg = new CfgDeviceCfgModel(m_setting);
+    m_prodCfg = new CfgProductVersionCfgModel(m_setting);
 }
 
 CfgResHandler::~CfgResHandler()
 {
     if(m_bootCfg)
         delete m_bootCfg;
+    if(m_deviceCfg)
+        delete m_deviceCfg;
+    if(m_prodCfg)
+        delete m_prodCfg;
 }
 
 CfgMotorBootCfgModel *CfgResHandler::bootCfg() const
@@ -22,6 +28,11 @@ CfgMotorBootCfgModel *CfgResHandler::bootCfg() const
 CfgDeviceCfgModel *CfgResHandler::deviceCfg() const
 {
     return m_deviceCfg;
+}
+
+CfgProductVersionCfgModel *CfgResHandler::prodCfg() const
+{
+    return m_prodCfg;
 }
 
 CfgMotorBootCfgModel::CfgMotorBootCfgModel(QSettings& set):
@@ -107,5 +118,57 @@ void CfgDeviceCfgModel::loadSetting()
     m_set.beginGroup("cfg/device");
     m_vane = m_set.value("vane", 1).toInt();
     m_HZ  = m_set.value("HZ", 50).toInt();
+    m_set.endGroup();
+}
+
+CfgProductVersionCfgModel::CfgProductVersionCfgModel(QSettings &set):
+    m_set(set)
+{
+    loadSetting();
+}
+
+CfgResHandlerInf::MotorType CfgProductVersionCfgModel::motor_type() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].m;
+}
+
+quint32 CfgProductVersionCfgModel::num_of_motor() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].numberOfMotor;
+}
+
+quint32 CfgProductVersionCfgModel::max_power() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxPower;
+}
+
+quint32 CfgProductVersionCfgModel::max_vol() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxVol;
+}
+
+quint32 CfgProductVersionCfgModel::max_cur() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxCur;
+}
+
+quint32 CfgProductVersionCfgModel::max_torque() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxTorque;
+}
+
+CfgResHandlerInf::ProductVersion CfgProductVersionCfgModel::prod_version() const
+{
+    return CfgResHandlerInf::ProductVersion::PV1;
+}
+
+void CfgProductVersionCfgModel::loadSetting()
+{
+    m_set.beginGroup("cfg/product");
+
+    m_prod = static_cast<CfgResHandlerInf::ProductVersion>(m_set.value("version", 0).toInt());
+    if ((quint8)m_prod >= (quint8)CfgResHandlerInf::ProductVersion::MAX)
+        m_prod = CfgResHandlerInf::ProductVersion::INVALID;
+
     m_set.endGroup();
 }

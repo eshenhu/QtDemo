@@ -2,9 +2,41 @@
 #define CFGRESHANDLER_H
 
 #include "cfgreshandlerinf.h"
+#include <climits>
 
 #include <QObject>
 #include <QSettings>
+#include <QtGlobal>
+
+
+struct CfgMotorProdVersionStu
+{
+    CfgResHandlerInf::ProductVersion v;
+    CfgResHandlerInf::MotorType m;
+    quint8 numberOfMotor;  // 1 = 1
+    quint8 maxPower;  // 1kW = 10  1.5kw = 15
+    quint8 maxVol;    // 30v = 30
+    quint8 maxCur;    // 50A = 50 2*50A = 100
+    quint8 maxTorque; // 15N*M = 15
+    quint8 dummy;
+};
+
+const CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::ProductVersion::MAX] =
+{
+    {CfgResHandlerInf::ProductVersion::INVALID, CfgResHandlerInf::MotorType::INVALID,0,  0,  0,  0, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV1,     CfgResHandlerInf::MotorType::PELEC,  1, 15,  1, 30, 15, 0},
+    {CfgResHandlerInf::ProductVersion::PV2,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0},
+    {CfgResHandlerInf::ProductVersion::PV3,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0},
+    {CfgResHandlerInf::ProductVersion::PV4,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 30, 50, 15, 0},
+    {CfgResHandlerInf::ProductVersion::PV5,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0},
+    {CfgResHandlerInf::ProductVersion::PV6,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0},
+    {CfgResHandlerInf::ProductVersion::PV7,     CfgResHandlerInf::MotorType::PELEC,  1, 50, 55, 90, 50, 0},
+    {CfgResHandlerInf::ProductVersion::PV8,     CfgResHandlerInf::MotorType::PELEC,  1, 50,100, 50, 50, 0},
+    {CfgResHandlerInf::ProductVersion::PV9,     CfgResHandlerInf::MotorType::PELEC,  2, 60, 30,200, 60, 0},
+    {CfgResHandlerInf::ProductVersion::PV10,    CfgResHandlerInf::MotorType::PELEC,  2, 60, 55,110, 60, 0},
+    {CfgResHandlerInf::ProductVersion::PV11,    CfgResHandlerInf::MotorType::PELEC,  2,100, 55,180,100, 0},
+    {CfgResHandlerInf::ProductVersion::PV12,    CfgResHandlerInf::MotorType::PELEC,  2,100,100,100,100, 0}
+};
 
 class CfgMotorBootCfgModel
 {
@@ -55,7 +87,28 @@ private:
     QSettings& m_set;
 };
 
+class CfgProductVersionCfgModel
+{
+public:
+    CfgProductVersionCfgModel(QSettings& set);
+    ~CfgProductVersionCfgModel(){}
 
+public:
+    CfgResHandlerInf::MotorType motor_type() const;
+    quint32 num_of_motor() const;
+    quint32 max_power() const;
+    quint32 max_vol() const;
+    quint32 max_cur() const;
+    quint32 max_torque() const;
+    CfgResHandlerInf::ProductVersion prod_version() const;
+
+private:
+    void loadSetting();
+
+private:
+    QSettings& m_set;
+    CfgResHandlerInf::ProductVersion m_prod;
+};
 
 class CfgResHandler : public QObject, public CfgResHandlerInf
 {
@@ -68,10 +121,13 @@ public:
 public:
     CfgMotorBootCfgModel *bootCfg() const;
     CfgDeviceCfgModel *deviceCfg() const;
+    CfgProductVersionCfgModel *prodCfg() const;
+
 private:
     QSettings m_setting;
     CfgMotorBootCfgModel* m_bootCfg = nullptr;
     CfgDeviceCfgModel* m_deviceCfg = nullptr;
+    CfgProductVersionCfgModel* m_prodCfg = nullptr;
 
 signals:
 
@@ -80,16 +136,65 @@ public slots:
     // CfgResHandlerInf interface
 public:
     inline quint32 boot_delay() const
-     { return m_bootCfg->boot_delay(); }
+    {
+        Q_ASSERT(m_bootCfg != nullptr);
+        return m_bootCfg->boot_delay();
+    }
     inline quint32 boot_rape() const
-     { return m_bootCfg->boot_rape(); }
+    {
+        Q_ASSERT(m_bootCfg != nullptr);
+        return m_bootCfg->boot_rape();
+    }
     inline quint32 duration() const
-     { return m_bootCfg->duration(); }
+    {
+        Q_ASSERT(m_bootCfg != nullptr);
+        return m_bootCfg->duration();
+    }
     inline quint32 vane() const
-     { return m_deviceCfg->vane();}
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->vane();
+    }
     inline quint32 HZ() const
-     { return m_deviceCfg->HZ();}
-
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->HZ();
+    }
+    MotorType motor_type() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->motor_type();
+    }
+    quint32 num_of_motor() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->num_of_motor();
+    }
+    quint32 max_power() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_power();
+    }
+    quint32 max_vol() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_vol();
+    }
+    quint32 max_cur() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_cur();
+    }
+    quint32 max_torque() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_torque();
+    }
+    ProductVersion prod_version() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->prod_version();
+    }
 };
 
 #endif // CFGRESHANDLER_H

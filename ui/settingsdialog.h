@@ -44,7 +44,7 @@
 #include <QDialog>
 #include <QSerialPort>
 
-class QString;
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 

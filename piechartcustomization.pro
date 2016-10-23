@@ -29,7 +29,10 @@ SOURCES += main.cpp \
     driver/basedmodeldriverclz.cpp \
     ui/testtab.cpp \
     cfg/cfgreshandler.cpp \
-    driver/measdataformat.cpp
+    driver/measdataformat.cpp \
+    util/fileassist.cpp \
+    util/filefactory.cpp \
+    util/filemeas.cpp
 
 HEADERS += \
     pentool.h \
@@ -61,7 +64,12 @@ HEADERS += \
     cfg/cfgreshandler.h \
     cfg/cfgreshandlerinf.h \
     driver/modelpoctype.h \
-    driver/measdataformat.h
+    driver/measdataformat.h \
+    util/fileassist.h \
+    util/filefactory.h \
+    util/filemeas.h \
+    util/csv.h \
+    driver/signaloverline.h
 
 FORMS += \
     ui/settingsdialog.ui \
@@ -73,3 +81,10 @@ SUBDIRS += \
     comm/serialbus.pro
 
 DISTFILES += \
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lqtcsv.1.0.0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lqtcsv.1.0.0
+else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lqtcsv.1.0.0
+
+INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv
+DEPENDPATH += $$PWD/../../../../../../usr/local/include/qtcsv

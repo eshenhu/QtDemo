@@ -7,7 +7,7 @@ MeasDataFormat::MeasDataFormat()
     vol = 0;
     thro_1 = 0;
     thro_2 = 0;
-    dis = 0;
+    dis = 0xFFFFFFFF;
 }
 
 quint32 MeasDataFormat::getVol() const

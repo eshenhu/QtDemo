@@ -65,13 +65,10 @@ public:
         ResetCode = 0x01,
         HandShakeCode = 0x02,
         FreqAdjustCode = 0x03,
-        StartBtnCode = 0x04,
         AlarmInfoCode = 0x05,
-        MeasConfigCode = 0x06,
         MeasStartCode = 0x07,
-        MeasEndCode = 0x08,
+//        MeasEndCode = 0x08,
         ManualMeasStartCode = 0x09,
-        ThroCalibrateCode = 0x0a,
         QueryAlarmInfoCode = 0x0b
 //        Invalid = 0x00,
 //        ReadCoils = 0x01,
@@ -145,17 +142,17 @@ private:
 
     template <typename T> void encode(QDataStream *stream, const T &t) {
         static_assert(std::is_pod<T>::value, "Only POD types supported.");
-        static_assert(IsType<T, quint8, quint16>::value, "Only quint8 and quint16 supported.");
+        static_assert(IsType<T, quint8, quint16, quint32>::value, "Only quint8 and quint16 and quint32 supported.");
         (*stream) << t;
     }
     template <typename T> void decode(QDataStream *stream, T &t) const {
         static_assert(std::is_pod<T>::value, "Only POD types supported.");
-        static_assert(IsType<T, quint8 *, quint16 *>::value, "Only quint8* and quint16* supported.");
+        static_assert(IsType<T, quint8 *, quint16 *, quint32>::value, "Only quint8* and quint16* and quint32* supported.");
         (*stream) >> *t;
     }
     template <typename T> void encode(QDataStream *stream, const QVector<T> &vector) {
         static_assert(std::is_pod<T>::value, "Only POD types supported.");
-        static_assert(IsType<T, quint8, quint16>::value, "Only quint8 and quint16 supported.");
+        static_assert(IsType<T, quint8, quint16, quint32>::value, "Only quint8 and quint16 and quint32 supported.");
         for (int i = 0; i < vector.count(); ++i)
             (*stream) << vector[i];
     }

@@ -278,62 +278,45 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
     case QModbus2DataUnit::HandShakeCode:
     {
         const QModbus2DataUnit::HandShakeStruct& cast_p = data.uvalues().s.p;
-        return QModbus2Request(QModbus2Request::HandShakeCode, cast_p.randomNumLow, cast_p.randomNumHigh);
+        return QModbus2Request(QModbus2Request::HandShakeCode, cast_p.randomNum_1, cast_p.randomNum_2,
+                                                               cast_p.randomNum_3, cast_p.randomNum_4);
     }
         break;
 
     case QModbus2DataUnit::FreqAdjustCode:
     {
         const QModbus2DataUnit::FreqAdjustStruct& cast_q = data.uvalues().s.q;
-        return QModbus2Request(QModbus2Request::FreqAdjustCode, cast_q.freqValue);
+        return QModbus2Request(QModbus2Request::FreqAdjustCode, cast_q.freqValue_1, cast_q.freqValue_2);
     }
-        break;
-
-    case QModbus2DataUnit::StartBtnCode:
-        return QModbus2Request(QModbus2Request::StartBtnCode);
         break;
 
     case QModbus2DataUnit::AlarmInfoCode:
         return QModbus2Request(QModbus2Request::AlarmInfoCode);
         break;
 
-    case QModbus2DataUnit::MeasConfigCode:
-    {
-        const QModbus2DataUnit::MeasConfigStruct& cast_r = data.uvalues().s.r;
-        return QModbus2Request(QModbus2Request::MeasConfigCode, cast_r.measOptions,
-                               cast_r.throStart, cast_r.throEnd, cast_r.throStep,
-                               cast_r.volStart, cast_r.volEnd, cast_r.volStep,
-                               cast_r.disStart, cast_r.disEnd, cast_r.disStep,
-                               cast_r.timeStep, cast_r.startDelay, cast_r.softDelay);
-    }
-        break;
-
     case QModbus2DataUnit::MeasStartCode:
         return QModbus2Request(QModbus2Request::MeasStartCode);
         break;
 
-    case QModbus2DataUnit::MeasEndCode:
-        return QModbus2Request(QModbus2Request::MeasEndCode);
-        break;
+//    case QModbus2DataUnit::MeasEndCode:
+//        return QModbus2Request(QModbus2Request::MeasEndCode);
+//        break;
 
-    case QModbus2DataUnit::ManualMeasStartCode:
-    {
-        const QModbus2DataUnit::ManualMeasStruct& cast_s = data.uvalues().s.s;
-        return QModbus2Request(QModbus2Request::ManualMeasStartCode,
-                               cast_s.vol, cast_s.thro, cast_s.distance);
-    }
-        break;
+//    case QModbus2DataUnit::ManualMeasStartCode:
+//    {
+//        const QModbus2DataUnit::ManualMeasStruct& cast_s = data.uvalues().s.s;
+//        return QModbus2Request(QModbus2Request::ManualMeasStartCode,
+//                               cast_s.vol, cast_s.thro, cast_s.distance);
+//    }
+//        break;
 
-    case QModbus2DataUnit::ThroCalibrateCode:
-    {
-        const QModbus2DataUnit::ThroCalibrateStruct& cast_t = data.uvalues().s.t;
-        return QModbus2Request(QModbus2Request::ThroCalibrateCode,
-                               cast_t.timeInHigh, cast_t.timeInLow);
-    }
-        break;
-
-    case QModbus2DataUnit::QueryAlarmInfoCode:
-        return QModbus2Request(QModbus2Request::QueryAlarmInfoCode);
+//    case QModbus2DataUnit::ThroCalibrateCode:
+//    {
+//        const QModbus2DataUnit::ThroCalibrateStruct& cast_t = data.uvalues().s.t;
+//        return QModbus2Request(QModbus2Request::ThroCalibrateCode,
+//                               cast_t.timeInHigh, cast_t.timeInLow);
+//    }
+//        break;
 
     default:
         break;
@@ -438,20 +421,14 @@ bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QM
         return processReadHandShakeCodeResponse(response, data);
     case QModbus2Request::FreqAdjustCode:
         return processReadFreqAdjustCodeResponse(response, data);
-    case QModbus2Request::StartBtnCode:
-        return processReadStartBtnCodeResponse(response, data);
+//    case QModbus2Request::StartBtnCode:
+//        return processReadStartBtnCodeResponse(response, data);
     case QModbus2Request::AlarmInfoCode:
         return processReadAlarmInfoCodeResponse(response, data);
-    case QModbus2Request::MeasConfigCode:
-        return processReadMeasConfigCodeResponse(response, data);
     case QModbus2Request::MeasStartCode:
         return processReadMeasStartCodeResponse(response, data);
-    case QModbus2Request::MeasEndCode:
-        return processReadMeasEndCodeResponse(response, data);
     case QModbus2Request::ManualMeasStartCode:
         return processReadManualMeasStartCodeResponse(response, data);
-    case QModbus2Request::ThroCalibrateCode:
-        return processReadThroCalibrateCodeResponse(response, data);
     case QModbus2Request::QueryAlarmInfoCode:
         return processReadQueryAlarmInfoCodeResponse(response, data);
     default:
@@ -500,9 +477,16 @@ bool QModbus2ClientPrivate::processReadHandShakeCodeResponse(const QModbus2Respo
                 >> data->m_uvalues.r.q.mainboardFirmwareRev
                   >> data->m_uvalues.r.q.sampleboardHWRev
                   >> data->m_uvalues.r.q.sampleboardFirmwareRev
-                  >> data->m_uvalues.r.q.volSpan
-                  >> data->m_uvalues.r.q.currentSpan
-                  >> data->m_uvalues.r.q.forceSpanL;
+                  >> data->m_uvalues.r.q.sampleboardFirmwareRev
+                  >> data->m_uvalues.r.q.productRev
+                  >> data->m_uvalues.r.q.secrectKeyMain_1
+                  >> data->m_uvalues.r.q.secrectKeyMain_2
+                  >> data->m_uvalues.r.q.secrectKeyMain_3
+                  >> data->m_uvalues.r.q.secrectKeyMain_4
+                  >> data->m_uvalues.r.q.secrectKeySample_1
+                  >> data->m_uvalues.r.q.secrectKeySample_2
+                  >> data->m_uvalues.r.q.secrectKeySample_3
+                  >> data->m_uvalues.r.q.secrectKeySample_4;
 
         // to be continue //eshenhu
         data->setRegisterType(QModbus2DataUnit::HandShakeCode);
@@ -515,22 +499,22 @@ bool QModbus2ClientPrivate::processReadFreqAdjustCodeResponse(const QModbus2Resp
 {
     if (data) {
         QDataStream stream(response.data());
-        stream >> data->m_uvalues.r.r.freqValue;
+        stream >> data->m_uvalues.r.r.status;
         data->setRegisterType(QModbus2DataUnit::FreqAdjustCode);
     }
     return true;
 }
 
-bool QModbus2ClientPrivate::processReadStartBtnCodeResponse(const QModbus2Response &response,
-                                                            QModbus2DataUnit *data)
-{
-    if (data) {
-        QDataStream stream(response.data());
-        stream >> data->m_uvalues.r.s.status;
-        data->setRegisterType(QModbus2DataUnit::StartBtnCode);
-    }
-    return true;
-}
+//bool QModbus2ClientPrivate::processReadStartBtnCodeResponse(const QModbus2Response &response,
+//                                                            QModbus2DataUnit *data)
+//{
+//    if (data) {
+//        QDataStream stream(response.data());
+//        stream >> data->m_uvalues.r.s.status;
+//        data->setRegisterType(QModbus2DataUnit::StartBtnCode);
+//    }
+//    return true;
+//}
 
 bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Response &response,
                                                              QModbus2DataUnit *data)
@@ -543,94 +527,83 @@ bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Respo
     return true;
 }
 
-bool QModbus2ClientPrivate::processReadMeasConfigCodeResponse(const QModbus2Response &response,
-                                                              QModbus2DataUnit *data)
-{
-    if (data) {
-        QDataStream stream(response.data());
-        stream >> data->m_uvalues.r.u.options;
-        data->setRegisterType(QModbus2DataUnit::MeasConfigCode);
-    }
-    return true;
-}
-
 bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Response &response,
                                                              QModbus2DataUnit *data)
 {
-    if (data) {
-        QDataStream stream(response.data());
-        stream >> data->m_uvalues.r.v.sequenceNum
-                >> data->m_uvalues.r.v.vol
-                >> data->m_uvalues.r.v.cur1
-                >> data->m_uvalues.r.v.cur2
-                >> data->m_uvalues.r.v.forceL
-                >> data->m_uvalues.r.v.forceM
-                >> data->m_uvalues.r.v.forceH
-                >> data->m_uvalues.r.v.torqueL
-                >> data->m_uvalues.r.v.torqueM
-                >> data->m_uvalues.r.v.torqueH
-                >> data->m_uvalues.r.v.speedL
-                >> data->m_uvalues.r.v.speedH
-                >> data->m_uvalues.r.v.force2L
-                >> data->m_uvalues.r.v.force2M
-                >> data->m_uvalues.r.v.force2H
-                >> data->m_uvalues.r.v.torque2L
-                >> data->m_uvalues.r.v.torque2M
-                >> data->m_uvalues.r.v.torque2H
-                >> data->m_uvalues.r.v.speed2L
-                >> data->m_uvalues.r.v.speed2H
-                >> data->m_uvalues.r.v.temp1
-                >> data->m_uvalues.r.v.temp2
-                >> data->m_uvalues.r.v.temp3
-                >> data->m_uvalues.r.v.temp4
-                >> data->m_uvalues.r.v.shock1X
-                >> data->m_uvalues.r.v.shock1Y
-                >> data->m_uvalues.r.v.shock1Z
-                >> data->m_uvalues.r.v.shock2X
-                >> data->m_uvalues.r.v.shock2Y
-                >> data->m_uvalues.r.v.shock2Z
-                >> data->m_uvalues.r.v.fuelL
-                >> data->m_uvalues.r.v.fuelM
-                >> data->m_uvalues.r.v.fuelH
-                >> data->m_uvalues.r.v.expand1
-                >> data->m_uvalues.r.v.expand2
-                >> data->m_uvalues.r.v.expand3
-                >> data->m_uvalues.r.v.errorL
-                >> data->m_uvalues.r.v.errorM
-                >> data->m_uvalues.r.v.errorH;
+//    if (data) {
+//        QDataStream stream(response.data());
+//        stream >> data->m_uvalues.r.v.sequenceNum
+//                >> data->m_uvalues.r.v.vol
+//                >> data->m_uvalues.r.v.cur1
+//                >> data->m_uvalues.r.v.cur2
+//                >> data->m_uvalues.r.v.forceL
+//                >> data->m_uvalues.r.v.forceM
+//                >> data->m_uvalues.r.v.forceH
+//                >> data->m_uvalues.r.v.torqueL
+//                >> data->m_uvalues.r.v.torqueM
+//                >> data->m_uvalues.r.v.torqueH
+//                >> data->m_uvalues.r.v.speedL
+//                >> data->m_uvalues.r.v.speedH
+//                >> data->m_uvalues.r.v.force2L
+//                >> data->m_uvalues.r.v.force2M
+//                >> data->m_uvalues.r.v.force2H
+//                >> data->m_uvalues.r.v.torque2L
+//                >> data->m_uvalues.r.v.torque2M
+//                >> data->m_uvalues.r.v.torque2H
+//                >> data->m_uvalues.r.v.speed2L
+//                >> data->m_uvalues.r.v.speed2H
+//                >> data->m_uvalues.r.v.temp1
+//                >> data->m_uvalues.r.v.temp2
+//                >> data->m_uvalues.r.v.temp3
+//                >> data->m_uvalues.r.v.temp4
+//                >> data->m_uvalues.r.v.shock1X
+//                >> data->m_uvalues.r.v.shock1Y
+//                >> data->m_uvalues.r.v.shock1Z
+//                >> data->m_uvalues.r.v.shock2X
+//                >> data->m_uvalues.r.v.shock2Y
+//                >> data->m_uvalues.r.v.shock2Z
+//                >> data->m_uvalues.r.v.fuelL
+//                >> data->m_uvalues.r.v.fuelM
+//                >> data->m_uvalues.r.v.fuelH
+//                >> data->m_uvalues.r.v.expand1
+//                >> data->m_uvalues.r.v.expand2
+//                >> data->m_uvalues.r.v.expand3
+//                >> data->m_uvalues.r.v.errorL
+//                >> data->m_uvalues.r.v.errorM
+//                >> data->m_uvalues.r.v.errorH;
 
-        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
-    }
+//        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
+//    }
     return true;
 
 }
 
-bool QModbus2ClientPrivate::processReadMeasEndCodeResponse(const QModbus2Response &response,
-                                                           QModbus2DataUnit *data)
-{
-    if (data) {
-        data->setRegisterType(QModbus2DataUnit::MeasEndCode);
-    }
-    return true;
+//bool QModbus2ClientPrivate::processReadMeasEndCodeResponse(const QModbus2Response &response,
+//                                                           QModbus2DataUnit *data)
+//{
+//    if (data) {
+//        data->setRegisterType(QModbus2DataUnit::MeasEndCode);
+//    }
+//    return true;
 
-}
+//}
 
 bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus2Response &response,
                                                                    QModbus2DataUnit *data)
 {
-
-}
-
-bool QModbus2ClientPrivate::processReadThroCalibrateCodeResponse(const QModbus2Response &response,
-                                                                 QModbus2DataUnit *data)
-{
-
+    return true;
 }
 
 bool QModbus2ClientPrivate::processReadQueryAlarmInfoCodeResponse(const QModbus2Response &response,
                                                                   QModbus2DataUnit *data)
 {
-
+    if (data) {
+        QDataStream stream(response.data());
+        stream >> data->m_uvalues.r.u.errorCode
+               >> data->m_uvalues.r.u.errorInfo;
+        data->setRegisterType(QModbus2DataUnit::QueryAlarmInfoCode);
+    }
+    return true;
 }
 
 //bool QModbus2ClientPrivate::collateBits(const QModbus2Pdu &response,
