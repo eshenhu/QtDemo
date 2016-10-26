@@ -409,10 +409,21 @@ void QModbus2ClientPrivate::processQueueElement(const QModbus2Response &pdu,
     element.reply->setFinished(true);
 }
 
+static bool isValid(const QModbus2Response &response, QModbus2Response::FunctionCode fc)
+{
+    if (!response.isValid())
+        return false;
+    if (response.isException())
+        return false;
+    if (response.functionCode() != fc)
+        return false;
+    return true;
+}
+
 bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QModbus2DataUnit *data)
 {
-//    if (!isValid(response, response.functionCode()))
-//        return false;
+    if (!isValid(response, response.functionCode()))
+        return false;
 
     switch (response.functionCode()) {
     case QModbus2Request::ResetCode:
@@ -427,8 +438,6 @@ bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QM
         return processReadAlarmInfoCodeResponse(response, data);
     case QModbus2Request::MeasStartCode:
         return processReadMeasStartCodeResponse(response, data);
-    case QModbus2Request::ManualMeasStartCode:
-        return processReadManualMeasStartCodeResponse(response, data);
     case QModbus2Request::QueryAlarmInfoCode:
         return processReadQueryAlarmInfoCodeResponse(response, data);
     default:
@@ -437,16 +446,7 @@ bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QM
     return q_func()->processPrivateResponse(response, data);
 }
 
-static bool isValid(const QModbus2Response &response, QModbus2Response::FunctionCode fc)
-{
-    if (!response.isValid())
-        return false;
-    if (response.isException())
-        return false;
-    if (response.functionCode() != fc)
-        return false;
-    return true;
-}
+
 
 bool QModbus2ClientPrivate::processReadRestCodeResponse(const QModbus2Response &response,
                                                         QModbus2DataUnit *data)
@@ -530,52 +530,7 @@ bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Respo
 bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Response &response,
                                                              QModbus2DataUnit *data)
 {
-//    if (data) {
-//        QDataStream stream(response.data());
-//        stream >> data->m_uvalues.r.v.sequenceNum
-//                >> data->m_uvalues.r.v.vol
-//                >> data->m_uvalues.r.v.cur1
-//                >> data->m_uvalues.r.v.cur2
-//                >> data->m_uvalues.r.v.forceL
-//                >> data->m_uvalues.r.v.forceM
-//                >> data->m_uvalues.r.v.forceH
-//                >> data->m_uvalues.r.v.torqueL
-//                >> data->m_uvalues.r.v.torqueM
-//                >> data->m_uvalues.r.v.torqueH
-//                >> data->m_uvalues.r.v.speedL
-//                >> data->m_uvalues.r.v.speedH
-//                >> data->m_uvalues.r.v.force2L
-//                >> data->m_uvalues.r.v.force2M
-//                >> data->m_uvalues.r.v.force2H
-//                >> data->m_uvalues.r.v.torque2L
-//                >> data->m_uvalues.r.v.torque2M
-//                >> data->m_uvalues.r.v.torque2H
-//                >> data->m_uvalues.r.v.speed2L
-//                >> data->m_uvalues.r.v.speed2H
-//                >> data->m_uvalues.r.v.temp1
-//                >> data->m_uvalues.r.v.temp2
-//                >> data->m_uvalues.r.v.temp3
-//                >> data->m_uvalues.r.v.temp4
-//                >> data->m_uvalues.r.v.shock1X
-//                >> data->m_uvalues.r.v.shock1Y
-//                >> data->m_uvalues.r.v.shock1Z
-//                >> data->m_uvalues.r.v.shock2X
-//                >> data->m_uvalues.r.v.shock2Y
-//                >> data->m_uvalues.r.v.shock2Z
-//                >> data->m_uvalues.r.v.fuelL
-//                >> data->m_uvalues.r.v.fuelM
-//                >> data->m_uvalues.r.v.fuelH
-//                >> data->m_uvalues.r.v.expand1
-//                >> data->m_uvalues.r.v.expand2
-//                >> data->m_uvalues.r.v.expand3
-//                >> data->m_uvalues.r.v.errorL
-//                >> data->m_uvalues.r.v.errorM
-//                >> data->m_uvalues.r.v.errorH;
-
-//        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
-//    }
     return true;
-
 }
 
 //bool QModbus2ClientPrivate::processReadMeasEndCodeResponse(const QModbus2Response &response,
@@ -591,6 +546,36 @@ bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Respo
 bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus2Response &response,
                                                                    QModbus2DataUnit *data)
 {
+    if (data) {
+        QDataStream stream(response.data());
+        QModbus2DataUnit::MeasStartRecStruct& val = data->m_uvalues.r.s;
+
+        stream >> val.humidity >> val.envtemp >> val.pressure >> val.thro_1 >> val.thro_2
+                >> val.motorType >> val.numOfMotor;
+
+        if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
+        {
+            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+                    >> val.motorInfo.elec.elecMotorStruct[0].current >> val.motorInfo.elec.elecMotorStruct[0].lift
+                    >> val.motorInfo.elec.elecMotorStruct[0].torque >> val.motorInfo.elec.elecMotorStruct[0].speed
+                    >> val.motorInfo.elec.elecMotorStruct[0].temp_1 >> val.motorInfo.elec.elecMotorStruct[0].temp_2;
+
+            if (val.numOfMotor >= 2)
+            {
+                stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+                        >> val.motorInfo.elec.elecMotorStruct[1].current >> val.motorInfo.elec.elecMotorStruct[1].lift
+                        >> val.motorInfo.elec.elecMotorStruct[1].torque >> val.motorInfo.elec.elecMotorStruct[1].speed
+                        >> val.motorInfo.elec.elecMotorStruct[1].temp_1 >> val.motorInfo.elec.elecMotorStruct[1].temp_2;
+            }
+        }
+        else
+        {
+            stream >> val.motorInfo.oil.lift >> val.motorInfo.oil.torque
+                    >> val.motorInfo.oil.speed >> val.motorInfo.oil.temp_1 >> val.motorInfo.oil.temp_2;
+        }
+
+        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
+    }
     return true;
 }
 

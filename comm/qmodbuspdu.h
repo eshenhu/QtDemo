@@ -62,13 +62,16 @@ public:
 
     enum FunctionCode {
         Invalid = 0x00,
-        ResetCode = 0x01,
-        HandShakeCode = 0x02,
+        HandShakeCode = 0x01,
+        HandShakePairCode = 0x02,
         FreqAdjustCode = 0x03,
+        FreqAdjustPairCode = 0x04,
         AlarmInfoCode = 0x05,
+        AlarmInfoPairCode = 0x06,
         MeasStartCode = 0x07,
-//        MeasEndCode = 0x08,
-        ManualMeasStartCode = 0x09,
+        MeasStartPairCode = 0x08,
+        ResetCode = 0x09,
+        ResetPairCode = 0x0A,
         QueryAlarmInfoCode = 0x0b
 //        Invalid = 0x00,
 //        ReadCoils = 0x01,

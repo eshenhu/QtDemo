@@ -61,10 +61,12 @@ public:
     };
 
     inline QModbusSerialAdu(Type type, const QByteArray &data)
-        : m_type(type), m_data(data), m_rawData(data)
+        : m_type(type), m_data(data)
     {
         if (m_type == Ascii)
             m_data = QByteArray::fromHex(m_data.mid(1, m_data.size() - 3));
+
+        m_pduData = QByteArray::fromHex(m_data.mid(6, m_data.size() - 8));
     }
 
     inline int size() const {
@@ -74,8 +76,8 @@ public:
     }
     inline QByteArray data() const { return m_data.left(size()); }
 
-    inline int rawSize() const { return m_rawData.size(); }
-    inline QByteArray rawData() const { return m_rawData; }
+//    inline int rawSize() const { return m_rawData.size(); }
+//    inline QByteArray rawData() const { return m_rawData; }
 
     inline int serverAddress() const {
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::serverAddress()", "Empty ADU.");
@@ -93,7 +95,7 @@ public:
 
     inline QModbus2Pdu pdu() const {
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::pdu()", "Empty ADU.");
-        return QModbus2Pdu(QModbus2Pdu::FunctionCode(m_data.at(6)), m_data.mid(7, size() - 6));
+        return QModbus2Pdu(QModbus2Pdu::FunctionCode(m_data.at(6)), m_data.mid(7, size() - 8));
     }
 
     template <typename T>
@@ -108,7 +110,8 @@ public:
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::matchingChecksum()", "Empty ADU.");
         if (m_type == Ascii)
             return QModbusSerialAdu::calculateLRC(data(), size()) == checksum<quint8>();
-        return QModbusSerialAdu::calculateCRC(data(), size()) == checksum<quint16>();
+        //return QModbusSerialAdu::calculateCRC(data(), size()) == checksum<quint16>();
+        return QModbusSerialAdu::calculateCRC(m_pduData, size()) == checksum<quint16>();
     }
 
     /*!
@@ -199,7 +202,8 @@ private:
 private:
     Type m_type = Rtu;
     QByteArray m_data;
-    QByteArray m_rawData;
+//    QByteArray m_rawData;
+    QByteArray m_pduData;
 };
 
 QT_END_NAMESPACE

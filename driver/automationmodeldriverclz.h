@@ -33,7 +33,8 @@ class AutomationModelDriverClz : public BasedModelDriverClz
 
     enum QModBusState {
         Connected,
-        Disconnected
+        Disconnected,
+        HandShakeException,
     };
 
     const int fixedServerAddress = 0xF077;
@@ -57,9 +58,11 @@ private:
     QModbus2Reply *lastRequest = nullptr;
     QModbus2Client *modbusDevice = nullptr;
 
+    //QQueue<QModbus2DataUnit> m_queue;
+
 signals:
     void statusBarChanged(const QString&, int timeDuration);
-    void stateChanged(const QModBusState);
+    void stateChanged(const QModBusState, QString);
 public slots:
     void startMeasTest(bool start = true);
     void readReady();

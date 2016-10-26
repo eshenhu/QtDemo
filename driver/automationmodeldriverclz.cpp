@@ -54,13 +54,13 @@ void AutomationModelDriverClz::setupModbusDevice()
                 [this](QModbus2Device::State state){
             if (state == QModbus2Device::UnconnectedState)
             {
-                emit stateChanged(Disconnected);
+                emit stateChanged(Disconnected, "Disconnected");
                 emit statusBarChanged(tr("comm: State changed : DisConnect"), 5000);
                 qInfo() << "comm: State changed : DisConnect.";
             }
             else if (state == QModbus2Device::ConnectedState)
             {
-                emit stateChanged(Connected);
+                emit stateChanged(Connected, "Connected");
                 emit statusBarChanged(tr("comm: State changed : Connect"), 5000);
                 qInfo() << "comm: State changed : Connect.";
             }
@@ -100,7 +100,7 @@ void AutomationModelDriverClz::startMeasTest(bool start)
     }
     else {
         modbusDevice->disconnectDevice();
-        emit stateChanged(Disconnected);
+        emit stateChanged(Disconnected, "Disconnected");
     }
 }
 
@@ -134,79 +134,30 @@ void AutomationModelDriverClz::processReceivedDataUnit(const QModbus2DataUnit &d
 {
     SignalOverLine signal(&data);
     processDataHandlerSingleShot(signal);
-
-
-
-
-    //    int type = static_cast<int>(data.registerType());
-    //    switch(type) {
-    //    case QModbus2DataUnit::RegisterType::ResetCode:
-    //    {
-    //        if(data.uvalues().r.p.status == static_cast<quint8>(QModbus2DataUnit::ResetRecStatus::BUSY))
-    //        {
-    //            SignalOverLine signal = SignalOverLine(QModbus2DataUnit::RegisterType::ResetCode);
-    //            QTimer::singleShot(msecTimeInterval, [this, signal](){
-    //                processDataHandlerSingleShot(signal); });
-    //        }
-    //        else
-    //        {
-    //            state = State::HandShakeState;
-    //            SignalOverLine signal = SignalOverLine(QModbus2DataUnit::RegisterType::ResetCode);
-    //            QTimer::singleShot(msecTimeInterval, [this, signal](){
-    //                processDataHandlerSingleShot(signal); });
-    //        }
-    //    }
-    //        break;
-
-    //    case QModbus2DataUnit::RegisterType::HandShakeCode:
-    //    {
-    //        state = State::FreqAdjustState;
-    //        QTimer::singleShot(msecTimeInterval, [this](){ processDataHandlerSingleShot(); });
-    //    }
-    //        break;
-
-    //    case QModbus2DataUnit::RegisterType::FreqAdjustCode:
-    //    {
-    //        state = State::FreqAdjustState;
-    //        QTimer::singleShot(msecTimeInterval, [this](){ processDataHandlerSingleShot(); });
-    //    }
-    //        break;
-
-    //    case QModbus2DataUnit::RegisterType::StartBtnCode:
-    //    {
-    //        state = State::AlarmQueryState;
-    //        QTimer::singleShot(msecTimeInterval, [this](){ processDataHandlerSingleShot(); });
-    //    }
-    //        break;
-
-    //    case QModbus2DataUnit::RegisterType::AlarmInfoCode:
-    //    {
-    //        state = State::MeasOptionsState;
-    //        QTimer::singleShot(msecTimeInterval, [this](){ processDataHandlerSingleShot(); });
-    //    }
-    //        break;
-
-    //    case QModbus2DataUnit::RegisterType::MeasConfigCode:
-    //    {
-    //        //state = State::AlarmQueryState;
-    //        QTimer::singleShot(msecTimeInterval, [this](){ processDataHandlerSingleShot(); });
-    //    }
-    //        break;
-
-    //    default:
-    //        break;
-    //    }
 }
 
 bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2DataUnit* data)
 {
     qWarning() << "it should be got improved here -- eshenhu";
+    if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
+    {
+        qWarning() << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
+                   << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
+        emit stateChanged(HandShakeException, QString::number(data->uvalues().r.q.productRev));
+        return false;
+    }
+
     return true;
 }
 
+/*
+ * Here there are two tasks:
+ * 1. enqueue dataunit to the front GUI.
+ * 2. persistent the dataunit for recording data.
+*/
 bool AutomationModelDriverClz::processReceivedMeasDataUnit(const QModbus2DataUnit * const data)
 {
-
+    return true;
 }
 
 void AutomationModelDriverClz::processSendTimeout()

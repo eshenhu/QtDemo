@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     driver/measdataformat.cpp \
     util/fileassist.cpp \
     util/filefactory.cpp \
-    util/filemeas.cpp
+    util/filemeas.cpp \
+    cfg/cfgjsonprimaryelement.cpp
 
 HEADERS += \
     pentool.h \
@@ -69,7 +70,8 @@ HEADERS += \
     util/filefactory.h \
     util/filemeas.h \
     util/csv.h \
-    driver/signaloverline.h
+    driver/signaloverline.h \
+    cfg/cfgjsonprimaryelement.h
 
 FORMS += \
     ui/settingsdialog.ui \
@@ -80,7 +82,7 @@ SUBDIRS += \
     comm/doc/snippets/snippets.pro \
     comm/serialbus.pro
 
-DISTFILES += \
+DISTFILES +=
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lqtcsv.1.0.0
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lqtcsv.1.0.0
@@ -88,3 +90,6 @@ else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lqtcsv.1.0.0
 
 INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv
 DEPENDPATH += $$PWD/../../../../../../usr/local/include/qtcsv
+
+RESOURCES += \
+    resource/productversion.qrc

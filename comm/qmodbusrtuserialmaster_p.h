@@ -132,7 +132,7 @@ public:
             const QModbusSerialAdu adu(QModbusSerialAdu::Rtu, responseBuffer.left(aduSize));
             responseBuffer.remove(0, aduSize);
 
-            qCDebug(QT_MODBUS2)<< "(RTU client) Received ADU:" << adu.rawData().toHex();
+            qCDebug(QT_MODBUS2)<< "(RTU client) Received ADU:" << adu.data().toHex();
             if (QT_MODBUS2().isDebugEnabled() && !responseBuffer.isEmpty())
                 qCDebug(QT_MODBUS2_LOW) << "(RTU client) Pending buffer:" << responseBuffer.toHex();
 
@@ -371,7 +371,9 @@ public:
             return false;   // reply deleted
         if (m_current.reply->serverAddress() != sendingServer)
             return false;   // server mismatch
-        if (m_current.requestPdu.functionCode() != response.compFunctionCode())
+        //if (m_current.requestPdu.functionCode() != response.compFunctionCode())
+        if (!(( (m_current.requestPdu.functionCode() + 1) == response.functionCode() ) ||
+              (response.functionCode() == QModbus2Pdu::FunctionCode::QueryAlarmInfoCode)))
             return false;   // request for different function code
         return true;
     }

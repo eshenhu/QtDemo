@@ -48,12 +48,11 @@ class QModbus2DataUnit
 public:
     enum RegisterType {
         Invalid = 0x00,
-        ResetCode = 0x01,
-        HandShakeCode = 0x02,
+        HandShakeCode = 0x01,
         FreqAdjustCode = 0x03,
         AlarmInfoCode = 0x05,
         MeasStartCode = 0x07,
-        ManualMeasStartCode = 0x09,
+        ResetCode = 0x09,
         QueryAlarmInfoCode = 0x0b
     };
 
@@ -114,8 +113,9 @@ public:
         quint16 distance;
     };
 
-    enum class MeasStartRecStatus : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
-    enum class MotorType  : quint8 { ELECE = 0, OILE = 1};
+    enum class MeasStartRecStatusEnum : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
+    enum class MotorTypeEnum  : quint8 { ELECE = 0, OILE = 1};
+    enum class LimitStatusEnum : quint8 { UPLIMIT = 0, DOWNLIMIT = 1, RUNNING = 2 };
 
     struct ElecMotorStruct
     {
@@ -130,7 +130,8 @@ public:
     struct ElecMotorCompStruct
     {
         quint8   limitStatus;
-        ElecMotorStruct pElecMotorStruct[2];  // currently, we have 2 motors with maximum size.
+        quint16  voltage;
+        ElecMotorStruct elecMotorStruct[2];  // currently, we have 2 motors with maximum size.
     };
 
     struct OilMotorCompStruct
@@ -149,10 +150,10 @@ public:
     };
 
     struct MeasStartRecStruct{
-        quint16 envtemp1;
-        quint16 envtemp2;
-        quint16 pressure;
-        quint16 altitude;
+        quint16 humidity;
+        quint32 envtemp;
+        quint32 pressure;
+        //quint16 altitude;
         quint8  thro_1;
         quint8  thro_2;
         quint8  backup_1;
@@ -172,6 +173,7 @@ public:
        ResetRecStruct p;
        HandShakeRecStruct q;
        FreqAdjustRecStruct r;
+       MeasStartRecStruct s;
        WarningRecStruct t;
        ErrorRecStruct u;
     };
