@@ -213,7 +213,7 @@ QT_BEGIN_NAMESPACE
 
 QT_END_NAMESPACE
 
-QModbus2DataUnit::MeasDataUnion QModbus2DataUnit::uvalues() const
-{
-    return m_uvalues;
-}
+//QModbus2DataUnit::MeasDataUnion QModbus2DataUnit::uvalues() const
+//{
+//    return m_uvalues;
+//}

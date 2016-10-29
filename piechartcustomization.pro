@@ -6,7 +6,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = piechartcustomization
 TEMPLATE = app
-
+CONFIG += c++11
 
 SOURCES += main.cpp \
     pentool.cpp \
@@ -33,7 +33,11 @@ SOURCES += main.cpp \
     util/fileassist.cpp \
     util/filefactory.cpp \
     util/filemeas.cpp \
-    cfg/cfgjsonprimaryelement.cpp
+    cfg/cfgjsonprimaryelement.cpp \
+    ui/abstractspinboxattr.cpp \
+    ui/qextcheckbox.cpp \
+    ui/compqchartwidget.cpp \
+    ui/qrtlineseries.cpp
 
 HEADERS += \
     pentool.h \
@@ -71,7 +75,13 @@ HEADERS += \
     util/filemeas.h \
     util/csv.h \
     driver/signaloverline.h \
-    cfg/cfgjsonprimaryelement.h
+    cfg/cfgjsonprimaryelement.h \
+    ui/basedspinboxattrinf.h \
+    ui/abstractspinboxattr.h \
+    ui/functions.h \
+    ui/qextcheckbox.h \
+    ui/compqchartwidget.h \
+    ui/qrtlineseries.h
 
 FORMS += \
     ui/settingsdialog.ui \

@@ -226,7 +226,8 @@ public:
 
     bool isValid() const { return m_type != Invalid ;}
 
-    MeasDataUnion uvalues() const;
+    //MeasDataUnion uvalues() const;
+    const MeasDataUnion& uvalues() const { return m_uvalues; }
 
 public:
     MeasDataUnion m_uvalues;

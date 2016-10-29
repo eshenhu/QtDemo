@@ -5,6 +5,22 @@
 #include <QString>
 #include "comm/qmodbusdataunit.h"
 
+class indexOnMotor
+{
+public:
+    indexOnMotor(quint8 idxMotor, quint8 idxOneMotor = 0):
+    m_idxMotor(idxMotor),
+    m_idxOneMotor(idxOneMotor)
+    {}
+    indexOnMotor() = default;
+
+    inline quint8 idxMotor() const { return m_idxMotor; }
+    inline quint8 idxOneMotor() const { return m_idxOneMotor; }
+
+private:
+    quint8 m_idxMotor;
+    quint8 m_idxOneMotor;
+};
 
 class JsonPVConfig{
 public:
@@ -38,7 +54,7 @@ public:
 
     JsonGUIPrimType type() const;
     QString str() const;
-    quint8 idx() const;
+    indexOnMotor idx() const;
     bool isSelected() const;
     qint16 lowLimit() const;
     qint16 upLimit() const;
@@ -50,7 +66,7 @@ private:
 private:
     JsonGUIPrimType m_type;
     QString   m_str;
-    quint8    m_idx;
+    indexOnMotor m_idx;
     bool      m_isSelected;
     qint16    m_lowLimit;
     qint16    m_upLimit;
@@ -64,7 +80,7 @@ public:
 
     const QList<JsonGUIElement> &elem() const;
 
-    void read(const QJsonObject &json);
+    void read(const QJsonArray &json);
     //void write(QJsonObject &json) const;
 private:
     QList<JsonGUIElement> m_elem;

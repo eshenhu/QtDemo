@@ -55,6 +55,8 @@ QT_CHARTS_END_NAMESPACE
 QT_CHARTS_USE_NAMESPACE
 
 class CfgResHandler;
+class CfgJsonReader;
+class CompQChartWidget;
 
 class ActionWidget : public QWidget
 {
@@ -67,28 +69,23 @@ public:
     void setSettingDialog(SettingsDialog *settingDialog);
     SettingsDialog *settingDialog() const;
 
+    const CfgJsonReader *reader() const;
+
 public Q_SLOTS:
-    //    void updateChartSettings();
-    //    void updateSerieSettings();
+//    void updateChartSettings();
+//    void updateSerieSettings();
 //    void updateSliceSettings();
 
-    void showFontDialog();
-
 private:
-//    QComboBox *m_themeComboBox;
-//    QCheckBox *m_aaCheckBox;
-//    QCheckBox *m_animationsCheckBox;
-//    QCheckBox *m_legendCheckBox;
+    QChartView*       m_chartView;
+    CompQChartWidget* m_chartWidget;
+    QTabWidget*       m_tabWidget;
+    QDialogButtonBox* m_buttonBox;
+    SettingsDialog*   m_settingDialog;
 
-    QChartView *m_chartView;
-    CustomSlice *m_slice;
-    QTabWidget *m_tabWidget;
-    QDialogButtonBox *m_buttonBox;
-    SettingsDialog *m_settingDialog;
+    CfgResHandler*    m_cfgHandler;
+    CfgJsonReader*    m_reader;
 
-    CfgResHandler* m_cfgHandler;
-
-    void createChartView();
     void createTabWidget();
 };
 #endif // MAINWIDGET_H

@@ -37,25 +37,49 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFormLayout>
-#include <QtWidgets/QFontDialog>
 #include <QtCharts/QChartView>
-#include <QtCharts/QPieSeries>
 
 #include <QtCharts/QLineSeries>
-#include <QtCharts/QSplineSeries>
 #include <QtCharts/QValueAxis>
-#include <QtCharts/QCategoryAxis>
 
 #include <QtGlobal>
 #include <QtWidgets/QMessageBox>
-#include <ui/configtab.h>
+#include "ui/compqchartwidget.h"
+#include "ui/configtab.h"
 #include "ui/testtab.h"
 #include "cfg/cfgreshandler.h"
+#include "cfg/cfgjsonprimaryelement.h"
 
 QT_CHARTS_USE_NAMESPACE
 
+ActionWidget::ActionWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    m_cfgHandler = new CfgResHandler();
+    m_reader = new CfgJsonReader();
+    m_reader->load("PV1");
 
+    createTabWidget();
+    //createChartView();
+    m_chartWidget = new CompQChartWidget(m_reader, this);
 
+    QHBoxLayout *baseLayout = new QHBoxLayout();
+    baseLayout->addWidget(m_tabWidget, 0);
+    baseLayout->addWidget(m_chartWidget, 1);
+    //baseLayout->addWidget(m_chartView, 1);
+    setLayout(baseLayout);
+
+//    updateSerieSettings();
+//    updateChartSettings();
+}
+
+ActionWidget::~ActionWidget()
+{
+    if(m_cfgHandler)
+        delete m_cfgHandler;
+    if (m_reader)
+        delete m_reader;
+}
 
 void ActionWidget::createChartView()
 {
@@ -71,7 +95,7 @@ void ActionWidget::createChartView()
     //![2]
 
     //![3]
-    QSplineSeries *series = new QSplineSeries;
+    QLineSeries *series = new QLineSeries;
     *series << QPointF(1, 5) << QPointF(3.5, 18) << QPointF(4.8, 7.5) << QPointF(10, 2.5);
     chart->addSeries(series);
 
@@ -82,24 +106,6 @@ void ActionWidget::createChartView()
     series->attachAxis(axisX);
     series->attachAxis(axisY);
     //![3]
-
-    //![4]
-    series = new QSplineSeries;
-    *series << QPointF(1, 0.5) << QPointF(1.5, 4.5) << QPointF(2.4, 2.5) << QPointF(4.3, 12.5)
-            << QPointF(5.2, 3.5) << QPointF(7.4, 16.5) << QPointF(8.3, 7.5) << QPointF(10, 17);
-    chart->addSeries(series);
-
-    QCategoryAxis *axisY3 = new QCategoryAxis;
-    axisY3->append("Low", 5);
-    axisY3->append("Medium", 12);
-    axisY3->append("High", 17);
-    axisY3->setLinePenColor(series->pen().color());
-    axisY3->setGridLinePen((series->pen()));
-
-    chart->addAxis(axisY3, Qt::AlignLeft);
-    series->attachAxis(axisX);
-    series->attachAxis(axisY3);
-    //![4]
 
     //![5]
     m_chartView = new QChartView(chart);
@@ -113,41 +119,8 @@ void ActionWidget::createTabWidget()
     m_tabWidget->setTabBarAutoHide(true);
     m_tabWidget->addTab(new TestTab(), tr("Test"));
     m_tabWidget->addTab(new ConfigTab(m_cfgHandler), tr("Config"));
+    //m_tabWidget->hide();
 }
-
-
-ActionWidget::ActionWidget(QWidget *parent)
-    : QWidget(parent),
-      m_slice(0)
-{
-
-    m_cfgHandler = new CfgResHandler();
-    createChartView();
-    createTabWidget();
-
-//    QGridLayout *baseLayout = new QGridLayout();
-//    baseLayout->addWidget(m_chartView, 0, 0);
-//    baseLayout->setRowStretch(0, 1);
-//    baseLayout->addWidget(m_tabWidget, 0, 0);
-//    baseLayout->setRowStretch(1, 0);
-
-
-    QHBoxLayout *baseLayout = new QHBoxLayout();
-    baseLayout->addWidget(m_tabWidget, 0);
-    baseLayout->addWidget(m_chartView, 1);
-    setLayout(baseLayout);
-
-//    updateSerieSettings();
-    //    updateChartSettings();
-}
-
-ActionWidget::~ActionWidget()
-{
-    if(m_cfgHandler)
-        delete m_cfgHandler;
-
-}
-
 
 //void MainWidget::updateChartSettings()
 //{
@@ -177,14 +150,9 @@ ActionWidget::~ActionWidget()
 //    m_series->setHoleSize(m_holeSize->value());
 //}
 
-void ActionWidget::showFontDialog()
+const CfgJsonReader *ActionWidget::reader() const
 {
-    if (!m_slice)
-        return;
-
-    QFontDialog dialog(m_slice->labelFont());
-    dialog.show();
-    dialog.exec();
+    return m_reader;
 }
 
 SettingsDialog *ActionWidget::settingDialog() const

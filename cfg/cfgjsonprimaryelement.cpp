@@ -34,10 +34,9 @@ const QList<JsonGUIElement> &JsonGUIElementList::elem() const
     return m_elem;
 }
 
-void JsonGUIElementList::read(const QJsonObject &json)
+void JsonGUIElementList::read(const QJsonArray &eleArray)
 {
     m_elem.clear();
-    QJsonArray eleArray = json["display"].toArray();
     for (int eleIndex = 0; eleIndex < eleArray.size(); ++eleIndex) {
         QJsonObject eleObject = eleArray[eleIndex].toObject();
         JsonGUIElement ele;
@@ -56,7 +55,7 @@ QString JsonGUIElement::str() const
     return m_str;
 }
 
-quint8 JsonGUIElement::idx() const
+indexOnMotor JsonGUIElement::idx() const
 {
     return m_idx;
 }
@@ -85,7 +84,8 @@ void JsonGUIElement::read(const QJsonObject &json)
 {
     m_str = json["text"].toString();
     m_type = lookup(m_str);
-    m_idx = static_cast<quint8>(json["index"].toInt());
+    quint8 v = static_cast<quint8>(json["index"].toInt());
+    m_idx = indexOnMotor(v & 0x0F, (v & 0xF0) >> 4);
     m_isSelected = json["isSelected"].toBool();
     m_lowLimit = static_cast<quint16>(json["lowLimit"].toInt());
     m_upLimit = static_cast<quint16>(json["upLimit"].toInt());
@@ -140,7 +140,7 @@ bool CfgJsonReader::read(const QJsonObject &json, const QString& str)
     QJsonObject pvJsonObject = pvJsonListObject[str].toObject();
 
     m_config->read(pvJsonObject["config"].toObject());
-    m_guiList->read(pvJsonObject["display"].toObject());
+    m_guiList->read(pvJsonObject["display"].toArray());
     return true;
 }
 

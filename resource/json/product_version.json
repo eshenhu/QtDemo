@@ -49,7 +49,7 @@
         },
         {
           "text": "TEMP_1",
-          "index": 255,
+          "index": 0,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -57,7 +57,7 @@
         },
         {
           "text": "TEMP_2",
-          "index": 255,
+          "index": 10,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -65,7 +65,7 @@
         },
         {
           "text": "POWEREFFEC 1",
-          "index": 255,
+          "index": 0,
           "isSelected": false,
           "lowLimit": -20,
           "upLimit": 20,
@@ -73,7 +73,7 @@
         },
         {
           "text": "POWEREFFEC 2",
-          "index": 255,
+          "index": 10,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -81,7 +81,7 @@
         },
         {
           "text": "X VIBRATE",
-          "index": 255,
+          "index": 0,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -89,7 +89,7 @@
         },
         {
           "text": "Y VIBRATE",
-          "index": 255,
+          "index": 10,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -97,7 +97,7 @@
         },
         {
           "text": "Z VIBRATE",
-          "index": 255,
+          "index": 20,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -169,7 +169,7 @@
         },
         {
           "text": "TEMP_2",
-          "index": 0,
+          "index": 10,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -185,7 +185,7 @@
         },
         {
           "text": "POWEREFFEC 2",
-          "index": 0,
+          "index": 10,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -201,7 +201,7 @@
         },
         {
           "text": "Y VIBRATE",
-          "index": 0,
+          "index": 10,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -209,7 +209,7 @@
         },
         {
           "text": "Z VIBRATE",
-          "index": 0,
+          "index": 20,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -241,7 +241,7 @@
         },
         {
           "text": "TEMP_2",
-          "index": 1,
+          "index": 11,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -257,7 +257,7 @@
         },
         {
           "text": "POWEREFFEC 2",
-          "index": 1,
+          "index": 11,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -273,7 +273,7 @@
         },
         {
           "text": "Y VIBRATE",
-          "index": 1,
+          "index": 11,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
@@ -281,7 +281,7 @@
         },
         {
           "text": "Z VIBRATE",
-          "index": 1,
+          "index": 21,
           "isSelected": false,
           "lowLimit": -10,
           "upLimit": 10,
