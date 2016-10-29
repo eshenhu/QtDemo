@@ -79,37 +79,8 @@ ActionWidget::~ActionWidget()
         delete m_cfgHandler;
     if (m_reader)
         delete m_reader;
-}
-
-void ActionWidget::createChartView()
-{
-    QChart *chart = new QChart();
-    chart->legend()->hide();
-    chart->setTitle("Measument Test");
-    //![1]
-    //!
-    //![2]
-    QValueAxis *axisX = new QValueAxis;
-    axisX->setTickCount(10);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    //![2]
-
-    //![3]
-    QLineSeries *series = new QLineSeries;
-    *series << QPointF(1, 5) << QPointF(3.5, 18) << QPointF(4.8, 7.5) << QPointF(10, 2.5);
-    chart->addSeries(series);
-
-    QValueAxis *axisY = new QValueAxis;
-    axisY->setLinePenColor(series->pen().color());
-
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisX);
-    series->attachAxis(axisY);
-    //![3]
-
-    //![5]
-    m_chartView = new QChartView(chart);
-    m_chartView->setRenderHint(QPainter::Antialiasing);
+    if (m_chartWidget)
+        delete m_chartWidget;
 }
 
 void ActionWidget::createTabWidget()

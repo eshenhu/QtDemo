@@ -21,7 +21,7 @@ class CompQChartWidget : public QWidget
 {
     Q_OBJECT
 
-    static const int MAX_NUM_CHARTS_SUPPORT = 5;
+    static const int MAX_NUM_CHARTS_SUPPORT = 4;
 public:
     explicit CompQChartWidget(const CfgJsonReader* reader, QWidget *parent = 0);
 

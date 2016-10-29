@@ -68,7 +68,8 @@ void CompQChartWidget::createChartsView()
     for (int idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
     {
         QChartView* chartView = CompQChartWidget::makeNewChart();
-        m_lhsLayout->addWidget(chartView);
+        chartView->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
+        m_lhsLayout->addWidget(chartView, 0, Qt::AlignVertical_Mask);
     }
 }
 
@@ -79,7 +80,10 @@ void CompQChartWidget::createCheckBoxView()
     {
         QCheckBox* checkbox = QExtCheckBox::makeExtCheckBox(*config, ele, this);
         checkbox->setChecked(ele.isSelected());
-        m_rhsLayout->addWidget(checkbox);
+        checkbox->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
+
+        m_rhsLayout->addWidget(checkbox, 0, Qt::AlignVertical_Mask);
+        m_rhsLayout->addStretch();
     }
     QPushButton* applyButton = new QPushButton(tr("Apply"));
 
@@ -100,12 +104,12 @@ void CompQChartWidget::createCheckBoxView()
         }
         updateChartsView();
     });
-    m_rhsLayout->addWidget(applyButton);
+    m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
 }
 
 void CompQChartWidget::updateChartsView()
 {
-    quint32 idx = 0;
+    int idx = 0;
     const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
     foreach (const QExtCheckBox* box, checkboxList)
     {
@@ -116,20 +120,23 @@ void CompQChartWidget::updateChartsView()
                 qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
                 return;
             }
-        }
-        if (idx < m_chartsViewVector.size())
-        {
-            QChart* chart = m_chartsViewVector[idx]->chart();
 
-            QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
-            yaxis->setTitleText(box->str());
-            yaxis->setLabelFormat(box->unit());
-            yaxis->setRange(box->lowLimit(), box->upLimit());
+            if (idx < m_chartsViewVector.size())
+            {
+                QChart* chart = m_chartsViewVector[idx]->chart();
+
+                QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
+                chart->setTitle(box->str());
+                yaxis->setTitleText(box->unit());
+                yaxis->setTickCount(5);
+                yaxis->setRange(box->lowLimit(), box->upLimit());
+            }
+            else
+            {
+                qWarning() << "ui.chartsview Total Number of Charts " << m_chartsViewVector.size()
+                           << "was exceeded the Vector Charts" << MAX_NUM_CHARTS_SUPPORT;
+            }
+            ++idx;
         }
-        else
-        {
-            qWarning() << "ui.chartsview Total Number of Charts was exceeded the Vector Charts" << MAX_NUM_CHARTS_SUPPORT;
-        }
-        ++idx;
     }
 }
