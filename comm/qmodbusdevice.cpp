@@ -349,7 +349,7 @@ QString QModbus2Device::errorString() const
     \sa disconnectDevice()
 */
 
-Q_LOGGING_CATEGORY(QT_MODBUS2, "qt.modbus")
-Q_LOGGING_CATEGORY(QT_MODBUS2_LOW, "qt.modbus.lowlevel")
+Q_LOGGING_CATEGORY(QT_MODBUS2, "qt.modbus", QtDebugMsg)
+Q_LOGGING_CATEGORY(QT_MODBUS2_LOW, "qt.modbus.lowlevel", QtDebugMsg)
 
 QT_END_NAMESPACE

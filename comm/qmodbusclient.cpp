@@ -253,13 +253,17 @@ QModbus2Reply *QModbus2ClientPrivate::sendRequest(const QModbus2Request &request
     }
 
     if (!request.isValid()) {
-        qCWarning(QT_MODBUS2) << "(Client) Refuse to send invalid request.";
+        qCWarning(QT_MODBUS2) << "(Client) Refuse to send invalid request..";
         q->setError(QModbus2Client::tr("Invalid Modbus request."), QModbus2Device::ProtocolError);
         return nullptr;
     }
 
     if (unit)
+    {
+        // eshenhu debugging...
+        qCWarning(QT_MODBUS2) << "(Client) Send request -->" << QString::number(serverAddress, 16) << request;
         return enqueueRequest(request, serverAddress, *unit, QModbus2Reply::Common);
+    }
     return enqueueRequest(request, serverAddress, QModbus2DataUnit(), QModbus2Reply::Raw);
 }
 

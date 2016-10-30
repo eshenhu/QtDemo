@@ -63,7 +63,7 @@ private:
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
-    void update(const QModbus2DataUnit* data);
+    void updateData(const QModbus2DataUnit* data);
 
 public slots:
     void startMeasTestSlot(bool checked = false);

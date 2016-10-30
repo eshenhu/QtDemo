@@ -308,7 +308,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
 
             if (processReceivedMeasDataUnit(signal.m_info.mp_dataUnit))
             {
-                emit update(signal.m_info.mp_dataUnit);
+                emit updateData(signal.m_info.mp_dataUnit);
             }
             QTimer::singleShot(msecTimeInterval, [this](){
                 if (mp_refresh->update())

@@ -72,7 +72,7 @@ ActionWidget::ActionWidget(QWidget *parent)
 
     m_driver = new AutomationModelDriverClz(this);
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, m_driver, &AutomationModelDriverClz::startMeasTestSlot);
-    connect(m_driver, &AutomationModelDriverClz::update, m_chartWidget, &CompQChartWidget::updateData);
+    connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
 
 //    updateSerieSettings();
 //    updateChartSettings();
