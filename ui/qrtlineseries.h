@@ -9,10 +9,12 @@ class QRTLineSeries : public QtCharts::QLineSeries
 {
     Q_OBJECT
 
-    const static quint32 MAX_NUM_POINTS = 1024;
 public:
     QRTLineSeries(QObject *parent = Q_NULLPTR);
     ~QRTLineSeries();
+
+public:
+    const static quint32 MAX_NUM_POINTS = 128;
 
 public:
     void update(double v);

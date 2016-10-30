@@ -11,7 +11,6 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
-#include <QtCharts/QDateTimeAxis>
 
 #include <QDebug>
 
@@ -25,7 +24,8 @@ CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent)
     m_reader(reader)
 {
     m_layout = new QHBoxLayout;
-    m_lhsLayout = new QVBoxLayout;
+    //m_lhsLayout = new QVBoxLayout;
+    m_lhsLayout = new QGridLayout;
     m_rhsLayout = new QVBoxLayout;
 
     createCheckBoxView();
@@ -55,9 +55,11 @@ QChartView* CompQChartWidget::makeNewChart()
     chart->addSeries(series);
     chart->legend()->hide();
 
-    QDateTimeAxis *axisX = new QDateTimeAxis;
-    axisX->setFormat("dd-MM h:mm:s");
-    axisX->setTickCount(6);
+    QValueAxis *axisX = new QValueAxis;
+    //axisX->setFormat("dd-MM h:mm:s");
+    axisX->setTickCount(QRTLineSeries::MAX_NUM_POINTS / 4);
+    axisX->setRange(0, QRTLineSeries::MAX_NUM_POINTS);
+    //axisX->hide();
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 
@@ -74,11 +76,17 @@ QChartView* CompQChartWidget::makeNewChart()
 
 void CompQChartWidget::createChartsView()
 {
+    const int div = 2;
+    int row = 0;
+    int col = 0;
     for (int idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
     {
         QChartView* chartView = CompQChartWidget::makeNewChart();
         chartView->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
-        m_lhsLayout->addWidget(chartView, 0, Qt::AlignVertical_Mask);
+        //m_lhsLayout->addWidget(chartView, 0, Qt::AlignTop);
+        row = idx/div;
+        col = idx%div;
+        m_lhsLayout->addWidget(chartView, row, col);
     }
 }
 
