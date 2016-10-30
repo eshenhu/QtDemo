@@ -42,6 +42,8 @@ public:
 
     virtual void update(const QModbus2DataUnit *data);
 
+    double pushData() const;
+
 private:
     JsonPVConfig   m_config;
     JsonGUIElement m_elem;

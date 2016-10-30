@@ -39,7 +39,11 @@ CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent)
 
 void CompQChartWidget::updateData(const QModbus2DataUnit *data)
 {
-
+    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+    foreach (QExtCheckBox* box, checkboxList)
+    {
+        box->update(data);
+    }
 }
 
 QChartView* CompQChartWidget::makeNewChart()
@@ -93,20 +97,20 @@ void CompQChartWidget::createCheckBoxView()
     QPushButton* applyButton = new QPushButton(tr("Apply"));
 
     connect(applyButton, &QPushButton::clicked, [this](){
-        quint32 totalNum = 0;
-        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-        foreach (const QExtCheckBox* box, checkboxList)
-        {
-            if (box->isChecked())
-            {
-                ++totalNum;
-                if (totalNum > MAX_NUM_CHARTS_SUPPORT)
-                {
-                    qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
-                    return;
-                }
-            }
-        }
+//        quint32 totalNum = 0;
+//        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+//        foreach (const QExtCheckBox* box, checkboxList)
+//        {
+//            if (box->isChecked())
+//            {
+//                ++totalNum;
+//                if (totalNum > MAX_NUM_CHARTS_SUPPORT)
+//                {
+//                    qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
+//                    return;
+//                }
+//            }
+//        }
         updateChartsView();
     });
     m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
@@ -116,8 +120,10 @@ void CompQChartWidget::updateChartsView()
 {
     int idx = 0;
     const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-    foreach (const QExtCheckBox* box, checkboxList)
+    foreach (QExtCheckBox* box, checkboxList)
     {
+        box->setAssoChartView(nullptr);
+
         if (box->isChecked())
         {
             if (idx > MAX_NUM_CHARTS_SUPPORT)
@@ -128,8 +134,8 @@ void CompQChartWidget::updateChartsView()
 
             if (idx < m_chartsViewVector.size())
             {
+                box->setAssoChartView(m_chartsViewVector[idx]);
                 QChart* chart = m_chartsViewVector[idx]->chart();
-
                 QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
                 chart->setTitle(box->str());
                 yaxis->setTitleText(box->unit());

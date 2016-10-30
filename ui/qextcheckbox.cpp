@@ -1,16 +1,19 @@
 #include "qextcheckbox.h"
-
+#include "ui/qrtlineseries.h"
+#include <QChartView>
 
 QVector<QExtCheckBox*> QExtCheckBox::m_qExtSpinBoxList = QVector<QExtCheckBox*>();
 
+QT_CHARTS_USE_NAMESPACE
 
-QExtCheckBox::QExtCheckBox(QWidget *parent)
+QExtCheckBox::QExtCheckBox(QWidget *parent): m_assoChartView(nullptr)
 {
 }
 
 QExtCheckBox::QExtCheckBox(const JsonPVConfig &config, const JsonGUIElement &element, QWidget *parent):
     QCheckBox(element.str(), parent),
-    AbstractSpinBoxAttr(config, element)
+    AbstractSpinBoxAttr(config, element),
+    m_assoChartView(nullptr)
 {
 }
 
@@ -21,9 +24,13 @@ QExtCheckBox::~QExtCheckBox()
 void QExtCheckBox::update(const QModbus2DataUnit *data)
 {
     AbstractSpinBoxAttr::update(data);
-    if (QCheckBox::isChecked())
+    if (QCheckBox::isChecked() && m_assoChartView != nullptr)
     {
-        //emit signal to update main viewport
+        const QChart* chart = m_assoChartView->chart();
+        foreach (QAbstractSeries* series, chart->series())
+        {
+            static_cast<QRTLineSeries*>(series)->update(this->pushData());
+        }
     }
 }
 
@@ -36,4 +43,14 @@ QExtCheckBox *QExtCheckBox::makeExtCheckBox(const JsonPVConfig &config, const Js
 const QVector<QExtCheckBox *>& QExtCheckBox::qExtSpinBoxList()
 {
     return m_qExtSpinBoxList;
+}
+
+QChartView *QExtCheckBox::assoChartView() const
+{
+    return m_assoChartView;
+}
+
+void QExtCheckBox::setAssoChartView(QChartView *assoChartView)
+{
+    m_assoChartView = assoChartView;
 }

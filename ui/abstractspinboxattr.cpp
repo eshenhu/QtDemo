@@ -18,3 +18,8 @@ void AbstractSpinBoxAttr::update(const QModbus2DataUnit *data)
         m_pushData = pair.formulaF(m_data);
     }
 }
+
+double AbstractSpinBoxAttr::pushData() const
+{
+    return m_pushData;
+}

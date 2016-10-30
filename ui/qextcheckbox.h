@@ -4,10 +4,16 @@
 #include <QVector>
 #include <QCheckBox>
 #include "ui/abstractspinboxattr.h"
+#include <QtCharts/QChartGlobal>
 
 class JsonPVConfig;
 class JsonGUIElement;
 
+QT_CHARTS_BEGIN_NAMESPACE
+class QChartView;
+QT_CHARTS_END_NAMESPACE
+
+QT_CHARTS_USE_NAMESPACE
 
 class QExtCheckBox : public QCheckBox, public AbstractSpinBoxAttr
 {
@@ -29,7 +35,12 @@ signals:
 
 public slots:
 
+private:
+    QChartView* m_assoChartView;
 public:
     static QVector<QExtCheckBox*> m_qExtSpinBoxList;
+
+    QChartView *assoChartView() const;
+    void setAssoChartView(QChartView *assoChartView);
 };
 #endif // QEXTCHECKBOX_H
