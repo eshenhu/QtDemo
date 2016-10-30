@@ -68,7 +68,7 @@ TestTab::TestTab(QWidget *parent)
     m_testSeletionComboBox->addItem(tr("Manual"));
     m_testSeletionComboBox->setCurrentIndex(TestPlanEnum::Distance);
 
-    m_aaCheckBox = new QCheckBox();
+    m_volCheckBox = new QCheckBox();
     m_animationsCheckBox = new QCheckBox();
     m_animationsCheckBox->setCheckState(Qt::Checked);
 
@@ -76,7 +76,7 @@ TestTab::TestTab(QWidget *parent)
 
     QFormLayout *chartSettingsLayout = new QFormLayout();
     chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
-    chartSettingsLayout->addRow("Vol Limit", m_aaCheckBox);
+    chartSettingsLayout->addRow("Vol Limit", m_volCheckBox);
     chartSettingsLayout->addRow("Animations", m_animationsCheckBox);
     chartSettingsLayout->addRow("Legend", m_legendCheckBox);
     QGroupBox *chartSettings = new QGroupBox("Chart");
@@ -160,6 +160,11 @@ void TestTab::updateOptionsSelection(int index)
         qWarning("Unsupport tab");
         break;
     }
+}
+
+QPushButton *TestTab::start_btn() const
+{
+    return m_start_btn;
 }
 
 //void TestTab::enableTestTab(TestPlanEnum e)

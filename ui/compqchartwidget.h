@@ -16,6 +16,7 @@ QT_CHARTS_USE_NAMESPACE
 class CfgJsonReader;
 class QHBoxLayout;
 class QVBoxLayout;
+class QModbus2DataUnit;
 
 class CompQChartWidget : public QWidget
 {
@@ -28,13 +29,13 @@ public:
 signals:
 
 public slots:
+    void updateData(const QModbus2DataUnit* data);
 
 private:
     QChartView* makeNewChart();
     void createChartsView();
     void createCheckBoxView();
     void updateChartsView();
-
 
 private:
     QWidget* m_chartsWidget;

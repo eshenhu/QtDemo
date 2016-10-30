@@ -31,6 +31,8 @@ AutomationModelDriverClz::~AutomationModelDriverClz()
         delete mp_data;
 }
 
+
+
 void AutomationModelDriverClz::setupModbusDevice()
 {
     if (modbusDevice) {
@@ -68,7 +70,14 @@ void AutomationModelDriverClz::setupModbusDevice()
     }
 }
 
-void AutomationModelDriverClz::startMeasTest(bool start)
+void AutomationModelDriverClz::startMeasTestSlot(bool checked)
+{
+    SettingsDialog::Settings setting;
+    setting.name = QStringLiteral("/dev/tty.usbserial");
+    startMeasTest(setting);
+}
+
+void AutomationModelDriverClz::startMeasTest(const SettingsDialog::Settings setting)
 {
     if (!modbusDevice)
         return;
@@ -76,17 +85,17 @@ void AutomationModelDriverClz::startMeasTest(bool start)
     emit statusBarChanged(tr("comm: connection to server side"), 5000);
     if (modbusDevice->state() != QModbus2Device::ConnectedState) {
         modbusDevice->setConnectionParameter(QModbus2Device::SerialPortNameParameter,
-                                             m_settingDialog.name);
+                                             setting.name);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialParityParameter,
-                                             m_settingDialog.parity);
+                                             setting.parity);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialBaudRateParameter,
-                                             m_settingDialog.baud);
+                                             setting.baud);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialDataBitsParameter,
-                                             m_settingDialog.dataBits);
+                                             setting.dataBits);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialStopBitsParameter,
-                                             m_settingDialog.stopBits);
-        modbusDevice->setTimeout(m_settingDialog.responseTime);
-        modbusDevice->setNumberOfRetries(m_settingDialog.numberOfRetries);
+                                             setting.stopBits);
+        modbusDevice->setTimeout(setting.responseTime);
+        modbusDevice->setNumberOfRetries(setting.numberOfRetries);
 
         if (!modbusDevice->connectDevice()) {
             emit statusBarChanged(tr("comm: Connect failed: ") + modbusDevice->errorString(), 5000);
@@ -112,6 +121,7 @@ void AutomationModelDriverClz::readReady()
 
     if (reply->error() == QModbus2Device::NoError) {
         const QModbus2DataUnit unit = reply->result();
+        emit update(&unit);
         processReceivedDataUnit(unit);
     }
     else if (reply->error() == QModbus2Device::ProtocolError) {
@@ -183,7 +193,6 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             qWarning() << "unexpected signal was received during state --State::InitState-- with signal name "
                        << (quint32)(signal.m_type);
-
         }
     }
         break;

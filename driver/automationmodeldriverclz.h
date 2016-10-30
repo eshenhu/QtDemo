@@ -63,13 +63,16 @@ private:
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
+    void update(const QModbus2DataUnit* data);
+
 public slots:
-    void startMeasTest(bool start = true);
+    void startMeasTestSlot(bool checked = false);
     void readReady();
 
 private:
     void connect();
 
+    void startMeasTest(const SettingsDialog::Settings setting);
 
     void processSendTimeout();
     void setupModbusDevice();
@@ -85,7 +88,6 @@ private:
     void processReceivedDataUnit(const QModbus2DataUnit& data);
     bool processReceivedHandShakeDataUnit(const QModbus2DataUnit* data);
     bool processReceivedMeasDataUnit(const QModbus2DataUnit* const data);
-
 };
 
 #endif // AUTOMATIONMODELDRIVERCLZ_H

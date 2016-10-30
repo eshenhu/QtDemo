@@ -16,6 +16,7 @@
 #include <QDebug>
 
 #include "ui/qrtlineseries.h"
+#include "comm/qmodbusdataunit.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -36,15 +37,19 @@ CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent)
     setLayout(m_layout);
 }
 
+void CompQChartWidget::updateData(const QModbus2DataUnit *data)
+{
+
+}
+
 QChartView* CompQChartWidget::makeNewChart()
 {
     QRTLineSeries *series = new QRTLineSeries();
-    *series << QPointF(1, 1) << QPointF(2, 73) << QPointF(3, 268) << QPointF(4, 17) << QPointF(5, 4325) << QPointF(6, 723);
+    *series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
 
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->legend()->hide();
-    //chart->setTitle("Logarithmic axis example");
 
     QDateTimeAxis *axisX = new QDateTimeAxis;
     axisX->setFormat("dd-MM h:mm:s");

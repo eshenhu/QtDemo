@@ -49,6 +49,7 @@
 #include "ui/testtab.h"
 #include "cfg/cfgreshandler.h"
 #include "cfg/cfgjsonprimaryelement.h"
+#include "driver/automationmodeldriverclz.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -69,6 +70,10 @@ ActionWidget::ActionWidget(QWidget *parent)
     //baseLayout->addWidget(m_chartView, 1);
     setLayout(baseLayout);
 
+    m_driver = new AutomationModelDriverClz(this);
+    connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, m_driver, &AutomationModelDriverClz::startMeasTestSlot);
+    connect(m_driver, &AutomationModelDriverClz::update, m_chartWidget, &CompQChartWidget::updateData);
+
 //    updateSerieSettings();
 //    updateChartSettings();
 }
@@ -88,9 +93,10 @@ void ActionWidget::createTabWidget()
     m_tabWidget = new QTabWidget;
     m_tabWidget->setTabPosition(QTabWidget::West);
     m_tabWidget->setTabBarAutoHide(true);
-    m_tabWidget->addTab(new TestTab(), tr("Test"));
-    m_tabWidget->addTab(new ConfigTab(m_cfgHandler), tr("Config"));
-    //m_tabWidget->hide();
+    m_subTestTabWidget = new TestTab();
+    m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
+    m_subConfigTabWidget = new ConfigTab(m_cfgHandler);
+    m_tabWidget->addTab(m_subConfigTabWidget, tr("Config"));
 }
 
 //void MainWidget::updateChartSettings()
@@ -110,16 +116,6 @@ void ActionWidget::createTabWidget()
 //        m_chartView->chart()->legend()->hide();
 //}
 
-//void MainWidget::updateSerieSettings()
-//{
-//    m_series->setHorizontalPosition(m_hPosition->value());
-//    m_series->setVerticalPosition(m_vPosition->value());
-//    m_series->setPieSize(m_sizeFactor->value());
-//    m_holeSize->setMaximum(m_sizeFactor->value());
-//    m_series->setPieStartAngle(m_startAngle->value());
-//    m_series->setPieEndAngle(m_endAngle->value());
-//    m_series->setHoleSize(m_holeSize->value());
-//}
 
 const CfgJsonReader *ActionWidget::reader() const
 {

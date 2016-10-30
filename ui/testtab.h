@@ -35,9 +35,11 @@ public:
     QWidget* tabList[TestPlanEnum::Manual + 1];
     QWidget* lastActiveWidget;
 
+    QPushButton *start_btn() const;
+
 private:
     QComboBox *m_testSeletionComboBox;
-    QCheckBox *m_aaCheckBox;
+    QCheckBox *m_volCheckBox;
     QCheckBox *m_animationsCheckBox;
     QCheckBox *m_legendCheckBox;
 

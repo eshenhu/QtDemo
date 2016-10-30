@@ -57,6 +57,9 @@ QT_CHARTS_USE_NAMESPACE
 class CfgResHandler;
 class CfgJsonReader;
 class CompQChartWidget;
+class AutomationModelDriverClz;
+class TestTab;
+class ConfigTab;
 
 class ActionWidget : public QWidget
 {
@@ -79,6 +82,8 @@ public Q_SLOTS:
 private:
     QChartView*       m_chartView;
     CompQChartWidget* m_chartWidget;
+    TestTab*          m_subTestTabWidget;
+    ConfigTab*        m_subConfigTabWidget;
     QTabWidget*       m_tabWidget;
     QDialogButtonBox* m_buttonBox;
     SettingsDialog*   m_settingDialog;
@@ -86,6 +91,7 @@ private:
     CfgResHandler*    m_cfgHandler;
     CfgJsonReader*    m_reader;
 
+    AutomationModelDriverClz* m_driver;
     void createTabWidget();
 };
 #endif // MAINWIDGET_H
