@@ -123,43 +123,6 @@ void AutomationModelDriverClz::startMeasTest(const QSerialPortSetting::Settings 
     }
 }
 
-bool AutomationModelDriverClz::ackPeer(const QSerialPortSetting::Settings setting)
-{
-    bool rtn  = false;
-    if (!modbusDevice)
-        return false;
-
-    emit statusBarChanged(tr("comm: ack peer to detect facility"), 5000);
-    if (modbusDevice->state() != QModbus2Device::ConnectedState) {
-        modbusDevice->setConnectionParameter(QModbus2Device::SerialPortNameParameter,
-                                             setting.name);
-        modbusDevice->setConnectionParameter(QModbus2Device::SerialParityParameter,
-                                             setting.parity);
-        modbusDevice->setConnectionParameter(QModbus2Device::SerialBaudRateParameter,
-                                             setting.baudRate);
-        modbusDevice->setConnectionParameter(QModbus2Device::SerialDataBitsParameter,
-                                             setting.dataBits);
-        modbusDevice->setConnectionParameter(QModbus2Device::SerialStopBitsParameter,
-                                             setting.stopBits);
-        modbusDevice->setTimeout(setting.responseTime);
-        modbusDevice->setNumberOfRetries(setting.numberOfRetries);
-
-        if (!modbusDevice->connectDevice()) {
-            emit statusBarChanged(tr("comm: Connect failed: ") + modbusDevice->errorString(), 5000);
-            qInfo() << "comm: Connect failed: " <<  modbusDevice->errorString();
-        } else {
-            emit statusBarChanged(tr("comm: Connect Success: "), 5000);
-            qInfo()<< "comm: Connect Success: ";
-            SignalOverLine signal(SignalTypeUserInfoE::START);
-            processDataHandlerSingleShot(signal);
-        }
-    }
-    else {
-        modbusDevice->disconnectDevice();
-        emit stateChanged(Disconnected, "Disconnected");
-    }
-}
-
 void AutomationModelDriverClz::readReady()
 {
     auto reply = qobject_cast<QModbus2Reply *>(sender());
@@ -258,7 +221,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             }
             else
             {
-                state = State::HandShakeState;
+                //state = State::HandShakeState;
             }
         }
         else

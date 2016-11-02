@@ -27,9 +27,6 @@ class TestTab : public QWidget
 public:
     explicit TestTab(QWidget *parent = 0);
 
-protected slots:
-    void updateOptionsSelection(int index);
-
 public:
     QTabWidget *m_tabWidget;
     QWidget* tabList[TestPlanEnum::Manual + 1];
@@ -38,7 +35,7 @@ public:
     QPushButton *start_btn() const;
 
 private:
-    QComboBox *m_testSeletionComboBox;
+    //QComboBox *m_testSeletionComboBox;
     QCheckBox *m_volCheckBox;
     QCheckBox *m_animationsCheckBox;
     QCheckBox *m_legendCheckBox;
@@ -61,6 +58,7 @@ public:
     QSpinBox *m_disStart;
     QSpinBox *m_disEnd;
     QComboBox *m_disStep;
+    QComboBox *m_duration;
     QPushButton *m_apply_btn;
 
 public:
@@ -79,6 +77,7 @@ private:
     QSpinBox *m_voltage_start;
     QSpinBox *m_voltage_end;
     QComboBox *m_voltage_step;
+    QComboBox *m_duration;
     QPushButton *m_apply_btn;
 public:
 
@@ -87,6 +86,12 @@ public:
 class ThrottleTstTab : public QWidget
 {
     Q_OBJECT
+    QSpinBox* m_voltage;
+    QSpinBox* m_thro_start;
+    QSpinBox* m_thro_end;
+    QComboBox* m_thro_step;
+    QComboBox *m_duration;
+    QPushButton *m_apply_btn;
 
 public:
     explicit ThrottleTstTab(QWidget *parent = 0);

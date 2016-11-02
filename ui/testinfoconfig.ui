@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>198</width>
+    <width>200</width>
     <height>298</height>
    </rect>
   </property>
@@ -38,9 +38,6 @@
       <set>Qt::AlignCenter</set>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <property name="labelAlignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="sizePolicy">

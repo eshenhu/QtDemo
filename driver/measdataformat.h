@@ -67,7 +67,7 @@ class AbstractPeriodicalMeasDataUpdate : public AbstractMeasDataUpdate
 
 public:
     AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                     const quint32 durationInSec, const quint32 intervalInMSec = 200);
+                                     const quint32 durationInSec, const quint32 intervalInMSec = 500);
     virtual ~AbstractPeriodicalMeasDataUpdate() {m_phase = Phase::Phase_SoftStart;}
 
 private:
@@ -98,7 +98,7 @@ class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 thro,
                                 const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 200);
+                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalVolMeasDataUpdate(){}
 
 private:
@@ -118,7 +118,7 @@ class PeriodicalThroMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol,
                                  const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                 const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 200);
+                                 const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalThroMeasDataUpdate(){}
 
 private:
@@ -138,7 +138,7 @@ class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol, const quint32 thro,
                                 const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 200);
+                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalDisMeasDataUpdate(){}
 
 private:

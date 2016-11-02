@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>197</width>
+    <width>183</width>
     <height>176</height>
    </rect>
   </property>
@@ -25,8 +25,8 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -41,9 +41,6 @@
       <set>Qt::AlignCenter</set>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <property name="labelAlignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="minimumSize">
@@ -62,7 +59,7 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>Duration(s)</string>
+         <string>Dur(s)</string>
         </property>
        </widget>
       </item>
@@ -128,7 +125,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Start D(s)</string>
+         <string>Star D(s)</string>
         </property>
        </widget>
       </item>
@@ -241,19 +238,6 @@
          <string>Apply</string>
         </property>
        </widget>
-      </item>
-      <item row="3" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

@@ -70,7 +70,6 @@ public slots:
 
 public:
     void startMeasTest(const QSerialPortSetting::Settings setting);
-    bool ackPeer(const QSerialPortSetting::Settings setting);
 private:
     void connect();
 

@@ -163,61 +163,64 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
         if (progress.wasCanceled())
             break;
 
-        if (serial->isOpen()){
-            serial->close();
-        }
-
         p.name = info.portName();
         serial->setPortName(p.name);
 
         if (serial->open(QIODevice::ReadWrite)) {
 
-            // send Reset for ACK.
-            QByteArray writeData;
-            writeData.resize(9);
-            writeData[0] = 0xF0;
-            writeData[1] = 0xCC;
-            writeData[2] = 0x01;
-            writeData[3] = 0x00;
-            writeData[4] = 0xFE;
-            writeData[5] = 0xFF;
-            writeData[6] = 0x09;
-            writeData[7] = 0x7F;
-            writeData[8] = 0x46;
+            do{
+                // send Reset for ACK.
+                QByteArray writeData;
+                writeData.resize(9);
+                writeData[0] = 0xF0;
+                writeData[1] = 0xCC;
+                writeData[2] = 0x01;
+                writeData[3] = 0x00;
+                writeData[4] = 0xFE;
+                writeData[5] = 0xFF;
+                writeData[6] = 0x09;
+                writeData[7] = 0x7F;
+                writeData[8] = 0x46;
 
-            qint64 bytesWritten = serial->write(writeData);
+                qint64 bytesWritten = serial->write(writeData);
 
-            if (bytesWritten == -1) {
-                qDebug() << "Failed to write the data to port" << p.name << "error: %2" << serial->errorString();
-                continue;
-            } else if (bytesWritten != writeData.size()) {
-                qDebug() << "Failed to write all the data to port " << p.name <<  ", error: " << serial->errorString();
-                continue;
-            } else if (!serial->waitForBytesWritten(5000)) {
-                qDebug() << "Operation timed out or an error occurred for port " << p.name << ", error: " << serial->errorString();
-                continue;
-            }
+                if (bytesWritten == -1) {
+                    qDebug() << "Failed to write the data to port" << p.name << "error: %2" << serial->errorString();
+                    break;
+                } else if (bytesWritten != writeData.size()) {
+                    qDebug() << "Failed to write all the data to port " << p.name <<  ", error: " << serial->errorString();
+                    break;
+                } else if (!serial->waitForBytesWritten(5000)) {
+                    qDebug() << "Operation timed out or an error occurred for port " << p.name << ", error: " << serial->errorString();
+                    break;
+                }
 
-            qDebug() << "Data successfully sent to port" << p.name;
+                qDebug() << "Data successfully sent to port" << p.name;
 
-            QByteArray readData = serial->readAll();
-            while (serial->waitForReadyRead(2000))
-                readData.append(serial->readAll());
+                QByteArray readData = serial->readAll();
+                while (serial->waitForReadyRead(2000))
+                    readData.append(serial->readAll());
 
-            if (serial->error() == QSerialPort::ReadError) {
-                qDebug() << "Failed to read from port " << p.name << ", error: " << serial->errorString();
-                continue;
-            } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
-                qDebug() << "No data was currently available for reading from port " << p.name;
-                continue;
-            }
+                if (serial->error() == QSerialPort::ReadError) {
+                    qDebug() << "Failed to read from port " << p.name << ", error: " << serial->errorString();
+                    break;
+                } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
+                    qDebug() << "No data was currently available for reading from port " << p.name;
+                    break;
+                }
 
-            qDebug() << "Data successfully received from port" << p.name;
-            qDebug() << readData << endl;
+                qDebug() << "Data successfully received from port" << p.name;
+                qDebug() << readData;
 
+                found = true;
+                break;
+            }while (1);
+
+            // we need reclaim the resource.
             serial->close();
-            found = true;
-            break;
+
+            if (found)
+                break;
         }
         else
         {

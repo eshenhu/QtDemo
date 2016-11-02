@@ -35,6 +35,14 @@ public:
         SThr5 = 5
     };
 
+    enum DurationTime {
+        D05Sec = 5,
+        D10Sec = 10,
+        D15Sec = 15,
+        D20Sec = 20,
+        D30Sec = 30
+    };
+
     static const int DEFAULT_VOL = 10;
     static const int MIN_VOL     = 0;
     static const int MAX_VOL     = 20;
@@ -58,15 +66,15 @@ TestTab::TestTab(QWidget *parent)
     : QWidget(parent)
 {
     // test settings
-    m_testSeletionComboBox = new QComboBox();
-    m_testSeletionComboBox->addItem(tr("Distance"));
-    m_testSeletionComboBox->addItem(tr("Voltage"));
-    m_testSeletionComboBox->addItem(tr("Throttle"));
-    m_testSeletionComboBox->addItem(tr("Multiple"));
-    m_testSeletionComboBox->addItem(tr("Aging"));
-    m_testSeletionComboBox->addItem(tr("Calibrate"));
-    m_testSeletionComboBox->addItem(tr("Manual"));
-    m_testSeletionComboBox->setCurrentIndex(TestPlanEnum::Distance);
+//    m_testSeletionComboBox = new QComboBox();
+//    m_testSeletionComboBox->addItem(tr("Distance"));
+//    m_testSeletionComboBox->addItem(tr("Voltage"));
+//    m_testSeletionComboBox->addItem(tr("Throttle"));
+//    m_testSeletionComboBox->addItem(tr("Multiple"));
+//    m_testSeletionComboBox->addItem(tr("Aging"));
+//    m_testSeletionComboBox->addItem(tr("Calibrate"));
+//    m_testSeletionComboBox->addItem(tr("Manual"));
+//    m_testSeletionComboBox->setCurrentIndex(TestPlanEnum::Distance);
 
     m_volCheckBox = new QCheckBox();
     m_animationsCheckBox = new QCheckBox();
@@ -75,7 +83,7 @@ TestTab::TestTab(QWidget *parent)
     m_legendCheckBox = new QCheckBox();
 
     QFormLayout *chartSettingsLayout = new QFormLayout();
-    chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
+    //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
     chartSettingsLayout->addRow("Vol Limit", m_volCheckBox);
     chartSettingsLayout->addRow("Animations", m_animationsCheckBox);
     chartSettingsLayout->addRow("Legend", m_legendCheckBox);
@@ -131,36 +139,36 @@ TestTab::TestTab(QWidget *parent)
     setLayout(settingsLayout);
 }
 
-void TestTab::updateOptionsSelection(int index)
-{
-    m_tabWidget->removeTab(0);
-    switch (index) {
-    case Distance:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Distance], tr("Distance"));
-        break;
-    case Voltage:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Voltage], tr("Voltage"));
-        break;
-    case Throttle:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Throttle], tr("Throttle"));
-        break;
-    case Multiplue:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
-        break;
-    case Aging:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Aging], tr("Aging"));
-        break;
-    case Calibrate:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
-        break;
-    case Manual:
-        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Manual], tr("Manual"));
-        break;
-    default:
-        qWarning("Unsupport tab");
-        break;
-    }
-}
+//void TestTab::updateOptionsSelection(int index)
+//{
+//    m_tabWidget->removeTab(0);
+//    switch (index) {
+//    case Distance:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Distance], tr("Distance"));
+//        break;
+//    case Voltage:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Voltage], tr("Voltage"));
+//        break;
+//    case Throttle:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Throttle], tr("Throttle"));
+//        break;
+//    case Multiplue:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
+//        break;
+//    case Aging:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Aging], tr("Aging"));
+//        break;
+//    case Calibrate:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
+//        break;
+//    case Manual:
+//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Manual], tr("Manual"));
+//        break;
+//    default:
+//        qWarning("Unsupport tab");
+//        break;
+//    }
+//}
 
 QPushButton *TestTab::start_btn() const
 {
@@ -182,6 +190,7 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     // series settings
     m_voltage = new QSpinBox();
     m_voltage->setMinimumWidth(70);
+    m_voltage->setMaximumWidth(70);
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_voltage->setSingleStep(ConstValue::STEP_VOL);
@@ -189,6 +198,7 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
     m_throttle = new QSpinBox();
     m_throttle->setMinimumWidth(70);
+    m_throttle->setMaximumWidth(70);
     m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
     m_throttle->setSingleStep(ConstValue::STEP_THR);
@@ -196,6 +206,7 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
     m_disStart = new QSpinBox();
     m_disStart->setMinimumWidth(70);
+    m_disStart->setMaximumWidth(70);
     m_disStart->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_disStart->setRange(ConstValue::DIS_START, ConstValue::DIS_END);
     m_disStart->setSingleStep(ConstValue::DIS_STEP);
@@ -203,6 +214,7 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
     m_disEnd = new QSpinBox();
     m_disEnd->setMinimumWidth(70);
+    m_disEnd->setMaximumWidth(70);
     m_disEnd->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_disEnd->setRange(ConstValue::DIS_START, ConstValue::DIS_END);
     m_disEnd->setSingleStep(ConstValue::DIS_STEP);
@@ -210,10 +222,21 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
     m_disStep = new QComboBox();
     m_disStep->setMinimumWidth(70);
+    m_disStep->setMaximumWidth(70);
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis1));
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis2));
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis5));
     m_disStep->setCurrentIndex(0);
+
+    m_duration = new QComboBox();
+    m_duration->setMinimumWidth(70);
+    m_duration->setMaximumWidth(70);
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D05Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D10Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D15Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D20Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D30Sec));
+    m_duration->setCurrentIndex(1);
 
     m_apply_btn = new QPushButton(tr("Apply"));
 
@@ -222,11 +245,12 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     //connect(nextButton, &QAbstractButton::clicked, mapper, &QDataWidgetMapper::toNext);
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();
-    seriesSettingsLayout->addRow(tr("Voltage(V)"), m_voltage);
-    seriesSettingsLayout->addRow(tr("Throttle(%)"), m_throttle);
-    seriesSettingsLayout->addRow(tr("Dis Start(mm)"), m_disStart);
+    seriesSettingsLayout->addRow(tr("Vol(V)"), m_voltage);
+    seriesSettingsLayout->addRow(tr("Thrott(%)"), m_throttle);
+    seriesSettingsLayout->addRow(tr("Dis Beg(mm)"), m_disStart);
     seriesSettingsLayout->addRow(tr("Dis End(mm)"), m_disEnd);
-    seriesSettingsLayout->addRow(tr("Dis Step(mm)"), m_disStep);
+    seriesSettingsLayout->addRow(tr("Dis Stp(mm)"), m_disStep);
+    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
     seriesSettingsLayout->addRow(m_apply_btn);
 
     QFormLayout *outputListLayout = new QFormLayout();
@@ -282,13 +306,25 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S5));
     m_voltage_step->setCurrentIndex(0);
 
+    m_duration = new QComboBox();
+    m_duration->setMinimumWidth(70);
+    m_duration->setMaximumWidth(70);
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D05Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D10Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D15Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D20Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D30Sec));
+    m_duration->setCurrentIndex(1);
+
     m_apply_btn = new QPushButton(tr("Apply"));
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();
-    seriesSettingsLayout->addRow(tr("Throttle(%)"), m_throttle);
-    seriesSettingsLayout->addRow(tr("Vol Start(V)"), m_voltage_start);
+    seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
+    seriesSettingsLayout->addRow(tr("Vol Beg(V)"), m_voltage_start);
     seriesSettingsLayout->addRow(tr("Vol End(V)"), m_voltage_end);
-    seriesSettingsLayout->addRow(tr("Vol Step(V)"), m_voltage_step);
+    seriesSettingsLayout->addRow(tr("Vol Stp(V)"), m_voltage_step);
+    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
+    seriesSettingsLayout->addRow(m_apply_btn);
 
     QFormLayout *outputListLayout = new QFormLayout();
 
@@ -297,12 +333,73 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     horizonLayout->addLayout(outputListLayout, 1);
 
     setLayout(horizonLayout);
+
+    QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
+        Q_UNUSED(checked)
+
+
+    });
 }
 
 ThrottleTstTab::ThrottleTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    // series settings
+    m_voltage = new QSpinBox();
+    m_voltage->setMinimumWidth(70);
+    m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_voltage->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_voltage->setSingleStep(ConstValue::STEP_THR);
+    m_voltage->setValue(ConstValue::DEFAULT_THR);
 
+    m_thro_start = new QSpinBox();
+    m_thro_start->setMinimumWidth(70);
+    m_thro_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_thro_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_thro_start->setSingleStep(ConstValue::STEP_VOL);
+    m_thro_start->setValue(ConstValue::DEFAULT_VOL);
+
+    m_thro_end = new QSpinBox();
+    m_thro_end->setMinimumWidth(70);
+    m_thro_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_thro_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_thro_end->setSingleStep(ConstValue::STEP_VOL);
+    m_thro_end->setValue(ConstValue::MAX_VOL);
+
+    m_thro_step = new QComboBox();
+    m_thro_step->setMinimumWidth(70);
+    m_thro_step->addItem(QString::number(ConstValue::ThrottleStepStageEnum::SThr1));
+    m_thro_step->addItem(QString::number(ConstValue::ThrottleStepStageEnum::SThr2));
+    m_thro_step->addItem(QString::number(ConstValue::ThrottleStepStageEnum::SThr5));
+    m_thro_step->setCurrentIndex(0);
+
+    m_duration = new QComboBox();
+    m_duration->setMinimumWidth(70);
+    m_duration->setMaximumWidth(70);
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D05Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D10Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D15Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D20Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D30Sec));
+    m_duration->setCurrentIndex(1);
+
+    m_apply_btn = new QPushButton(tr("Apply"));
+
+    QFormLayout *seriesSettingsLayout = new QFormLayout();
+    seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
+    seriesSettingsLayout->addRow(tr("Thr Beg(%)"), m_thro_start);
+    seriesSettingsLayout->addRow(tr("Thr End(%)"), m_thro_end);
+    seriesSettingsLayout->addRow(tr("Thr Stp(%)"), m_thro_step);
+    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
+    seriesSettingsLayout->addRow(m_apply_btn);
+
+    QFormLayout *outputListLayout = new QFormLayout();
+
+    QHBoxLayout *horizonLayout = new QHBoxLayout();
+    horizonLayout->addLayout(seriesSettingsLayout, 0);
+    horizonLayout->addLayout(outputListLayout, 1);
+
+    setLayout(horizonLayout);
 }
 
 MultipleTstTab::MultipleTstTab(QWidget *parent)
