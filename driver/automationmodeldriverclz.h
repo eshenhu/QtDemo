@@ -4,7 +4,7 @@
 #include "basedmodeldriverclz.h"
 
 #include <QTimer>
-#include "ui/settingsdialog.h"
+#include "util/qserialporthelper.h"
 #include "comm/qmodbusdataunit.h"
 #include "driver/signaloverline.h"
 
@@ -37,7 +37,7 @@ class AutomationModelDriverClz : public BasedModelDriverClz
         HandShakeException,
     };
 
-    const int fixedServerAddress = 0xF077;
+    const int fixedServerAddress = 0xF0CC;
     const int msecTimeInterval = 500;  //ms
 
 public:
@@ -48,7 +48,7 @@ private:
     QTimer m_stateTimer;
     QTimer m_sendTimer;
     State state = State::InitState;
-    SettingsDialog::Settings m_settingDialog;
+    QSerialPortSetting::Settings m_settingDialog;
 
     MeasDataFormat* mp_data;
     CfgResHandlerInf* mp_cfgRes;
@@ -66,13 +66,13 @@ signals:
     void updateData(const QModbus2DataUnit* data);
 
 public slots:
-    void startMeasTestSlot(bool checked = false);
     void readReady();
 
+public:
+    void startMeasTest(const QSerialPortSetting::Settings setting);
+    bool ackPeer(const QSerialPortSetting::Settings setting);
 private:
     void connect();
-
-    void startMeasTest(const SettingsDialog::Settings setting);
 
     void processSendTimeout();
     void setupModbusDevice();

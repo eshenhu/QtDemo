@@ -172,14 +172,15 @@ public:
         QByteArray result;
         QDataStream out(&result, QIODevice::WriteOnly);
         quint16 aduSize = pdu.size();
+        aduSize = (aduSize & 0x00FF) << 8 | (aduSize & 0xFF00) >> 8;
 
-        out << quint16(serverAddress) << aduSize << ~aduSize << pdu;
+        out << quint16(serverAddress) << (quint16)aduSize << (quint16)~aduSize << pdu;
 
         if (type == Ascii) {
             out << calculateLRC(result, result.size());
             return ":" + result.toHex() + "\r" + delimiter;
         } else {
-            out << calculateCRC(result, result.size());
+            out << calculateCRC(result.mid(6), result.size() - 6);
         }
         return result;
     }

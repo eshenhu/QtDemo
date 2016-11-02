@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.0.2, 2016-10-30T15:31:20. -->
+<!-- Written by QtCreator 4.0.2, 2016-11-02T22:33:50. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -118,7 +118,10 @@
     </valuemap>
     <value type="int" key="ProjectExplorer.BuildConfiguration.BuildStepListCount">2</value>
     <value type="bool" key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment">false</value>
-    <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
+    <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges">
+     <value type="QString">QT_LOGGING_RULES=*.debug=true;qt.modbus.debug=true;qt.modbus.lowlevel.debug=true</value>
+     <value type="QString">QT_MESSAGE_PATTERN=[%{type}] %{appname} (%{file}:%{line}) - %{message}</value>
+    </valuelist>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Debug</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>

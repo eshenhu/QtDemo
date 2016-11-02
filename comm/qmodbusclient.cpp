@@ -299,7 +299,11 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
         break;
 
     case QModbus2DataUnit::MeasStartCode:
-        return QModbus2Request(QModbus2Request::MeasStartCode);
+    {
+        const QModbus2DataUnit::MeasStartStruct& cast_q = data.uvalues().s.s;
+        return QModbus2Request(QModbus2Request::MeasStartCode, cast_q.vol, cast_q.thro_1,
+                               cast_q.thro_2, cast_q.distance);
+    }
         break;
 
 //    case QModbus2DataUnit::MeasEndCode:
@@ -430,17 +434,17 @@ bool QModbus2ClientPrivate::processResponse(const QModbus2Response &response, QM
         return false;
 
     switch (response.functionCode()) {
-    case QModbus2Request::ResetCode:
+    case QModbus2Request::ResetPairCode:
         return processReadRestCodeResponse(response, data);
-    case QModbus2Request::HandShakeCode:
+    case QModbus2Request::HandShakePairCode:
         return processReadHandShakeCodeResponse(response, data);
-    case QModbus2Request::FreqAdjustCode:
+    case QModbus2Request::FreqAdjustPairCode:
         return processReadFreqAdjustCodeResponse(response, data);
 //    case QModbus2Request::StartBtnCode:
 //        return processReadStartBtnCodeResponse(response, data);
-    case QModbus2Request::AlarmInfoCode:
+    case QModbus2Request::AlarmInfoPairCode:
         return processReadAlarmInfoCodeResponse(response, data);
-    case QModbus2Request::MeasStartCode:
+    case QModbus2Request::MeasStartPairCode:
         return processReadMeasStartCodeResponse(response, data);
     case QModbus2Request::QueryAlarmInfoCode:
         return processReadQueryAlarmInfoCodeResponse(response, data);

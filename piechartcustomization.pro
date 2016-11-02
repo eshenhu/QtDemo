@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     customslice.cpp \
     actionwidget.cpp \
     mainwindow.cpp \
-    ui/settingsdialog.cpp \
     ui/configtab.cpp \
     ui/testinfoconfig.cpp \
     ui/optionsframe.cpp \
@@ -37,7 +36,8 @@ SOURCES += main.cpp \
     ui/abstractspinboxattr.cpp \
     ui/qextcheckbox.cpp \
     ui/compqchartwidget.cpp \
-    ui/qrtlineseries.cpp
+    ui/qrtlineseries.cpp \
+    util/qserialporthelper.cpp
 
 HEADERS += \
     pentool.h \
@@ -45,7 +45,6 @@ HEADERS += \
     customslice.h \
     actionwidget.h \
     mainwindow.h \
-    ui/settingsdialog.h \
     ui/configtab.h \
     ui/testinfoconfig.h \
     ui/optionsframe.h \
@@ -81,10 +80,11 @@ HEADERS += \
     ui/functions.h \
     ui/qextcheckbox.h \
     ui/compqchartwidget.h \
-    ui/qrtlineseries.h
+    ui/qrtlineseries.h \
+    util/qserialporthelper.h \
+    util/dserialportsetting.h
 
 FORMS += \
-    ui/settingsdialog.ui \
     ui/testinfoconfig.ui \
     ui/optionsframe.ui
 

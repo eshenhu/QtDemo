@@ -102,7 +102,7 @@ public:
             QDataStream out(&responseBuffer, QIODevice::ReadOnly);
             out >> serverAddr >> pduSize >> compPduSize;
 
-            if (~pduSize != compPduSize)
+            if ((quint16)~pduSize != (quint16)compPduSize)
             {
                 // data corrupt!
                 qCWarning(QT_MODBUS2) << "(RTU client) data corrupt! :" << "aduSize = "
@@ -110,6 +110,11 @@ public:
                                    << ", delaying pending frame";
                 return;
             }
+
+            pduSize = (pduSize & 0x00FF) << 8 | (pduSize & 0xFF00) >> 8;
+
+            qCDebug(QT_MODBUS2) << "(RTU client) :" << "aduSize = "
+                               << pduSize << "compAduSize = " << compPduSize;
 
 //            const QModbusSerialAdu tmpAdu(QModbusSerialAdu::Rtu, responseBuffer);
 
@@ -136,13 +141,13 @@ public:
             if (QT_MODBUS2().isDebugEnabled() && !responseBuffer.isEmpty())
                 qCDebug(QT_MODBUS2_LOW) << "(RTU client) Pending buffer:" << responseBuffer.toHex();
 
-            // check CRC
-            if (!adu.matchingChecksum()) {
-                qCWarning(QT_MODBUS2) << "(RTU client) Discarding response with wrong CRC, received:"
-                                     << adu.checksum<quint16>() << ", calculated CRC:"
-                                     << QModbusSerialAdu::calculateCRC(adu.data(), adu.size());
-                return;
-            }
+//            // check CRC
+//            if (!adu.matchingChecksum()) {
+//                qCWarning(QT_MODBUS2) << "(RTU client) Discarding response with wrong CRC, received:"
+//                                     << adu.checksum<quint16>() << ", calculated CRC:"
+//                                     << QModbusSerialAdu::calculateCRC(adu.data(), adu.size());
+//                return;
+//            }
 
             const QModbus2Response response = adu.pdu();
             if (!canMatchRequestAndResponse(response, adu.serverAddress())) {
@@ -274,6 +279,7 @@ public:
         auto reply = new QModbus2Reply(type, serverAddress, q);
         QueueElement element(reply, request, unit, m_numberOfRetries + 1);
         element.adu = QModbusSerialAdu::create(QModbusSerialAdu::Rtu, serverAddress, request);
+        qCWarning(QT_MODBUS2) << "(Client) send raw data" << element.adu.toHex();
         m_queue.enqueue(element);
 
         if (m_state == Idle)

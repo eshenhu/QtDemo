@@ -8,6 +8,7 @@
 
 #include "driver/measdataformat.h"
 #include "cfg/cfgreshandler.h"
+#include "util/qserialporthelper.h"
 
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
@@ -70,14 +71,23 @@ void AutomationModelDriverClz::setupModbusDevice()
     }
 }
 
-void AutomationModelDriverClz::startMeasTestSlot(bool checked)
-{
-    SettingsDialog::Settings setting;
-    setting.name = QStringLiteral("/dev/tty.usbserial");
-    startMeasTest(setting);
-}
+//QSerialPortSetting::Settings AutomationModelDriverClz::startMeasTestSlot(bool checked)
+//{
 
-void AutomationModelDriverClz::startMeasTest(const SettingsDialog::Settings setting)
+//    //setting.name = QStringLiteral("/dev/tty.usbserial");
+//    //setting.name = QStringLiteral("tty.usbserial-A50285BI");
+//    QSerialPortSetting::Settings setting = QSerialPortHelper::getPluggedInPort();
+
+//    if (setting.name.isEmpty())
+//    {
+//        qWarning() << "driver.automationmodeldriverclz  Failed to find the proper port !";
+//        return setting;
+//    }
+//    startMeasTest(setting);
+//    return true;
+//}
+
+void AutomationModelDriverClz::startMeasTest(const QSerialPortSetting::Settings setting)
 {
     if (!modbusDevice)
         return;
@@ -89,7 +99,44 @@ void AutomationModelDriverClz::startMeasTest(const SettingsDialog::Settings sett
         modbusDevice->setConnectionParameter(QModbus2Device::SerialParityParameter,
                                              setting.parity);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialBaudRateParameter,
-                                             setting.baud);
+                                             setting.baudRate);
+        modbusDevice->setConnectionParameter(QModbus2Device::SerialDataBitsParameter,
+                                             setting.dataBits);
+        modbusDevice->setConnectionParameter(QModbus2Device::SerialStopBitsParameter,
+                                             setting.stopBits);
+        modbusDevice->setTimeout(setting.responseTime);
+        modbusDevice->setNumberOfRetries(setting.numberOfRetries);
+
+        if (!modbusDevice->connectDevice()) {
+            emit statusBarChanged(tr("comm: Connect failed: ") + modbusDevice->errorString(), 5000);
+            qInfo() << "comm: Connect failed: " <<  modbusDevice->errorString();
+        } else {
+            emit statusBarChanged(tr("comm: Connect Success: "), 5000);
+            qInfo()<< "comm: Connect Success: ";
+            SignalOverLine signal(SignalTypeUserInfoE::START);
+            processDataHandlerSingleShot(signal);
+        }
+    }
+    else {
+        modbusDevice->disconnectDevice();
+        emit stateChanged(Disconnected, "Disconnected");
+    }
+}
+
+bool AutomationModelDriverClz::ackPeer(const QSerialPortSetting::Settings setting)
+{
+    bool rtn  = false;
+    if (!modbusDevice)
+        return false;
+
+    emit statusBarChanged(tr("comm: ack peer to detect facility"), 5000);
+    if (modbusDevice->state() != QModbus2Device::ConnectedState) {
+        modbusDevice->setConnectionParameter(QModbus2Device::SerialPortNameParameter,
+                                             setting.name);
+        modbusDevice->setConnectionParameter(QModbus2Device::SerialParityParameter,
+                                             setting.parity);
+        modbusDevice->setConnectionParameter(QModbus2Device::SerialBaudRateParameter,
+                                             setting.baudRate);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialDataBitsParameter,
                                              setting.dataBits);
         modbusDevice->setConnectionParameter(QModbus2Device::SerialStopBitsParameter,
@@ -148,7 +195,8 @@ void AutomationModelDriverClz::processReceivedDataUnit(const QModbus2DataUnit &d
 bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2DataUnit* data)
 {
     qWarning() << "it should be got improved here -- eshenhu";
-    if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
+    //if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
+    if (0)
     {
         qWarning() << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
@@ -186,6 +234,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         if (signal.m_type == SignalType::USER && signal.m_info.userType == SignalTypeUserInfoE::START)
         {
             sendHandShakeCmd();
+            //sendFreqAdjustCmd();
+            //sendAlarmQueryCmd();
+            //sendMeasStartCmd();
             state = State::HandShakeState;
         }
         else
@@ -249,6 +300,12 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         if(signal.m_type == SignalType::ECHO
                 && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FreqAdjustCode)
         {
+            const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
+//            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+//            const char* rawdata = (const char*)&data;
+//            QByteArray barray = QByteArray::number(rawdata, size);
+//            qInfo() << "com.comm receive" << barray.toHex();
+
             if (signal.m_info.mp_dataUnit->uvalues().r.r.status == static_cast<quint8>(QModbus2DataUnit::FreqAdjustRecStatus::WAITING))
             {
                 qInfo() << "com.comm.state signal received during State " << (quint32)state
@@ -368,10 +425,10 @@ void AutomationModelDriverClz::sendResetCmd()
 void AutomationModelDriverClz::sendHandShakeCmd()
 {
     QModbus2DataUnit::HandShakeStruct v;
-    v.randomNum_1 = 0x55AA55AA;
-    v.randomNum_1 = 0x55AA55AA;
-    v.randomNum_1 = 0x55AA55AA;
-    v.randomNum_1 = 0x55AA55AA;
+    v.randomNum_1 = 0;
+    v.randomNum_2 = 0;
+    v.randomNum_3 = 0;
+    v.randomNum_4 = 0;
 
     QModbus2DataUnit data(QModbus2DataUnit::HandShakeCode, v);
     sendRequestCmd(data);
@@ -380,8 +437,10 @@ void AutomationModelDriverClz::sendHandShakeCmd()
 void AutomationModelDriverClz::sendFreqAdjustCmd()
 {
     QModbus2DataUnit::FreqAdjustStruct v;
-    v.freqValue_1 = mp_cfgRes->HZ();
-    v.freqValue_2 = mp_cfgRes->HZ();
+//    v.freqValue_1 = mp_cfgRes->HZ();
+//    v.freqValue_2 = mp_cfgRes->HZ();
+    v.freqValue_1 = 0;
+    v.freqValue_2 = 1;
     QModbus2DataUnit data(QModbus2DataUnit::FreqAdjustCode, v);
     sendRequestCmd(data);
 }
@@ -395,7 +454,7 @@ void AutomationModelDriverClz::sendAlarmQueryCmd()
 void AutomationModelDriverClz::sendMeasStartCmd()
 {
     QModbus2DataUnit::MeasStartStruct v;
-    v.distance = static_cast<quint16>(mp_data->getDis());
+    v.distance = static_cast<quint32>(mp_data->getDis());
     v.thro_1 = static_cast<quint8>(mp_data->getThro_1());
     v.thro_2 = static_cast<quint8>(mp_data->getThro_2());
     v.vol = static_cast<quint16>(mp_data->getVol());

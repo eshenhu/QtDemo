@@ -5,7 +5,7 @@
 #include <qlabel.h>
 
 class ActionWidget;
-class SettingsDialog;
+class QSerialPortSetting;
 
 class MainWindow : public QMainWindow
 {
@@ -21,9 +21,7 @@ public:
 private:
     ActionWidget* m_widget;
     QLabel *statusIndLabel;
-    SettingsDialog* settingDialog;
-
-    void configCOM();
+    QSerialPortSetting* settingDialog;
 signals:
 
 public slots:

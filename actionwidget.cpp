@@ -31,19 +31,20 @@
 #include "pentool.h"
 #include "brushtool.h"
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QGroupBox>
-#include <QtWidgets/QDoubleSpinBox>
-#include <QtWidgets/QFormLayout>
-#include <QtCharts/QChartView>
 
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include <QtCharts/QChartView>
 
 #include <QtGlobal>
 #include <QtWidgets/QMessageBox>
+#include <QHBoxLayout>
+#include <QTabWidget>
+#include <QMessageBox>
+#include <QDebug>
+#include <QProgressDialog>
+#include <QSerialPortInfo>
+
 #include "ui/compqchartwidget.h"
 #include "ui/configtab.h"
 #include "ui/testtab.h"
@@ -71,8 +72,22 @@ ActionWidget::ActionWidget(QWidget *parent)
     setLayout(baseLayout);
 
     m_driver = new AutomationModelDriverClz(this);
-    connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, m_driver, &AutomationModelDriverClz::startMeasTestSlot);
+
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
+    connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
+        QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
+        if (setting.name.isEmpty())
+        {
+            QMessageBox::warning(this, tr("Warning"),
+                                 tr("Scanning serial port failed \n"
+                                    "Please check your cable connection status"),
+                                 QMessageBox::Ok);
+            return;
+        }
+
+        m_driver->startMeasTest(setting);
+    });
+
 
 //    updateSerieSettings();
 //    updateChartSettings();
@@ -122,12 +137,108 @@ const CfgJsonReader *ActionWidget::reader() const
     return m_reader;
 }
 
-SettingsDialog *ActionWidget::settingDialog() const
+QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
+{
+    QSerialPortSetting::Settings p;
+
+    QSerialPort* serial = new QSerialPort();
+    serial->setBaudRate(p.baudRate);
+    serial->setDataBits(p.dataBits);
+    serial->setParity(p.parity);
+    serial->setStopBits(p.stopBits);
+    serial->setFlowControl(p.flowControl);
+
+    const auto infos = QSerialPortInfo::availablePorts();
+
+    QProgressDialog progress(tr("Scanning serial port ..."), tr("Abort scanning"), 0, infos.size(), this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+
+    int i = 0;
+    bool found = false;
+    for (const QSerialPortInfo &info : infos)
+    {
+        progress.setValue(i++);
+
+        if (progress.wasCanceled())
+            break;
+
+        if (serial->isOpen()){
+            serial->close();
+        }
+
+        p.name = info.portName();
+        serial->setPortName(p.name);
+
+        if (serial->open(QIODevice::ReadWrite)) {
+
+            // send Reset for ACK.
+            QByteArray writeData;
+            writeData.resize(9);
+            writeData[0] = 0xF0;
+            writeData[1] = 0xCC;
+            writeData[2] = 0x01;
+            writeData[3] = 0x00;
+            writeData[4] = 0xFE;
+            writeData[5] = 0xFF;
+            writeData[6] = 0x09;
+            writeData[7] = 0x7F;
+            writeData[8] = 0x46;
+
+            qint64 bytesWritten = serial->write(writeData);
+
+            if (bytesWritten == -1) {
+                qDebug() << "Failed to write the data to port" << p.name << "error: %2" << serial->errorString();
+                continue;
+            } else if (bytesWritten != writeData.size()) {
+                qDebug() << "Failed to write all the data to port " << p.name <<  ", error: " << serial->errorString();
+                continue;
+            } else if (!serial->waitForBytesWritten(5000)) {
+                qDebug() << "Operation timed out or an error occurred for port " << p.name << ", error: " << serial->errorString();
+                continue;
+            }
+
+            qDebug() << "Data successfully sent to port" << p.name;
+
+            QByteArray readData = serial->readAll();
+            while (serial->waitForReadyRead(2000))
+                readData.append(serial->readAll());
+
+            if (serial->error() == QSerialPort::ReadError) {
+                qDebug() << "Failed to read from port " << p.name << ", error: " << serial->errorString();
+                continue;
+            } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
+                qDebug() << "No data was currently available for reading from port " << p.name;
+                continue;
+            }
+
+            qDebug() << "Data successfully received from port" << p.name;
+            qDebug() << readData << endl;
+
+            serial->close();
+            found = true;
+            break;
+        }
+        else
+        {
+            qDebug() << "util.qSerialPortHelper Open Port" << info.portName()
+                     << "failed!";
+        }
+    }
+    progress.setValue(infos.size());
+
+    if (!found){
+        p.name = QString("");
+    }
+    return p;
+}
+
+QSerialPortSetting *ActionWidget::settingDialog() const
 {
     return m_settingDialog;
 }
 
-void ActionWidget::setSettingDialog(SettingsDialog *settingDialog)
+void ActionWidget::setSettingDialog(QSerialPortSetting *settingDialog)
 {
     m_settingDialog = settingDialog;
 }

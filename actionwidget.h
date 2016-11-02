@@ -33,20 +33,19 @@
 #include <QtCharts/QChartGlobal>
 #include <qdialogbuttonbox.h>
 #include <qspinbox.h>
+#include "util/dserialportsetting.h"
 
 QT_BEGIN_NAMESPACE
-class QLineEdit;
 class QPushButton;
 class QCheckBox;
 class QComboBox;
-class QDoubleSpinBox;
 class QTabWidget;
 QT_END_NAMESPACE
 
 class PenTool;
 class BrushTool;
 class CustomSlice;
-class SettingsDialog;
+class QSerialPortSetting;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QChartView;
@@ -69,15 +68,18 @@ public:
     explicit ActionWidget(QWidget *parent = 0);
     ~ActionWidget();
 
-    void setSettingDialog(SettingsDialog *settingDialog);
-    SettingsDialog *settingDialog() const;
+    void setSettingDialog(QSerialPortSetting *settingDialog);
+    QSerialPortSetting *settingDialog() const;
 
     const CfgJsonReader *reader() const;
 
 public Q_SLOTS:
+    //void slotMeasStartAction(bool checked);
 //    void updateChartSettings();
 //    void updateSerieSettings();
 //    void updateSliceSettings();
+private:
+    QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
 
 private:
     QChartView*       m_chartView;
@@ -86,7 +88,7 @@ private:
     ConfigTab*        m_subConfigTabWidget;
     QTabWidget*       m_tabWidget;
     QDialogButtonBox* m_buttonBox;
-    SettingsDialog*   m_settingDialog;
+    QSerialPortSetting*   m_settingDialog;
 
     CfgResHandler*    m_cfgHandler;
     CfgJsonReader*    m_reader;

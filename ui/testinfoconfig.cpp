@@ -31,7 +31,8 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
 //    });
     //connect(ui->ESCFreq_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFreqChanged(int)));
 
-    m_model->setHZ(ui->ESCFreq_combox->currentText().toInt());
+    m_model->setHZ(ui->ESCFreq_combox->currentIndex());
+
     m_model->setVane(ui->propVanes_combox->currentText().toInt());
 
     connect(ui->ESCFreq_combox,

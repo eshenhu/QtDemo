@@ -4,7 +4,7 @@
 #include <QToolBar>
 #include <qlabel.h>
 #include <qstatusbar.h>
-#include "ui/settingsdialog.h"
+#include "util/qserialporthelper.h"
 
 MainWindow::MainWindow(QWidget* parent)
 {
@@ -32,21 +32,16 @@ void MainWindow::createStatusBar()
     //connect(m_widget, SIGNAL(modified()), this, SLOT(spreadsheetModified()));
     updateStatusBar(tr("init"));
 }
-void MainWindow::configCOM()
-{
-    settingDialog = new SettingsDialog();
-    settingDialog->exec();
-}
 
 void MainWindow::createActions()
 {
     QToolBar *fileToolBar = addToolBar(tr("Config"));
-    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
-    QAction *newAct = new QAction(newIcon, tr("COM"), this);
-    newAct->setShortcuts(QKeySequence::New);
-    newAct->setStatusTip(tr("Config a COM port"));
-    connect(newAct, &QAction::triggered, this, &MainWindow::configCOM);
-    fileToolBar->addAction(newAct);
+//    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
+//    QAction *newAct = new QAction(newIcon, tr("COM"), this);
+//    newAct->setShortcuts(QKeySequence::New);
+//    newAct->setStatusTip(tr("Config a COM port"));
+//    connect(newAct, &QAction::triggered, this, &MainWindow::configCOM);
+//    fileToolBar->addAction(newAct);
 
 //    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
 //    QAction *openAct = new QAction(openIcon, tr("&Open..."), this);

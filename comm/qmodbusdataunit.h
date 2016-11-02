@@ -110,7 +110,7 @@ public:
         quint16 vol;
         quint8 thro_1;
         quint8 thro_2;
-        quint16 distance;
+        quint32 distance;
     };
 
     enum class MeasStartRecStatusEnum : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
