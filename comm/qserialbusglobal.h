@@ -41,15 +41,17 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_STATIC
-#  if defined(QT_BUILD_SERIALBUS_LIB)
-#    define Q_SERIALBUS_EXPORT Q_DECL_EXPORT
-#  else
-#    define Q_SERIALBUS_EXPORT Q_DECL_IMPORT
-#  endif
-#else
-#  define Q_SERIALBUS_EXPORT
-#endif
+//#ifndef QT_STATIC
+//#  if defined(QT_BUILD_SERIALBUS_LIB)
+//#    define Q_SERIALBUS_EXPORT Q_DECL_EXPORT
+//#  else
+//#    define Q_SERIALBUS_EXPORT Q_DECL_IMPORT
+//#  endif
+//#else
+//#  define Q_SERIALBUS_EXPORT
+//#endif
+
+#define Q_SERIALBUS_EXPORT
 
 QT_END_NAMESPACE
 

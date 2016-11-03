@@ -94,12 +94,16 @@ SUBDIRS += \
 
 DISTFILES +=
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lqtcsv.1.0.0
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lqtcsv.1.0.0
-else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lqtcsv.1.0.0
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -lqtcsv.1.0.0
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lqtcsv.1.0.0
+#else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lqtcsv.1.0.0
 
-INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv
-DEPENDPATH += $$PWD/../../../../../../usr/local/include/qtcsv
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/
+else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/
+
+#INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv
+#DEPENDPATH += $$PWD/../../../../../../usr/local/include/qtcsv
 
 RESOURCES += \
     resource/productversion.qrc

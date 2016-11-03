@@ -152,7 +152,7 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
 
     QProgressDialog progress(tr("Scanning serial port ..."), tr("Abort scanning"), 0, infos.size(), this);
     progress.setWindowModality(Qt::WindowModal);
-    progress.show();
+    progress.setMinimumDuration(4000);
 
     int i = 0;
     bool found = false;

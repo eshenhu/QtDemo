@@ -8,6 +8,6 @@
 
 QFile *FileFactory::makeNewFile()
 {
-    QString str = QCoreApplication::applicationDirPath() + '/data';
+    //QString str = QCoreApplication::applicationDirPath() + '/data';
     return new QFile("in.csv");
 }
