@@ -2,6 +2,7 @@
 #define TESTTAB_H
 
 #include <QWidget>
+#include "ui/uitestbasedstruct.h"
 
 class QSpinBox;
 class QDialogButtonBox;
@@ -79,10 +80,18 @@ private:
     QComboBox *m_voltage_step;
     QComboBox *m_duration;
     QPushButton *m_apply_btn;
-public:
 
+public:
     explicit VoltageTstTab(QWidget *parent = 0);
+
+signals:
+    void updateUserSelection(VoltageTstData data);
+
+private:
+    void validateUserInput(bool checked = false);
 };
+
+
 class ThrottleTstTab : public QWidget
 {
     Q_OBJECT
@@ -95,6 +104,12 @@ class ThrottleTstTab : public QWidget
 
 public:
     explicit ThrottleTstTab(QWidget *parent = 0);
+
+signals:
+    void updateUserSelection(ThrottleTstData data);
+
+private:
+    void validateUserInput(bool checked = false);
 };
 class MultipleTstTab : public QWidget
 {

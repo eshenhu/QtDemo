@@ -9,9 +9,6 @@ TEMPLATE = app
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    pentool.cpp \
-    brushtool.cpp \
-    customslice.cpp \
     actionwidget.cpp \
     mainwindow.cpp \
     ui/configtab.cpp \
@@ -40,9 +37,6 @@ SOURCES += main.cpp \
     util/qserialporthelper.cpp
 
 HEADERS += \
-    pentool.h \
-    brushtool.h \
-    customslice.h \
     actionwidget.h \
     mainwindow.h \
     ui/configtab.h \
@@ -82,7 +76,8 @@ HEADERS += \
     ui/compqchartwidget.h \
     ui/qrtlineseries.h \
     util/qserialporthelper.h \
-    util/dserialportsetting.h
+    util/dserialportsetting.h \
+    ui/uitestbasedstruct.h
 
 FORMS += \
     ui/testinfoconfig.ui \

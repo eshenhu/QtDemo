@@ -318,6 +318,8 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
 
     m_apply_btn = new QPushButton(tr("Apply"));
 
+    connect(m_apply_btn, SIGNAL(clicked(bool)), this, SLOT(validateUserInput(bool)));
+
     QFormLayout *seriesSettingsLayout = new QFormLayout();
     seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
     seriesSettingsLayout->addRow(tr("Vol Beg(V)"), m_voltage_start);
@@ -337,8 +339,28 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
         Q_UNUSED(checked)
 
-
     });
+}
+
+void VoltageTstTab::validateUserInput(bool checked)
+{
+    Q_UNUSED(checked)
+    if(m_voltage_start->value() >= m_voltage_end->value())
+    {
+        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                             tr("The END value is larger than START value"),
+                             QMessageBox::Close);
+        warningBox.exec();
+        return;
+    }
+
+    VoltageTstData data;
+    data.thro = m_throttle->value();
+    data.vol_beg = m_voltage_start->value();
+    data.vol_end = m_voltage_end->value();
+    data.vol_step = (quint16)m_voltage_step->currentText().toInt();
+    data.duration = (quint16)m_duration->currentText().toInt();
+    emit updateUserSelection(data);
 }
 
 ThrottleTstTab::ThrottleTstTab(QWidget *parent)
@@ -385,6 +407,8 @@ ThrottleTstTab::ThrottleTstTab(QWidget *parent)
 
     m_apply_btn = new QPushButton(tr("Apply"));
 
+    connect(m_apply_btn, SIGNAL(clicked(bool)), this, SLOT(validateUserInput(bool)));
+
     QFormLayout *seriesSettingsLayout = new QFormLayout();
     seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
     seriesSettingsLayout->addRow(tr("Thr Beg(%)"), m_thro_start);
@@ -400,6 +424,29 @@ ThrottleTstTab::ThrottleTstTab(QWidget *parent)
     horizonLayout->addLayout(outputListLayout, 1);
 
     setLayout(horizonLayout);
+}
+
+void ThrottleTstTab::validateUserInput(bool checked)
+{
+    Q_UNUSED(checked)
+    if(m_thro_start->value() >= m_thro_end->value())
+    {
+        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                             tr("The START %d value is larger than END %d value")
+                               .arg(QString::number(m_thro_start->value()),
+                                    QString::number(m_thro_end->value())),
+                             QMessageBox::Close);
+        warningBox.exec();
+        return;
+    }
+
+    ThrottleTstData data;
+    data.vol = m_voltage->value();
+    data.thro_beg = m_thro_start->value();
+    data.thro_end = m_thro_end->value();
+    data.thro_step = (quint16)m_thro_step->currentText().toInt();
+    data.duration = (quint16)m_duration->currentText().toInt();
+    emit updateUserSelection(data);
 }
 
 MultipleTstTab::MultipleTstTab(QWidget *parent)

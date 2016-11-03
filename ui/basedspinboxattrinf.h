@@ -20,8 +20,6 @@ public:
     virtual QString unit() const = 0;
 
     virtual void update(const QModbus2DataUnit* data) = 0;
-//    virtual std::function<qint32(const QModbus2DataUnit*, const quint8 idx)> function() const = 0;
-//    virtual std::function<double(qint32)> formula() const = 0;
 };
 
 Q_DECLARE_INTERFACE(BasedSpinBoxAttrInf, "BasedSpinBoxAttrInf/1.0")

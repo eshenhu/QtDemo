@@ -27,9 +27,6 @@
 **
 ****************************************************************************/
 #include "actionwidget.h"
-#include "customslice.h"
-#include "pentool.h"
-#include "brushtool.h"
 #include <QtWidgets/QPushButton>
 
 #include <QtCharts/QLineSeries>
