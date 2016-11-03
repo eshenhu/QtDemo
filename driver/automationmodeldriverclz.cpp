@@ -87,8 +87,19 @@ void AutomationModelDriverClz::setupModbusDevice()
 //    return true;
 //}
 
+void AutomationModelDriverClz::resetMeasDataUnit()
+{
+    // delete the previous meas data struct;
+    if (mp_refresh){
+        delete mp_refresh;
+    }
+}
+
+
 void AutomationModelDriverClz::startMeasTest(const QSerialPortSetting::Settings setting)
 {
+    resetMeasDataUnit();
+
     if (!modbusDevice)
         return;
 

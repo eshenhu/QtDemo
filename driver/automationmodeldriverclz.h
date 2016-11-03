@@ -73,6 +73,8 @@ public:
 private:
     void connect();
 
+    void resetMeasDataUnit();
+
     void processSendTimeout();
     void setupModbusDevice();
     void sendRequestCmd(const QModbus2DataUnit& writeUnit);

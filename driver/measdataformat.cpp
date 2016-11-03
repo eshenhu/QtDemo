@@ -109,9 +109,9 @@ bool AbstractPeriodicalMeasDataUpdate::update()
     return rtn;
 }
 
-PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 thro,
+PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
                                                          const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                                         const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec):
+                                                         const quint32 durationInSec, const quint32 intervalInMSec):
     AbstractPeriodicalMeasDataUpdate(delay_start, soft_delay, boot_voltage, durationInSec, intervalInMSec),
     m_start_vol(start),
     m_end_vol(end),
@@ -120,11 +120,12 @@ PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const quint32 start, co
 {
     if (m_start_vol > m_end_vol)
     {
+        m_step = 0;
         qWarning() << "com.meas.driver - PeriodicalVolMeasDataUpdate m_start_vol" << m_start_vol << "< m_end_vold" << m_end_vol;
     }
     else
     {
-        m_step = (end - start) / (totalInSec/durationInSec);
+        m_step = step;
     }
 }
 
@@ -140,6 +141,49 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
 
         m_calc_value += m_step;
         if(m_calc_value > m_end_vol)
+        {
+            rtn = true;
+        }
+    }
+    else
+    {
+        rtn = true;
+    }
+    return rtn;
+}
+
+PeriodicalThroMeasDataUpdate::PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
+                                                           const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+                                                           const quint32 durationInSec, const quint32 intervalInMSec)
+    :AbstractPeriodicalMeasDataUpdate(delay_start, soft_delay, boot_voltage, durationInSec, intervalInMSec),
+      m_start_thro(start),
+      m_end_thro(end),
+      m_step(0),
+      m_vol(vol),
+      m_calc_value(start)
+{
+    if (m_start_thro > m_end_thro)
+    {
+        qWarning() << "com.meas.driver - PeriodicalThroMeasDataUpdate m_start_thro" << m_start_thro << "< m_end_thro" << m_end_thro;
+    }
+    else
+    {
+        m_step = step;
+    }
+}
+
+bool PeriodicalThroMeasDataUpdate::updateValue()
+{
+    bool rtn = false;
+    if (m_start_thro <= m_end_thro)
+    {
+        m_data->setVol(m_vol);
+        m_data->setThro_1(m_start_thro);
+        m_data->setThro_2(m_start_thro);
+        m_data->setDis(UINT_MAX);
+
+        m_calc_value += m_step;
+        if(m_calc_value > m_end_thro)
         {
             rtn = true;
         }

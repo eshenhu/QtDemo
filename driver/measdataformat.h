@@ -96,9 +96,9 @@ public:
 class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
-    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 thro,
+    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
                                 const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
+                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalVolMeasDataUpdate(){}
 
 private:
@@ -116,15 +116,15 @@ public:
 class PeriodicalThroMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
-    PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol,
+    PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
                                  const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                 const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
+                                 const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalThroMeasDataUpdate(){}
 
 private:
-    const quint32 m_step;
     const quint32 m_start_thro;
     const quint32 m_end_thro;
+    quint32 m_step;
     const quint32 m_vol;
     quint32 m_calc_value;
 
