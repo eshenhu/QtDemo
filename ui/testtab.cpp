@@ -14,6 +14,8 @@
 #include <QTabWidget>
 #include <QMessageBox>
 
+#include <QDebug>
+
 class ConstValue
 {
 public:
@@ -65,17 +67,6 @@ public:
 TestTab::TestTab(QWidget *parent)
     : QWidget(parent)
 {
-    // test settings
-//    m_testSeletionComboBox = new QComboBox();
-//    m_testSeletionComboBox->addItem(tr("Distance"));
-//    m_testSeletionComboBox->addItem(tr("Voltage"));
-//    m_testSeletionComboBox->addItem(tr("Throttle"));
-//    m_testSeletionComboBox->addItem(tr("Multiple"));
-//    m_testSeletionComboBox->addItem(tr("Aging"));
-//    m_testSeletionComboBox->addItem(tr("Calibrate"));
-//    m_testSeletionComboBox->addItem(tr("Manual"));
-//    m_testSeletionComboBox->setCurrentIndex(TestPlanEnum::Distance);
-
     m_volCheckBox = new QCheckBox();
     m_animationsCheckBox = new QCheckBox();
     m_animationsCheckBox->setCheckState(Qt::Checked);
@@ -108,8 +99,13 @@ TestTab::TestTab(QWidget *parent)
     m_tabWidget = new QTabWidget;
     m_tabWidget->setTabPosition(QTabWidget::West);
     tabList[TestPlanEnum::Distance] = new DistanceTstTab();
-    tabList[TestPlanEnum::Voltage] = new VoltageTstTab();
-    tabList[TestPlanEnum::Throttle] = new ThrottleTstTab();
+
+    m_volTstTab = new VoltageTstTab();
+    tabList[TestPlanEnum::Voltage] = m_volTstTab;
+
+    m_throTstTab = new ThrottleTstTab();
+    tabList[TestPlanEnum::Throttle] = m_throTstTab;
+
     tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
     tabList[TestPlanEnum::Aging] = new AgingTstTab();
     tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
@@ -117,7 +113,15 @@ TestTab::TestTab(QWidget *parent)
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Voltage], tr("Voltage"));
+    connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
+        emit updateUserSelection(data);
+    } );
+
     m_tabWidget->addTab(tabList[TestPlanEnum::Throttle], tr("Throttle"));
+    connect(m_throTstTab, &ThrottleTstTab::updateUserSelection, [this](ThrottleTstData data){
+        emit updateUserSelection(data);
+    } );
+
     m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
@@ -432,9 +436,7 @@ void ThrottleTstTab::validateUserInput(bool checked)
     if(m_thro_start->value() >= m_thro_end->value())
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The START %d value is larger than END %d value")
-                               .arg(QString::number(m_thro_start->value()),
-                                    QString::number(m_thro_end->value())),
+                             tr("The START value is larger than END value"),
                              QMessageBox::Close);
         warningBox.exec();
         return;

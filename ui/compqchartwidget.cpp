@@ -49,7 +49,7 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data)
 QChartView* CompQChartWidget::makeNewChart()
 {
     QRTLineSeries *series = new QRTLineSeries();
-    *series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
+    //*series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
 
     QChart *chart = new QChart();
     chart->addSeries(series);
@@ -105,22 +105,9 @@ void CompQChartWidget::createCheckBoxView()
     QPushButton* applyButton = new QPushButton(tr("Apply"));
 
     connect(applyButton, &QPushButton::clicked, [this](){
-//        quint32 totalNum = 0;
-//        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-//        foreach (const QExtCheckBox* box, checkboxList)
-//        {
-//            if (box->isChecked())
-//            {
-//                ++totalNum;
-//                if (totalNum > MAX_NUM_CHARTS_SUPPORT)
-//                {
-//                    qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
-//                    return;
-//                }
-//            }
-//        }
         updateChartsView();
     });
+
     m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
 }
 

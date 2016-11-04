@@ -4,7 +4,7 @@
 #include <QJsonObject>
 #include <QString>
 #include "comm/qmodbusdataunit.h"
-
+#include "ui/uitestbasedstruct.h"
 class indexOnMotor
 {
 public:
@@ -35,17 +35,6 @@ private:
     QModbus2DataUnit::MotorTypeEnum m_motorType;
     quint8 m_numOfMotor;
 };
-
-enum JsonGUIPrimType : quint8 { INVALID,
-                               VOLTAGE,
-                               CURRENT,
-                               FORCE,
-                               THROTTLE,
-                               SPEED,
-                               TEMP,
-                               POWEREFFEC,
-                               VIBRATE,
-                               POWER };
 
 class JsonGUIElement{
 public:

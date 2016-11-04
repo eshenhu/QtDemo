@@ -7,6 +7,7 @@
 #include "util/qserialporthelper.h"
 #include "comm/qmodbusdataunit.h"
 #include "driver/signaloverline.h"
+#include "ui/uitestbasedstruct.h"
 
 class QModbus2Client;
 class QModbus2Reply;
@@ -69,7 +70,7 @@ public slots:
     void readReady();
 
 public:
-    void startMeasTest(const QSerialPortSetting::Settings setting);
+    void startMeasTest(const UiCompMeasData data, const QSerialPortSetting::Settings setting);
 private:
     void connect();
 

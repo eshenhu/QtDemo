@@ -21,35 +21,6 @@ enum TestPlanEnum {
     Manual
 };
 
-class TestTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit TestTab(QWidget *parent = 0);
-
-public:
-    QTabWidget *m_tabWidget;
-    QWidget* tabList[TestPlanEnum::Manual + 1];
-    QWidget* lastActiveWidget;
-
-    QPushButton *start_btn() const;
-
-private:
-    //QComboBox *m_testSeletionComboBox;
-    QCheckBox *m_volCheckBox;
-    QCheckBox *m_animationsCheckBox;
-    QCheckBox *m_legendCheckBox;
-
-    QDialogButtonBox* m_buttonBox;
-
-    QPushButton* m_start_btn;
-    QPushButton* m_showgraph_btn;
-
-private:
-    void enableTestTab(TestPlanEnum);
-};
-
 class DistanceTstTab : public QWidget
 {
     Q_OBJECT
@@ -84,10 +55,10 @@ private:
 public:
     explicit VoltageTstTab(QWidget *parent = 0);
 
-signals:
+Q_SIGNALS:
     void updateUserSelection(VoltageTstData data);
 
-private:
+public slots:
     void validateUserInput(bool checked = false);
 };
 
@@ -105,12 +76,13 @@ class ThrottleTstTab : public QWidget
 public:
     explicit ThrottleTstTab(QWidget *parent = 0);
 
-signals:
+Q_SIGNALS:
     void updateUserSelection(ThrottleTstData data);
 
-private:
+public slots:
     void validateUserInput(bool checked = false);
 };
+
 class MultipleTstTab : public QWidget
 {
     Q_OBJECT
@@ -139,5 +111,43 @@ class ManualTstTab : public QWidget
 public:
     explicit ManualTstTab(QWidget *parent = 0);
 };
+
+class TestTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit TestTab(QWidget *parent = 0);
+
+public:
+    QTabWidget *m_tabWidget;
+    QWidget* tabList[TestPlanEnum::Manual + 1];
+    QWidget* lastActiveWidget;
+
+    QPushButton *start_btn() const;
+
+private:
+    //QComboBox *m_testSeletionComboBox;
+    QCheckBox *m_volCheckBox;
+    QCheckBox *m_animationsCheckBox;
+    QCheckBox *m_legendCheckBox;
+
+    QDialogButtonBox* m_buttonBox;
+
+    QPushButton* m_start_btn;
+    QPushButton* m_showgraph_btn;
+
+    VoltageTstTab* m_volTstTab;
+    ThrottleTstTab* m_throTstTab;
+
+Q_SIGNALS:
+    void updateUserSelection(ThrottleTstData data);
+    void updateUserSelection(VoltageTstData data);
+
+private:
+    void enableTestTab(TestPlanEnum);
+};
+
+
 
 #endif // TESTTAB_H

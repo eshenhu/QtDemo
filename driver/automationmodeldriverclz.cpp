@@ -96,9 +96,24 @@ void AutomationModelDriverClz::resetMeasDataUnit()
 }
 
 
-void AutomationModelDriverClz::startMeasTest(const QSerialPortSetting::Settings setting)
+void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSerialPortSetting::Settings setting)
 {
-    resetMeasDataUnit();
+    if (mp_refresh)
+        delete mp_refresh;
+//    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
+//                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+//                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+    if (data.type == JsonGUIPrimType::VOLTAGE){
+        mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step,
+                                                     data.data.u.thro, 3, 5, 5, data.data.u.duration);
+    }
+    else if (data.type == JsonGUIPrimType::THROTTLE){
+        mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step,
+                                                      data.data.v.vol, 3, 5, 5, data.data.v.duration);
+    }
+    else{
+        qWarning() << tr("com.engine Sorry, we don't support this selection temporaily ");
+    }
 
     if (!modbusDevice)
         return;

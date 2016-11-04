@@ -80,30 +80,6 @@
           "unit": "C"
         },
         {
-          "text": "X VIBRATE",
-          "index": 0,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Y VIBRATE",
-          "index": 10,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Z VIBRATE",
-          "index": 20,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
           "text": "POWER",
           "index": 255,
           "isSelected": false,
@@ -262,30 +238,6 @@
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "g/A"
-        },
-        {
-          "text": "X VIBRATE",
-          "index": 1,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Y VIBRATE",
-          "index": 11,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Z VIBRATE",
-          "index": 21,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
         },
         {
           "text": "POWER",

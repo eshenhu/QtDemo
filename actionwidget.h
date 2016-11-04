@@ -34,6 +34,7 @@
 #include <qdialogbuttonbox.h>
 #include <qspinbox.h>
 #include "util/dserialportsetting.h"
+#include "ui/uitestbasedstruct.h"
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -60,6 +61,7 @@ class AutomationModelDriverClz;
 class TestTab;
 class ConfigTab;
 
+
 class ActionWidget : public QWidget
 {
     Q_OBJECT
@@ -74,10 +76,14 @@ public:
     const CfgJsonReader *reader() const;
 
 public Q_SLOTS:
-    //void slotMeasStartAction(bool checked);
+    void updateUserInput(VoltageTstData data);
+    void updateUserInput(ThrottleTstData data);
+//    void slotMeasStartAction(bool checked);
 //    void updateChartSettings();
 //    void updateSerieSettings();
 //    void updateSliceSettings();
+
+
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
 
@@ -92,6 +98,8 @@ private:
 
     CfgResHandler*    m_cfgHandler;
     CfgJsonReader*    m_reader;
+
+    UiCompMeasData    m_measData;
 
     AutomationModelDriverClz* m_driver;
     void createTabWidget();

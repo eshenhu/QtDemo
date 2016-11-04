@@ -54,6 +54,7 @@ QT_CHARTS_USE_NAMESPACE
 ActionWidget::ActionWidget(QWidget *parent)
     : QWidget(parent)
 {
+    m_measData.type = JsonGUIPrimType::INVALID;
     m_cfgHandler = new CfgResHandler();
     m_reader = new CfgJsonReader();
     m_reader->load("PV1");
@@ -73,8 +74,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
         QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
-        if (setting.name.isEmpty())
-        {
+        if (setting.name.isEmpty()){
             QMessageBox::warning(this, tr("Warning"),
                                  tr("Scanning serial port failed \n"
                                     "Please check your cable connection status"),
@@ -82,7 +82,15 @@ ActionWidget::ActionWidget(QWidget *parent)
             return;
         }
 
-        m_driver->startMeasTest(setting);
+        if (m_measData.type == JsonGUIPrimType::INVALID){
+            QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
+                                                         "Please make your selection"),
+                                 QMessageBox::Ok);
+            return;
+        }
+        m_driver->startMeasTest(m_measData, setting);
+        //reset.
+        m_measData.type = JsonGUIPrimType::INVALID;
     });
 
 
@@ -105,7 +113,13 @@ void ActionWidget::createTabWidget()
     m_tabWidget = new QTabWidget;
     m_tabWidget->setTabPosition(QTabWidget::West);
     m_tabWidget->setTabBarAutoHide(true);
+
     m_subTestTabWidget = new TestTab();
+    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(VoltageTstData)),
+            this, SLOT(updateUserInput(VoltageTstData)));
+    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(ThrottleTstData)),
+            this, SLOT(updateUserInput(ThrottleTstData)));
+
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
     m_subConfigTabWidget = new ConfigTab(m_cfgHandler);
     m_tabWidget->addTab(m_subConfigTabWidget, tr("Config"));
@@ -132,6 +146,18 @@ void ActionWidget::createTabWidget()
 const CfgJsonReader *ActionWidget::reader() const
 {
     return m_reader;
+}
+
+void ActionWidget::updateUserInput(VoltageTstData data)
+{
+    m_measData.type = JsonGUIPrimType::VOLTAGE;
+    m_measData.data.u = data;
+}
+
+void ActionWidget::updateUserInput(ThrottleTstData data)
+{
+    m_measData.type = JsonGUIPrimType::THROTTLE;
+    m_measData.data.v = data;
 }
 
 QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
@@ -204,10 +230,14 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
                 } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
                     qDebug() << "No data was currently available for reading from port " << p.name;
                     break;
+                } else if (readData.at(6) != 0x0a || readData.at(6) != 0x0b){
+                    qDebug() << "No matching function code received" << readData.at(6);
+                    break;
                 }
 
+
                 qDebug() << "Data successfully received from port" << p.name;
-                qDebug() << readData;
+                qDebug() << readData.toHex();
 
                 found = true;
                 break;

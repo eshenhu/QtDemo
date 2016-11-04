@@ -29,13 +29,12 @@ void MainWindow::createStatusBar()
 
     statusBar()->addWidget(statusIndLabel);
 
-    //connect(m_widget, SIGNAL(modified()), this, SLOT(spreadsheetModified()));
     updateStatusBar(tr("init"));
 }
 
 void MainWindow::createActions()
 {
-    QToolBar *fileToolBar = addToolBar(tr("Config"));
+//    QToolBar *fileToolBar = addToolBar(tr("Config"));
 //    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
 //    QAction *newAct = new QAction(newIcon, tr("COM"), this);
 //    newAct->setShortcuts(QKeySequence::New);

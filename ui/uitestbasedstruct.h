@@ -1,7 +1,6 @@
 #ifndef UITESTBASEDSTRUCT_H
 #define UITESTBASEDSTRUCT_H
 
-
 struct VoltageTstData
 {
    quint16 thro;
@@ -19,6 +18,36 @@ struct ThrottleTstData
    quint16 thro_step;
    quint16 duration;
 };
+
+enum JsonGUIPrimType : quint8 { INVALID,
+                               VOLTAGE,
+                               CURRENT,
+                               FORCE,
+                               THROTTLE,
+                               SPEED,
+                               TEMP,
+                               POWEREFFEC,
+                               VIBRATE,
+                               POWER };
+
+//enum UiMeasType
+//{
+//    INVALID = 0,
+//    VOLTAGE = 1,
+//    THROTTLE = 2
+//};
+
+union UiMeasData{
+    VoltageTstData u;
+    ThrottleTstData v;
+};
+
+struct UiCompMeasData{
+    JsonGUIPrimType type;
+    UiMeasData data;
+};
+
+
 
 
 #endif // UITESTBASEDSTRUCT_H
