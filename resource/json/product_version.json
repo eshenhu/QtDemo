@@ -17,15 +17,15 @@
         },
         {
           "text": "CURRENT",
-          "index": 255,
+          "index": 0,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 40,
           "unit": "A"
         },
         {
-          "text": "FORCE",
-          "index": 255,
+          "text": "THRUST",
+          "index": 0,
           "isSelected": true,
           "lowLimit": -5000,
           "upLimit": 5000,
@@ -33,16 +33,16 @@
         },
         {
           "text": "THROTTLE",
-          "index": 255,
-          "isSelected": false,
+          "index": 0,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "%"
         },
         {
           "text": "SPEED",
-          "index": 255,
-          "isSelected": false,
+          "index": 0,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 50000,
           "unit": "RPM"
@@ -50,30 +50,30 @@
         {
           "text": "TEMP_1",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
         },
         {
           "text": "TEMP_2",
-          "index": 10,
-          "isSelected": false,
+          "index": 16,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
         },
         {
-          "text": "POWEREFFEC 1",
+          "text": "EFFICIENCY 1",
           "index": 0,
           "isSelected": false,
-          "lowLimit": -20,
-          "upLimit": 20,
+          "lowLimit": 0,
+          "upLimit": 100,
           "unit": "g/W"
         },
         {
-          "text": "POWEREFFEC 2",
-          "index": 10,
+          "text": "EFFICIENCY 2",
+          "index": 16,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -81,8 +81,8 @@
         },
         {
           "text": "POWER",
-          "index": 255,
-          "isSelected": false,
+          "index": 0,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 1000,
           "unit": "W"
@@ -105,15 +105,15 @@
         },
         {
           "text": "CURRENT",
-          "index": 255,
+          "index": 0,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 40,
           "unit": "A"
         },
         {
-          "text": "FORCE",
-          "index": 255,
+          "text": "THRUST",
+          "index": 0,
           "isSelected": true,
           "lowLimit": -5000,
           "upLimit": 5000,
@@ -121,7 +121,7 @@
         },
         {
           "text": "THROTTLE",
-          "index": 255,
+          "index": 0,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
@@ -145,14 +145,14 @@
         },
         {
           "text": "TEMP_2",
-          "index": 10,
+          "index": 16,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
         },
         {
-          "text": "POWEREFFEC 1",
+          "text": "EFFICIENCY 1",
           "index": 0,
           "isSelected": false,
           "lowLimit": -20,
@@ -160,36 +160,12 @@
           "unit": "g/W"
         },
         {
-          "text": "POWEREFFEC 2",
-          "index": 10,
+          "text": "EFFICIENCY 2",
+          "index": 16,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "g/A"
-        },
-        {
-          "text": "X VIBRATE",
-          "index": 0,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Y VIBRATE",
-          "index": 10,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
-        },
-        {
-          "text": "Z VIBRATE",
-          "index": 20,
-          "isSelected": false,
-          "lowLimit": -10,
-          "upLimit": 10,
-          "unit": "g0"
         },
         {
           "text": "POWER",
@@ -217,14 +193,14 @@
         },
         {
           "text": "TEMP_2",
-          "index": 11,
+          "index": 17,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
         },
         {
-          "text": "POWEREFFEC 1",
+          "text": "EFFICIENCY 1",
           "index": 1,
           "isSelected": false,
           "lowLimit": -20,
@@ -232,8 +208,8 @@
           "unit": "g/W"
         },
         {
-          "text": "POWEREFFEC 2",
-          "index": 11,
+          "text": "EFFICIENCY 2",
+          "index": 17,
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 100,

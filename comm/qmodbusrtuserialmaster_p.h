@@ -126,14 +126,14 @@ public:
 //                return;
 //            }
 
-            // server address byte + function code byte + PDU size + 2 bytes CRC
-//            int aduSize = 2 + pduSizeWithoutFcode + 2;
-//            if (tmpAdu.rawSize() < aduSize) {
-//                qCDebug(QT_MODBUS2) << "(RTU client) Incomplete ADU received, ignoring";
-//                return;
-//            }
 
+            //server address byte + function code byte + PDU size + 2 bytes CRC
             qint32 aduSize = 2 + 2 + 2 + pduSize + 2;
+            if (responseBuffer.size() < aduSize) {
+                qCDebug(QT_MODBUS2) << "(RTU client) Incomplete ADU received, ignoring";
+                return;
+            }
+
             const QModbusSerialAdu adu(QModbusSerialAdu::Rtu, responseBuffer.left(aduSize));
             responseBuffer.remove(0, aduSize);
 
@@ -216,6 +216,7 @@ public:
         });
 
         QObject::connect(m_serialPort, &QSerialPort::bytesWritten, q, [this](qint64 bytes) {
+            qCDebug(QT_MODBUS2) << "(RTU client) bytesWritten to device" << m_current.bytesWritten;
             m_current.bytesWritten += bytes;
         });
 
@@ -326,20 +327,24 @@ public:
             // send timeout will always happen
             if (m_current.reply.isNull()) {
                 scheduleNextRequest();
-            } else if (m_current.bytesWritten < m_current.adu.size()) {
-                qCDebug(QT_MODBUS2) << "(RTU client) Send failed:" << m_current.requestPdu;
+            }
+//            else if (m_current.bytesWritten < m_current.adu.size()) {
+//                qCDebug(QT_MODBUS2) << "(RTU client) Send failed:" << m_current.requestPdu
+//                                    << "byteWrite: " << m_current.bytesWritten
+//                                    << "adu.Size:" << m_current.adu.size();
 
-                if (m_current.numberOfRetries <= 0) {
-                    if (m_current.reply) {
-                        m_current.reply->setError(QModbus2Device::TimeoutError,
-                            QModbus2Client::tr("Request timeout."));
-                    }
-                    scheduleNextRequest();
-                } else {
-                    m_serialPort->clear(QSerialPort::AllDirections);
-                    QTimer::singleShot(m_interFrameDelayMilliseconds, [writeAdu]() { writeAdu(); });
-                }
-            } else {
+//                if (m_current.numberOfRetries <= 0) {
+//                    if (m_current.reply) {
+//                        m_current.reply->setError(QModbus2Device::TimeoutError,
+//                            QModbus2Client::tr("Request timeout."));
+//                    }
+//                    scheduleNextRequest();
+//                } else {
+//                    m_serialPort->clear(QSerialPort::AllDirections);
+//                    QTimer::singleShot(m_interFrameDelayMilliseconds, [writeAdu]() { writeAdu(); });
+//                }
+//            }
+            else {
                 qCDebug(QT_MODBUS2) << "(RTU client) Send successful:" << m_current.requestPdu;
                 m_state = Receive;
                 m_responseTimer.start(m_responseTimeoutDuration);

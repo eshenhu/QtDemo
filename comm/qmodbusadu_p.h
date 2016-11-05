@@ -95,7 +95,7 @@ public:
 
     inline QModbus2Pdu pdu() const {
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::pdu()", "Empty ADU.");
-        return QModbus2Pdu(QModbus2Pdu::FunctionCode(m_data.at(6)), m_data.mid(7, size() - 8));
+        return QModbus2Pdu(QModbus2Pdu::FunctionCode(m_data.at(6)), m_data.mid(7, size() - 6));
     }
 
     template <typename T>

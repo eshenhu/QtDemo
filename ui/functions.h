@@ -64,11 +64,12 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
     Q_UNUSED(idx)
     if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
+        qDebug() << "ui.function.functionVol update Vol value with :" << (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
         return (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
     }
     else
     {
-        qWarning() << "com.ui.functions Voltage can not enabled on non-elec motor type";
+        qCritical() << "com.ui.functions Voltage can not enabled on non-elec motor type";
     }
     return (qint32)0;
 };
@@ -84,16 +85,18 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
         {
+            qDebug() << "ui.function.functionVol update Current value with :"
+                     << static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].current);
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].current);
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else
     {
-        qWarning() << "com.ui.functions Voltage can not enabled on non-elec motor type";
+        qCritical() << "com.ui.functions Voltage can not enabled on non-elec motor type";
     }
     return rtn;
 };
@@ -109,12 +112,13 @@ const static functionT functionForce = [](const QModbus2DataUnit* data, const Js
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
-        {
+        {     
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].lift);
+            qDebug() << "ui.function.functionForce update Force value with :" << rtn;
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else
@@ -145,10 +149,11 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
         if ((idx.idxMotor()+1) <= config.numOfMotor())
         {
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].speed);
+            qDebug() << "ui.function.functionForce update Speed value with :" << rtn;
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else
@@ -175,7 +180,7 @@ const static functionT functionTemp = [](const QModbus2DataUnit* data, const Jso
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else
@@ -201,7 +206,7 @@ const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, co
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else
@@ -235,7 +240,7 @@ const static functionT functionPower = [](const QModbus2DataUnit* data, const Js
         }
         else
         {
-            qWarning() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
     else

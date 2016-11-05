@@ -14,7 +14,8 @@ AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
     state(State::InitState),
     mp_data(new MeasDataFormat()),
-    mp_cfgRes(new CfgResHandler(this))
+    mp_cfgRes(new CfgResHandler(this)),
+    mp_refresh(nullptr)
 {
     m_sendTimer.setSingleShot(true);
     QObject::connect(&m_sendTimer, &QTimer::timeout, this, [this]() { processSendTimeout(); });
@@ -106,10 +107,12 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
     if (data.type == JsonGUIPrimType::VOLTAGE){
         mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step,
                                                      data.data.u.thro, 3, 5, 5, data.data.u.duration);
+        mp_refresh->setSeed(mp_data);
     }
     else if (data.type == JsonGUIPrimType::THROTTLE){
         mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step,
                                                       data.data.v.vol, 3, 5, 5, data.data.v.duration);
+        mp_refresh->setSeed(mp_data);
     }
     else{
         qWarning() << tr("com.engine Sorry, we don't support this selection temporaily ");
@@ -223,9 +226,6 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         if (signal.m_type == SignalType::USER && signal.m_info.userType == SignalTypeUserInfoE::START)
         {
             sendHandShakeCmd();
-            //sendFreqAdjustCmd();
-            //sendAlarmQueryCmd();
-            //sendMeasStartCmd();
             state = State::HandShakeState;
         }
         else
@@ -290,10 +290,10 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FreqAdjustCode)
         {
             const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
-//            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
-//            const char* rawdata = (const char*)&data;
-//            QByteArray barray = QByteArray::number(rawdata, size);
-//            qInfo() << "com.comm receive" << barray.toHex();
+            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+            const char* rawdata = (const char*)&data;
+            QByteArray barray = QByteArray::fromRawData(rawdata, size);
+            qInfo() << "com.comm receive" << barray.toHex();
 
             if (signal.m_info.mp_dataUnit->uvalues().r.r.status == static_cast<quint8>(QModbus2DataUnit::FreqAdjustRecStatus::WAITING))
             {
@@ -307,6 +307,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                         << "to State" << (quint32)State::AlarmQueryState;
                 sendAlarmQueryCmd();
                 state = State::AlarmQueryState;
+//                mp_refresh->update();
+//                sendMeasStartCmd();
+//                state = State::MeasRunningState;
             }
         }
         else
@@ -321,7 +324,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
     case State::AlarmQueryState:
     {
         if(signal.m_type == SignalType::ECHO
-                && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::QueryAlarmInfoCode)
+                && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::AlarmInfoCode)
         {
             if (signal.m_info.mp_dataUnit->uvalues().r.t.status == static_cast<quint8>(QModbus2DataUnit::WarningRecStatus::WarningNotFinished))
             {

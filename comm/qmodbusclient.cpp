@@ -301,8 +301,8 @@ QModbus2Request QModbus2ClientPrivate::createReadRequest(const QModbus2DataUnit 
     case QModbus2DataUnit::MeasStartCode:
     {
         const QModbus2DataUnit::MeasStartStruct& cast_q = data.uvalues().s.s;
-        return QModbus2Request(QModbus2Request::MeasStartCode, cast_q.vol, cast_q.thro_1,
-                               cast_q.thro_2, cast_q.distance);
+        return QModbus2Request(QModbus2Request::MeasStartCode, (quint16)cast_q.vol, (quint8)cast_q.thro_1,
+                               (quint8)cast_q.thro_2, (quint32)cast_q.distance);
     }
         break;
 

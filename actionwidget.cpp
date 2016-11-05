@@ -111,7 +111,7 @@ ActionWidget::~ActionWidget()
 void ActionWidget::createTabWidget()
 {
     m_tabWidget = new QTabWidget;
-    m_tabWidget->setTabPosition(QTabWidget::West);
+    m_tabWidget->setTabPosition(QTabWidget::North);
     m_tabWidget->setTabBarAutoHide(true);
 
     m_subTestTabWidget = new TestTab();
@@ -191,7 +191,9 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
 
         if (serial->open(QIODevice::ReadWrite)) {
 
+            //F0 CC 09 00 F6 FF 07 00 00 00 00 FF FF FF FF XX XX
             do{
+                //F0 CC 01 00 FE FF 05 7F 43
                 // send Reset for ACK.
                 QByteArray writeData;
                 writeData.resize(9);
@@ -201,9 +203,27 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
                 writeData[3] = 0x00;
                 writeData[4] = 0xFE;
                 writeData[5] = 0xFF;
-                writeData[6] = 0x09;
+                writeData[6] = 0x05;
                 writeData[7] = 0x7F;
-                writeData[8] = 0x46;
+                writeData[8] = 0x43;
+//                writeData.resize(17);
+//                writeData[0] = 0xF0;
+//                writeData[1] = 0xCC;
+//                writeData[2] = 0x09;
+//                writeData[3] = 0x00;
+//                writeData[4] = 0xF6;
+//                writeData[5] = 0xFF;
+//                writeData[6] = 0x07;
+//                writeData[7] = 0x00;
+//                writeData[8] = 0x00;
+//                writeData[9] = 0x00;
+//                writeData[10] = 0x00;
+//                writeData[11] = 0xFF;
+//                writeData[12] = 0xFF;
+//                writeData[13] = 0xFF;
+//                writeData[14] = 0xFF;
+//                writeData[15] = 0x50;
+//                writeData[16] = 0x11;
 
                 qint64 bytesWritten = serial->write(writeData);
 
@@ -224,20 +244,19 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
                 while (serial->waitForReadyRead(2000))
                     readData.append(serial->readAll());
 
+                qDebug() << "Data successfully received from port" << p.name;
+                qDebug() << readData.toHex();
+
                 if (serial->error() == QSerialPort::ReadError) {
                     qDebug() << "Failed to read from port " << p.name << ", error: " << serial->errorString();
                     break;
                 } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
                     qDebug() << "No data was currently available for reading from port " << p.name;
                     break;
-                } else if (readData.at(6) != 0x0a || readData.at(6) != 0x0b){
-                    qDebug() << "No matching function code received" << readData.at(6);
+                } else if (readData.at(6) != 0x06 && readData.at(6) != 0x08 && readData.at(6) != 0x0b){
+                    qDebug() << "No matching function code received" << readData.at(6) << "end";
                     break;
                 }
-
-
-                qDebug() << "Data successfully received from port" << p.name;
-                qDebug() << readData.toHex();
 
                 found = true;
                 break;
