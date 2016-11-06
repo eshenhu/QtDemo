@@ -48,12 +48,12 @@ void AutomationModelDriverClz::setupModbusDevice()
 
     QObject::connect(modbusDevice, &QModbus2Client::errorOccurred, [this](QModbus2Device::Error) {
         emit statusBarChanged(modbusDevice->errorString(), 5000);
-        qWarning() << "comm: Error occurred: " << modbusDevice->errorString();
+        qCWarning(DRONE_LOGGING) << "comm: Error occurred: " << modbusDevice->errorString();
     });
 
     if (!modbusDevice) {
         emit statusBarChanged(tr("Could not create Modbus master."), 5000);
-        qWarning() << "comm: Could not create Modbus master.";
+        qCWarning(DRONE_LOGGING) << "comm: Could not create Modbus master.";
     } else {
         QObject::connect(modbusDevice, &QModbus2Client::stateChanged,
                 [this](QModbus2Device::State state){
@@ -61,13 +61,13 @@ void AutomationModelDriverClz::setupModbusDevice()
             {
                 emit stateChanged(Disconnected, "Disconnected");
                 emit statusBarChanged(tr("comm: State changed : DisConnect"), 5000);
-                qInfo() << "comm: State changed : DisConnect.";
+                qCInfo(DRONE_LOGGING) << "comm: State changed : DisConnect.";
             }
             else if (state == QModbus2Device::ConnectedState)
             {
                 emit stateChanged(Connected, "Connected");
                 emit statusBarChanged(tr("comm: State changed : Connect"), 5000);
-                qInfo() << "comm: State changed : Connect.";
+                qCInfo(DRONE_LOGGING) << "comm: State changed : Connect.";
             }
         });
     }
@@ -82,7 +82,7 @@ void AutomationModelDriverClz::setupModbusDevice()
 
 //    if (setting.name.isEmpty())
 //    {
-//        qWarning() << "driver.automationmodeldriverclz  Failed to find the proper port !";
+//        qCWarning(DRONE_LOGGING) << "driver.automationmodeldriverclz  Failed to find the proper port !";
 //        return setting;
 //    }
 //    startMeasTest(setting);
@@ -116,7 +116,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
         mp_refresh->setSeed(mp_data);
     }
     else{
-        qWarning() << tr("com.engine Sorry, we don't support this selection temporaily ");
+        qCWarning(DRONE_LOGGING) << tr("com.engine Sorry, we don't support this selection temporaily ");
         return;
     }
 
@@ -140,10 +140,10 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
 
         if (!modbusDevice->connectDevice()) {
             emit statusBarChanged(tr("comm: Connect failed: ") + modbusDevice->errorString(), 5000);
-            qInfo() << "comm: Connect failed: " <<  modbusDevice->errorString();
+            qCInfo(DRONE_LOGGING) << "comm: Connect failed: " <<  modbusDevice->errorString();
         } else {
             emit statusBarChanged(tr("comm: Connect Success: "), 5000);
-            qInfo()<< "comm: Connect Success: ";
+            qCInfo(DRONE_LOGGING)<< "comm: Connect Success: ";
             enterFSMInitState();
             SignalOverLine signal(SignalTypeUserInfoE::START);
             processDataHandlerSingleShot(signal);
@@ -158,13 +158,13 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
 void AutomationModelDriverClz::enterFSMInitState()
 {
     state = State::InitState;
-    qDebug() << "com.automationModeDriver State Changed -> State::Reset";
+    qCDebug(DRONE_LOGGING) << "com.automationModeDriver State Changed -> State::Reset";
 }
 
 void AutomationModelDriverClz::enterFSMResetState()
 {
     state = State::ResetState;
-    qDebug() << "com.automationModeDriver State Changed -> State::Reset";
+    qCDebug(DRONE_LOGGING) << "com.automationModeDriver State Changed -> State::Reset";
     QTimer::singleShot(msecTimeInterval, [this](){ sendResetCmd();});
 }
 
@@ -183,13 +183,13 @@ void AutomationModelDriverClz::readReady()
                     arg(reply->errorString()));
 
         emit statusBarChanged(str, 5000);
-        qInfo() << str;
+        qCInfo(DRONE_LOGGING) << str;
     } else {
         QString str(tr("Read response error: %1 (code: 0x%2)").
                     arg(reply->errorString()).
                     arg(reply->error(), -1, 16));
         emit statusBarChanged(str, 5000);
-        qInfo() << str;
+        qCInfo(DRONE_LOGGING) << str;
     }
     reply->deleteLater();
 }
@@ -202,11 +202,11 @@ void AutomationModelDriverClz::processReceivedDataUnit(const QModbus2DataUnit &d
 
 bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2DataUnit* data)
 {
-    qWarning() << "it should be got improved here -- eshenhu";
+    qCWarning(DRONE_LOGGING) << "it should be got improved here -- eshenhu";
     //if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
     if (0)
     {
-        qWarning() << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
+        qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
         emit stateChanged(HandShakeException, QString::number(data->uvalues().r.q.productRev));
         return false;
@@ -302,7 +302,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             {
                 str = tr("Unspecified FatalErrorCode was received during Testing... ERRORCODE= %1")
                         .arg(signal.m_info.mp_dataUnit->uvalues().r.u.errorCode);
-                qWarning() << "Unspecified FatalErrorCode was received during Testing... ERRORCODE="
+                qCWarning(DRONE_LOGGING) << "Unspecified FatalErrorCode was received during Testing... ERRORCODE="
                            << signal.m_info.mp_dataUnit->uvalues().r.u.errorCode;
                 break;
             }
@@ -333,7 +333,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         }
         else
         {
-            qWarning() << "unexpected signal was received during state --State::InitState-- with signal name "
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state --State::InitState-- with signal name "
                        << (quint32)(signal.m_type);
         }
     }
@@ -351,14 +351,14 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             else
             {
                 modbusDevice->disconnectDevice();
-                qInfo() << "com.automationModel Enter into the Idle Mode";
+                qCInfo(DRONE_LOGGING) << "com.automationModel Enter into the Idle Mode";
                 emit stateChanged(Disconnected, "Disconnected");
             }
         }
         else
         {
             modbusDevice->disconnectDevice();
-            qWarning() << "unexpected signal was received during state -- State::ResetState"
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state -- State::ResetState"
                        << "  with signal name " << static_cast<quint32>(signal.m_type);
 
         }
@@ -372,20 +372,20 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             if (processReceivedHandShakeDataUnit(signal.m_info.mp_dataUnit))
             {
-                qInfo() << "com.comm.state changed from State::" << (quint32)State::HandShakeState
+                qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)State::HandShakeState
                         << "to State" << (int)State::FreqAdjustState;
                 sendFreqAdjustCmd();
                 state = State::FreqAdjustState;
             }
             else
             {
-                qWarning() << "unexpected signal was received during state " << (quint32)state
+                qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
                            << "  with signal name " << (quint32)signal.m_type;
             }
         }
         else
         {
-            qWarning() << "unexpected signal was received during state " << (int)state
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (int)state
                        << "  with signal name " << (quint32)signal.m_type;
             enterFSMResetState();
         }
@@ -397,21 +397,21 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         if(signal.m_type == SignalType::ECHO
                 && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FreqAdjustCode)
         {
-//            const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
-//            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
-//            const char* rawdata = (const char*)&data;
-//            QByteArray barray = QByteArray::fromRawData(rawdata, size);
-//            qInfo() << "com.comm receive" << barray.toHex();
+            const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
+            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+            const char* rawdata = (const char*)&data;
+            QByteArray barray = QByteArray::fromRawData(rawdata, size);
+            qCInfo(DRONE_LOGGING) << "com.comm receive" << barray.toHex();
 
             if (signal.m_info.mp_dataUnit->uvalues().r.r.status == static_cast<quint8>(QModbus2DataUnit::FreqAdjustRecStatus::WAITING))
             {
-                qInfo() << "com.comm.state signal received during State " << (quint32)state
+                qCInfo(DRONE_LOGGING) << "com.comm.state signal received during State " << (quint32)state
                         << "status == WAITTING";
                 QTimer::singleShot(msecTimeInterval, [this](){ sendFreqAdjustCmd();});
             }
             else
             {
-                qInfo() << "com.comm.state changed from State::" << (quint32)State::FreqAdjustState
+                qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)State::FreqAdjustState
                         << "to State" << (quint32)State::AlarmQueryState;
                 sendAlarmQueryCmd();
                 state = State::AlarmQueryState;
@@ -419,7 +419,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         }
         else
         {
-            qWarning() << "unexpected signal was received during state " << (quint32)state
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
             enterFSMResetState();
         }
@@ -433,13 +433,13 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             if (signal.m_info.mp_dataUnit->uvalues().r.t.status == static_cast<quint8>(QModbus2DataUnit::WarningRecStatus::WarningNotFinished))
             {
-                qInfo() << "com.comm.state signal received during State " << (quint32)state
+                qCInfo(DRONE_LOGGING) << "com.comm.state signal received during State " << (quint32)state
                         << "status == WarningNotFinished";
                 QTimer::singleShot(msecTimeInterval, [this](){ sendAlarmQueryCmd();});
             }
             else
             {
-                qInfo() << "com.comm.state changed from State::" << (quint32)state
+                qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                         << "to State" << (qint32)State::MeasRunningState;
                 mp_refresh->update();
                 sendMeasStartCmd();
@@ -448,7 +448,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         }
         else
         {
-            qWarning() << "unexpected signal was received during state " << (quint32)state
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
             enterFSMResetState();
         }
@@ -469,7 +469,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             QTimer::singleShot(msecTimeInterval, [this](){
                 if (mp_refresh->update())
                 {
-                    qInfo() << "com.comm.state changed from State::" << (quint32)state
+                    qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                             << "to State - State::MeasFinishedState";
                     enterFSMResetState();
                 }
@@ -481,7 +481,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         }
         else
         {
-            qWarning() << "unexpected signal was received during state " << (quint32)state
+            qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
             enterFSMResetState();
         }
@@ -510,7 +510,7 @@ void AutomationModelDriverClz::sendRequestCmd(const QModbus2DataUnit& writeUnit)
     } else {
         const QString str(tr("comm: Write error: ") + modbusDevice->errorString());
         emit statusBarChanged(str, 5000);
-        qInfo() << str;
+        qCInfo(DRONE_LOGGING) << str;
     }
 }
 
@@ -566,3 +566,4 @@ void AutomationModelDriverClz::sendMeasStartCmd()
 //    sendRequestCmd(data);
 //}
 
+Q_LOGGING_CATEGORY(DRONE_LOGGING, "drone.engine", QtDebugMsg)

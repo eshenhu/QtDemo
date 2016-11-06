@@ -108,10 +108,10 @@ TestTab::TestTab(QWidget *parent)
 
     tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
     tabList[TestPlanEnum::Aging] = new AgingTstTab();
-    tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
+    //tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
     tabList[TestPlanEnum::Manual] = new ManualTstTab();
 
-    m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
+
     m_tabWidget->addTab(tabList[TestPlanEnum::Voltage], tr("Voltage"));
     connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
         emit updateUserSelection(data);
@@ -122,9 +122,10 @@ TestTab::TestTab(QWidget *parent)
         emit updateUserSelection(data);
     } );
 
+    m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
-    m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
+    //m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Manual], tr("Manual"));
 
 

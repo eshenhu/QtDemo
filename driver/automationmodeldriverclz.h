@@ -8,7 +8,7 @@
 #include "comm/qmodbusdataunit.h"
 #include "driver/signaloverline.h"
 #include "ui/uitestbasedstruct.h"
-
+#include "qtcore/qloggingcategory.h"
 
 class QModbus2Client;
 class QModbus2Reply;
@@ -17,6 +17,9 @@ class CharDataFormat;
 class MeasDataFormat;
 class CfgResHandlerInf;
 class MeasDataUpdateInf;
+
+
+Q_DECLARE_LOGGING_CATEGORY(DRONE_LOGGING)
 
 class FatalErrorDrvClz
 {

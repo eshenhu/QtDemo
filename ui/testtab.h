@@ -12,9 +12,9 @@ class QPushButton;
 class QTabWidget;
 
 enum TestPlanEnum {
-    Distance,
     Voltage,
     Throttle,
+    Distance,
     Multiplue,
     Aging,
     Calibrate,

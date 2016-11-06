@@ -13,7 +13,7 @@
 #include <QtCharts/QChart>
 
 #include <QDebug>
-
+#include <QMargins>
 #include "ui/qrtlineseries.h"
 #include "comm/qmodbusdataunit.h"
 
@@ -26,6 +26,11 @@ CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent)
     m_layout = new QHBoxLayout;
     //m_lhsLayout = new QVBoxLayout;
     m_lhsLayout = new QGridLayout;
+    m_lhsLayout->setHorizontalSpacing(0);
+    m_lhsLayout->setVerticalSpacing(0);
+    m_lhsLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    //m_lhsLayout->setMargin(0);
+    m_lhsLayout->setContentsMargins(0,0,0,0);
     m_rhsLayout = new QVBoxLayout;
 
     createCheckBoxView();
@@ -53,11 +58,12 @@ QChartView* CompQChartWidget::makeNewChart()
 
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTheme(QChart::ChartThemeBrownSand);
+    //chart->setTheme(QChart::ChartThemeBrownSand);
+    //chart->setMargins(QMargins(0,0,0,0));
     chart->legend()->hide();
 
     QValueAxis *axisX = new QValueAxis;
-    //axisX->setFormat("dd-MM h:mm:s");
+//    //axisX->setFormat("dd-MM h:mm:s");
     axisX->setTickCount(QRTLineSeries::MAX_NUM_POINTS / 4);
     axisX->setRange(0, QRTLineSeries::MAX_NUM_POINTS);
     axisX->hide();
@@ -98,7 +104,7 @@ void CompQChartWidget::createCheckBoxView()
     {
         QCheckBox* checkbox = QExtCheckBox::makeExtCheckBox(*config, ele, this);
         checkbox->setChecked(ele.isSelected());
-        checkbox->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
+        checkbox->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
 
         m_rhsLayout->addWidget(checkbox, 0, Qt::AlignVertical_Mask);
         m_rhsLayout->addStretch();
@@ -133,8 +139,9 @@ void CompQChartWidget::updateChartsView()
                 box->setAssoChartView(m_chartsViewVector[idx]);
                 QChart* chart = m_chartsViewVector[idx]->chart();
                 QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
-                chart->setTitle(box->str());
-                yaxis->setTitleText(box->unit());
+                chart->setTitle(box->str() + '(' + box->unit() + ')');
+                //yaxis->setTitleText(box->unit());
+                yaxis->setLabelFormat(QStringLiteral("%d"));
                 yaxis->setTickCount(5);
                 yaxis->setRange(box->lowLimit(), box->upLimit());
             }
