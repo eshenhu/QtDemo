@@ -44,7 +44,7 @@
           "index": 0,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 50000,
+          "upLimit": 30000,
           "unit": "RPM"
         },
         {

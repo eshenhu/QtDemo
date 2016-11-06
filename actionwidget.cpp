@@ -72,6 +72,10 @@ ActionWidget::ActionWidget(QWidget *parent)
     m_driver = new AutomationModelDriverClz(this);
 
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
+    connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
+            const AutomationModelDriverClz::QModBusState state, QString str){
+
+    });
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
         QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
         if (setting.name.isEmpty()){

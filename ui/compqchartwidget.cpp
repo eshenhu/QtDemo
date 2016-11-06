@@ -53,13 +53,14 @@ QChartView* CompQChartWidget::makeNewChart()
 
     QChart *chart = new QChart();
     chart->addSeries(series);
+    chart->setTheme(QChart::ChartThemeBrownSand);
     chart->legend()->hide();
 
     QValueAxis *axisX = new QValueAxis;
     //axisX->setFormat("dd-MM h:mm:s");
     axisX->setTickCount(QRTLineSeries::MAX_NUM_POINTS / 4);
     axisX->setRange(0, QRTLineSeries::MAX_NUM_POINTS);
-    //axisX->hide();
+    axisX->hide();
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 

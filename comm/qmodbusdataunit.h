@@ -123,7 +123,7 @@ public:
     };
 
     enum class MeasStartRecStatusEnum : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
-    enum class MotorTypeEnum  : quint8 { ELECE = 0, OILE = 1};
+    enum class MotorTypeEnum  : quint8 { OILE = 0, ELECE = 1} ;
     enum class LimitStatusEnum : quint8 { UPLIMIT = 0, DOWNLIMIT = 1, RUNNING = 2 };
 
     struct ElecMotorStruct

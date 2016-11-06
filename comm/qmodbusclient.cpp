@@ -538,6 +538,58 @@ bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Respo
 bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Response &response,
                                                              QModbus2DataUnit *data)
 {
+    if (data) {
+        QDataStream stream(response.data());
+        QModbus2DataUnit::MeasStartRecStruct& val = data->m_uvalues.r.s;
+
+//        const QModbus2DataUnit::MeasDataUnion& data2 = data->uvalues();
+//        int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+//        const char* rawdata = (const char*)&data2;
+//        QByteArray barray = QByteArray::fromRawData(rawdata, size);
+//        qCDebug(QT_MODBUS2) << "com.comm.qmodbusclient receive" << barray.toHex();
+
+//        qCDebug(QT_MODBUS2) << "com.comm.qmodbusclient receive" << response.data().toHex();
+
+        stream >> val.humidity >> val.envtemp >> val.pressure >> val.thro_1 >> val.thro_2
+               >> val.backup_1 >> val.backup_2 >> val.motorType >> val.numOfMotor;
+
+//        qCDebug(QT_MODBUS2) << "com.comm.data = val.humidity" << val.humidity << "val.envtemp" << val.envtemp
+//                << "val.pressure" << val.pressure << "val.thro_1 " << val.thro_1 << "val.thro_2" << val.thro_2
+//                << "val.backup_1" << val.backup_1 << "val.backup_2" << val.backup_2
+//                << "val.motorType" << val.motorType << "val.numOfMotor" << val.numOfMotor;
+
+        if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
+        {
+            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+                    >> val.motorInfo.elec.elecMotorStruct[0].current >> val.motorInfo.elec.elecMotorStruct[0].lift
+                    >> val.motorInfo.elec.elecMotorStruct[0].torque >> val.motorInfo.elec.elecMotorStruct[0].speed
+                    >> val.motorInfo.elec.elecMotorStruct[0].temp_1 >> val.motorInfo.elec.elecMotorStruct[0].temp_2;
+
+            qCDebug(QT_MODBUS2) << "com.comm.data = elec.limitStatus" << val.motorInfo.elec.limitStatus
+                                << "elec.voltage" << val.motorInfo.elec.voltage
+                                << "elec.elecMotorStruct[0].current " << val.motorInfo.elec.elecMotorStruct[0].current;
+
+            if (val.numOfMotor >= 2)
+            {
+                stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+                        >> val.motorInfo.elec.elecMotorStruct[1].current >> val.motorInfo.elec.elecMotorStruct[1].lift
+                        >> val.motorInfo.elec.elecMotorStruct[1].torque >> val.motorInfo.elec.elecMotorStruct[1].speed
+                        >> val.motorInfo.elec.elecMotorStruct[1].temp_1 >> val.motorInfo.elec.elecMotorStruct[1].temp_2;
+            }
+        }
+        else if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::OILE))
+        {
+            stream >> val.motorInfo.oil.lift >> val.motorInfo.oil.torque
+                    >> val.motorInfo.oil.speed >> val.motorInfo.oil.temp_1 >> val.motorInfo.oil.temp_2;
+        }
+        else
+        {
+            qCCritical(QT_MODBUS2) << "com.qt_modbus2 The received moto type can't match any of existed motor";
+        }
+
+
+        data->setRegisterType(QModbus2DataUnit::MeasStartCode);
+    }
     return true;
 }
 
@@ -557,6 +609,12 @@ bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus
     if (data) {
         QDataStream stream(response.data());
         QModbus2DataUnit::MeasStartRecStruct& val = data->m_uvalues.r.s;
+
+        const QModbus2DataUnit::MeasDataUnion& data2 = data->uvalues();
+        int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+        const char* rawdata = (const char*)&data2;
+        QByteArray barray = QByteArray::fromRawData(rawdata, size);
+        qCDebug(QT_MODBUS2) << "com.comm.qmodbusclient receive" << barray.toHex();
 
         stream >> val.humidity >> val.envtemp >> val.pressure >> val.thro_1 >> val.thro_2
                 >> val.motorType >> val.numOfMotor;
@@ -582,6 +640,8 @@ bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus
                     >> val.motorInfo.oil.speed >> val.motorInfo.oil.temp_1 >> val.motorInfo.oil.temp_2;
         }
 
+        qCDebug(QT_MODBUS2) << "com.comm.data = val.humidity" << val.humidity << "val.envtemp" << val.envtemp
+                << "val.pressure" << val.pressure << "val.thro_1 " << val.thro_1 << "val.thro_2" << val.thro_2;
         data->setRegisterType(QModbus2DataUnit::MeasStartCode);
     }
     return true;

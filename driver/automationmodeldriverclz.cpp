@@ -357,8 +357,10 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         }
         else
         {
+            modbusDevice->disconnectDevice();
             qWarning() << "unexpected signal was received during state -- State::ResetState"
                        << "  with signal name " << static_cast<quint32>(signal.m_type);
+
         }
     }
         break;
@@ -395,11 +397,11 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         if(signal.m_type == SignalType::ECHO
                 && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FreqAdjustCode)
         {
-            const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
-            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
-            const char* rawdata = (const char*)&data;
-            QByteArray barray = QByteArray::fromRawData(rawdata, size);
-            qInfo() << "com.comm receive" << barray.toHex();
+//            const QModbus2DataUnit::MeasDataUnion& data = signal.m_info.mp_dataUnit->uvalues();
+//            int size = sizeof(QModbus2DataUnit::MeasDataUnion);
+//            const char* rawdata = (const char*)&data;
+//            QByteArray barray = QByteArray::fromRawData(rawdata, size);
+//            qInfo() << "com.comm receive" << barray.toHex();
 
             if (signal.m_info.mp_dataUnit->uvalues().r.r.status == static_cast<quint8>(QModbus2DataUnit::FreqAdjustRecStatus::WAITING))
             {

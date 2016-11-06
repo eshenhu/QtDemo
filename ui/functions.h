@@ -62,9 +62,27 @@ const static formulaT formulaDummy = [](const qint32 v){
 
 const static functionT functionVol = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
+//        qDebug() << "ui.function.functionVol update Vol value with : humidity" << (qint32)data->uvalues().r.s.humidity
+//                 << "envtemp" <<  (qint32)data->uvalues().r.s.envtemp
+//                 << "pressure" <<  (qint32)data->uvalues().r.s.pressure
+//                 << "thro_1" <<  (qint32)data->uvalues().r.s.thro_1
+//                 << "thro_2" <<  (qint32)data->uvalues().r.s.thro_2
+//                 << "motorType" <<  (qint32)data->uvalues().r.s.motorType
+//                 << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
+//                 << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
+//                 << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
+//                 << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
+//                 << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
+//                 << "torque [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].torque
+//                 << "speed [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].speed
+//                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
+//                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2;
+
         qDebug() << "ui.function.functionVol update Vol value with :" << (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
+
         return (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
     }
     else
@@ -80,7 +98,8 @@ const static formulaT formulaVol = [](const qint32 v){
 
 const static functionT functionCurrent = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
@@ -108,7 +127,8 @@ const static formulaT formulaCurrent = [](const qint32 v){
 
 const static functionT functionForce = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
@@ -121,7 +141,7 @@ const static functionT functionForce = [](const QModbus2DataUnit* data, const Js
             qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
-    else
+    else if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::OILE)
     {
         rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.lift);
     }
@@ -143,7 +163,8 @@ const static formulaT formulaThrottle = [](const qint32 v){
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
@@ -156,10 +177,11 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
             qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
-    else
+    else if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::OILE)
     {
         rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.speed);
     }
+
     return rtn;
 };
 
@@ -169,7 +191,8 @@ const static formulaT formulaSpeed = [](const qint32 v){
 
 const static functionT functionTemp = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
@@ -183,7 +206,7 @@ const static functionT functionTemp = [](const QModbus2DataUnit* data, const Jso
             qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
-    else
+    else if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::OILE)
     {
         rtn = idx.idxOneMotor() == 0 ? static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.temp_1) :
                                        static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.temp_2);
@@ -197,7 +220,8 @@ const static formulaT formulaTemp = [](const qint32 v){
 
 const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
@@ -231,7 +255,8 @@ const static formulaT formulaVibrate = [](const qint32 v){
 
 const static functionT functionPower = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())

@@ -9,6 +9,7 @@
 #include "driver/signaloverline.h"
 #include "ui/uitestbasedstruct.h"
 
+
 class QModbus2Client;
 class QModbus2Reply;
 class CharDataFormat;
@@ -63,6 +64,8 @@ private:
 class AutomationModelDriverClz : public BasedModelDriverClz
 {
     Q_OBJECT
+
+public:
     enum class State {
         InitState = 0,
         ResetState,
