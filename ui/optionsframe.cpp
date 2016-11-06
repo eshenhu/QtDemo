@@ -11,12 +11,14 @@ OptionsFrame::OptionsFrame(CfgMotorBootCfgModel* cfg, QWidget *parent) :
 
     ui->duration_comboBox->setCurrentIndex(3);
     ui->startdelay_comboBox->setCurrentIndex(2);
-    ui->stopdelay_comboBox->setCurrentIndex(2);
+    ui->softdelay_comboBox->setCurrentIndex(2);
+    ui->bootvol_comboBox->setCurrentIndex(0);
 
     connect(ui->apply_button, &QPushButton::clicked, [this](){
         m_cfg->set_boot_delay(ui->startdelay_comboBox->currentText().toInt());
-        m_cfg->set_boot_rape(ui->startdelay_comboBox->currentText().toInt());
+        m_cfg->set_boot_rape(ui->softdelay_comboBox->currentText().toInt());
         m_cfg->set_duration(ui->duration_comboBox->currentText().toInt());
+        m_cfg->setBootVol(ui->bootvol_comboBox->currentText().toInt());
     });
 }
 

@@ -120,11 +120,11 @@ public slots:
     void readReady();
 
 public:
-    void startMeasTest(const UiCompMeasData data, const QSerialPortSetting::Settings setting);
+    void startMeasTest(const UiCompMeasData data, const CfgResHandlerInf* res, const QSerialPortSetting::Settings setting);
 
 public:
     void enterFSMInitState();
-    void enterFSMResetState();
+    void enterFSMResetState(const QString&);
 
 private:
     void connect();

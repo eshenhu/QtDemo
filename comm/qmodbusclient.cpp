@@ -260,8 +260,8 @@ QModbus2Reply *QModbus2ClientPrivate::sendRequest(const QModbus2Request &request
 
     if (unit)
     {
-        // eshenhu debugging...
-        qCWarning(QT_MODBUS2) << "(Client) Send request -->" << QString::number(serverAddress, 16) << request;
+//        // eshenhu debugging...
+//        qCWarning(QT_MODBUS2) << "(Client) Send request -->" << QString::number(serverAddress, 16) << request;
         return enqueueRequest(request, serverAddress, *unit, QModbus2Reply::Common);
     }
     return enqueueRequest(request, serverAddress, QModbus2DataUnit(), QModbus2Reply::Raw);

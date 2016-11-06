@@ -51,9 +51,11 @@ public:
     quint32 boot_delay() const;
     quint32 boot_rape() const;
 
-
     quint32 duration() const;
     void set_duration(const quint32 &duration);
+
+    quint32 bootVol() const;
+    void setBootVol(const quint32 &bootVol);
 
 private:
     void loadSetting();
@@ -62,6 +64,7 @@ private:
     quint32 m_boot_delay;
     quint32 m_boot_rape;
     quint32 m_duration;
+    quint32 m_bootVol;
     QSettings& m_set;
 };
 
@@ -149,6 +152,12 @@ public:
     {
         Q_ASSERT(m_bootCfg != nullptr);
         return m_bootCfg->duration();
+    }
+
+    inline quint32 bootVol() const
+    {
+        Q_ASSERT(m_bootCfg != nullptr);
+        return m_bootCfg->bootVol();
     }
     inline quint32 vane() const
     {

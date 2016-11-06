@@ -39,6 +39,7 @@
 #include <QTabWidget>
 #include <QMessageBox>
 #include <QDebug>
+#include <QMessageBox>
 #include <QProgressDialog>
 #include <QSerialPortInfo>
 
@@ -52,7 +53,8 @@
 QT_CHARTS_USE_NAMESPACE
 
 ActionWidget::ActionWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      m_msgBox(nullptr)
 {
     m_measData.type = JsonGUIPrimType::INVALID;
     m_cfgHandler = new CfgResHandler();
@@ -74,7 +76,16 @@ ActionWidget::ActionWidget(QWidget *parent)
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
             const AutomationModelDriverClz::QModBusState state, QString str){
-
+        qDebug() << "ui.actionwidget received statechange signal" << str;
+        if(state == AutomationModelDriverClz::QModBusState::FatalErrorException)
+        {
+            m_msgBox = std::unique_ptr<QMessageBox>(new QMessageBox(QMessageBox::Warning, tr("Going into RESET state"), str));
+            m_msgBox->exec();
+        }
+        else if (state == AutomationModelDriverClz::QModBusState::Disconnected)
+        {
+            m_msgBox = nullptr;
+        }
     });
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
         QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
@@ -92,7 +103,7 @@ ActionWidget::ActionWidget(QWidget *parent)
                                  QMessageBox::Ok);
             return;
         }
-        m_driver->startMeasTest(m_measData, setting);
+        m_driver->startMeasTest(m_measData, m_cfgHandler, setting);
         //reset.
         m_measData.type = JsonGUIPrimType::INVALID;
     });

@@ -34,7 +34,6 @@ public:
 private:
     Ui::OptionsFrame *ui;
     CfgMotorBootCfgModel* m_cfg;
-
 };
 
 #endif // OPTIONSFRAME_H

@@ -106,6 +106,8 @@ bool AbstractPeriodicalMeasDataUpdate::update()
                 rtn = true;
         }
     }
+//    qInfo() << "util.measdataformat tick=" << m_tick << "m_phase=" << (quint8)m_phase
+//            << "vol=" << m_data->getVol() << "thro_1" << m_data->getThro_1();
     return rtn;
 }
 

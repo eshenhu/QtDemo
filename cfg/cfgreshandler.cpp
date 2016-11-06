@@ -3,7 +3,7 @@
 #include <QSettings>
 
 CfgResHandler::CfgResHandler(QObject *parent) : QObject(parent),
-    m_setting("mpth", "meas")
+    m_setting("drone", "meas")
 {
     m_bootCfg = new CfgMotorBootCfgModel(m_setting);
     m_deviceCfg = new CfgDeviceCfgModel(m_setting);
@@ -38,6 +38,7 @@ CfgProductVersionCfgModel *CfgResHandler::prodCfg() const
 CfgMotorBootCfgModel::CfgMotorBootCfgModel(QSettings& set):
     m_boot_delay(5),
     m_boot_rape(10),
+    m_bootVol(5),
     m_set(set)
 {
     loadSetting();
@@ -49,7 +50,19 @@ void CfgMotorBootCfgModel::loadSetting()
     m_boot_delay = m_set.value("boot_delay", 5).toInt();
     m_boot_rape  = m_set.value("boot_rape", 10).toInt();
     m_duration = m_set.value("duration", 10).toInt();
+    m_bootVol = m_set.value("boot_vol", 5).toInt();
     m_set.endGroup();
+}
+
+quint32 CfgMotorBootCfgModel::bootVol() const
+{
+    return m_bootVol;
+}
+
+void CfgMotorBootCfgModel::setBootVol(const quint32 &bootVol)
+{
+    m_bootVol = bootVol;
+    m_set.setValue("cfg/motor/boot_vol", m_bootVol);
 }
 
 quint32 CfgMotorBootCfgModel::duration() const

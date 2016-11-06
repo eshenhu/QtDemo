@@ -29,10 +29,12 @@
 #ifndef ACTIONWIDGET_H
 #define ACTIONWIDGET_H
 
+#include <memory>
 #include <QtWidgets/QWidget>
 #include <QtCharts/QChartGlobal>
 #include <qdialogbuttonbox.h>
 #include <qspinbox.h>
+#include <QMessageBox>
 #include "util/dserialportsetting.h"
 #include "ui/uitestbasedstruct.h"
 
@@ -102,6 +104,8 @@ private:
     UiCompMeasData    m_measData;
 
     AutomationModelDriverClz* m_driver;
+
+    std::unique_ptr<QMessageBox> m_msgBox;
     void createTabWidget();
 };
 #endif // MAINWIDGET_H
