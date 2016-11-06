@@ -15,7 +15,8 @@ AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     state(State::InitState),
     mp_data(new MeasDataFormat()),
     mp_cfgRes(new CfgResHandler(this)),
-    mp_refresh(nullptr)
+    mp_refresh(nullptr),
+    m_monitorError(new FatalErrorDrvClz)
 {
     m_sendTimer.setSingleShot(true);
     QObject::connect(&m_sendTimer, &QTimer::timeout, this, [this]() { processSendTimeout(); });
@@ -116,6 +117,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
     }
     else{
         qWarning() << tr("com.engine Sorry, we don't support this selection temporaily ");
+        return;
     }
 
     if (!modbusDevice)
@@ -142,6 +144,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
         } else {
             emit statusBarChanged(tr("comm: Connect Success: "), 5000);
             qInfo()<< "comm: Connect Success: ";
+            enterFSMInitState();
             SignalOverLine signal(SignalTypeUserInfoE::START);
             processDataHandlerSingleShot(signal);
         }
@@ -150,6 +153,19 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const QSe
         modbusDevice->disconnectDevice();
         emit stateChanged(Disconnected, "Disconnected");
     }
+}
+
+void AutomationModelDriverClz::enterFSMInitState()
+{
+    state = State::InitState;
+    qDebug() << "com.automationModeDriver State Changed -> State::Reset";
+}
+
+void AutomationModelDriverClz::enterFSMResetState()
+{
+    state = State::ResetState;
+    qDebug() << "com.automationModeDriver State Changed -> State::Reset";
+    QTimer::singleShot(msecTimeInterval, [this](){ sendResetCmd();});
 }
 
 void AutomationModelDriverClz::readReady()
@@ -219,6 +235,93 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
     if (!modbusDevice)
         return;
 
+    /*
+     *
+     *   Handle Exception Case:
+     *
+     */
+    switch (state)
+    {
+    case State::InitState:
+    case State::ResetState:
+    case State::HandShakeState:
+    case State::FreqAdjustState:
+    case State::StartBtnQueryState:
+    case State::AlarmQueryState:
+    case State::MeasOptionsState:
+    case State::MeasRunningState:
+    case State::MeasFinishedState:
+    {
+        bool isSendErrorSigNeeded = true;
+        QString str;
+
+        if(signal.m_type == SignalType::ECHO
+                && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode)
+        {
+            switch (signal.m_info.mp_dataUnit->uvalues().r.u.errorCode)
+            {
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorCRC:
+            {
+                str = tr("Fatal Error : Please check the cable connection, Internal Error with error code .")
+                        + QString::number((quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorCRC);
+                m_monitorError->cntUpCRC();
+                if (!m_monitorError->isCRCError())
+                    isSendErrorSigNeeded = false;
+            }
+                break;
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorFrame:
+            {
+                str = tr("Fatal Error : Internal Error with error code %1. Please check the cable connection ")
+                        + QString::number((quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorFrame);
+                m_monitorError->cntUpFrameError();
+                if (!m_monitorError->isFrameError())
+                    isSendErrorSigNeeded = false;
+            }
+                break;
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorEmerBtnDown:
+            {
+                str = tr("Fatal Error : Emergency Button was Pressed");
+            }
+                break;
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorCageOpen:
+            {
+                str = tr("Fatal Error : Cage was opened");
+            }
+                break;
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorCable2Cnt2Samp:
+            {
+                str = tr("Fatal Error : Cable between maincontrol and sample was broken");
+            }
+                break;
+            case (quint8)QModbus2DataUnit::FatalErrorCodeE::FatalErrorCable2Cnt2Pwr:
+            {
+                str = tr("Fatal Error : Cable between maincontrol and power was broken");
+            }
+                break;
+            default:
+            {
+                str = tr("Unspecified FatalErrorCode was received during Testing... ERRORCODE= %1")
+                        .arg(signal.m_info.mp_dataUnit->uvalues().r.u.errorCode);
+                qWarning() << "Unspecified FatalErrorCode was received during Testing... ERRORCODE="
+                           << signal.m_info.mp_dataUnit->uvalues().r.u.errorCode;
+                break;
+            }
+            }
+
+            if (isSendErrorSigNeeded)
+            {
+                enterFSMResetState();
+                emit stateChanged(QModBusState::FatalErrorException, str);
+            }
+        }
+        break;
+    }
+    }
+    /*
+     *
+     *   Simple FSM engine.
+     *
+     */
     switch (state)
     {
     case State::InitState:
@@ -247,7 +350,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             }
             else
             {
-                //state = State::HandShakeState;
+                modbusDevice->disconnectDevice();
+                qInfo() << "com.automationModel Enter into the Idle Mode";
+                emit stateChanged(Disconnected, "Disconnected");
             }
         }
         else
@@ -280,6 +385,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             qWarning() << "unexpected signal was received during state " << (int)state
                        << "  with signal name " << (quint32)signal.m_type;
+            enterFSMResetState();
         }
     }
         break;
@@ -313,6 +419,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             qWarning() << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
+            enterFSMResetState();
         }
     }
         break;
@@ -341,16 +448,18 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             qWarning() << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
+            enterFSMResetState();
         }
     }
         break;
 
     case State::MeasRunningState:
     {
-        if(signal.m_type == SignalType::ECHO
-                && signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::MeasStartCode)
+        if( signal.m_type == SignalType::ECHO &&
+                (  signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::MeasStartCode
+                || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
+                ))
         {
-
             if (processReceivedMeasDataUnit(signal.m_info.mp_dataUnit))
             {
                 emit updateData(signal.m_info.mp_dataUnit);
@@ -360,17 +469,19 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 {
                     qInfo() << "com.comm.state changed from State::" << (quint32)state
                             << "to State - State::MeasFinishedState";
-                    state = State::MeasFinishedState;
-                    QTimer::singleShot(msecTimeInterval, [this](){
-                        SignalOverLine signal(SignalTypeTMOInfoE::TMO500MS);
-                        processDataHandlerSingleShot(signal);
-                    });
+                    enterFSMResetState();
                 }
                 else
                 {
                     sendMeasStartCmd();
                 }
             });
+        }
+        else
+        {
+            qWarning() << "unexpected signal was received during state " << (quint32)state
+                       << "  with signal name " << (quint32)signal.m_type;
+            enterFSMResetState();
         }
     }
         break;

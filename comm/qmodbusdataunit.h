@@ -53,7 +53,16 @@ public:
         AlarmInfoCode = 0x05,
         MeasStartCode = 0x07,
         ResetCode = 0x09,
-        QueryAlarmInfoCode = 0x0b
+        FatalErrorInfoCode = 0x0b
+    };
+
+    enum class FatalErrorCodeE : quint8{
+        FatalErrorCRC = 0x07,
+        FatalErrorFrame = 0x08,
+        FatalErrorEmerBtnDown = 0x0B,
+        FatalErrorCageOpen = 0x0C,
+        FatalErrorCable2Cnt2Samp = 0x0D,
+        FatalErrorCable2Cnt2Pwr = 0x0E
     };
 
     enum class ResetRecStatus : quint8 { BUSY = 0, OK = 1 };

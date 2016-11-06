@@ -594,7 +594,7 @@ bool QModbus2ClientPrivate::processReadQueryAlarmInfoCodeResponse(const QModbus2
         QDataStream stream(response.data());
         stream >> data->m_uvalues.r.u.errorCode
                >> data->m_uvalues.r.u.errorInfo;
-        data->setRegisterType(QModbus2DataUnit::QueryAlarmInfoCode);
+        data->setRegisterType(QModbus2DataUnit::FatalErrorInfoCode);
     }
     return true;
 }

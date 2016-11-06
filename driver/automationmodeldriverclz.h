@@ -2,7 +2,7 @@
 #define AUTOMATIONMODELDRIVERCLZ_H
 
 #include "basedmodeldriverclz.h"
-
+#include <memory>
 #include <QTimer>
 #include "util/qserialporthelper.h"
 #include "comm/qmodbusdataunit.h"
@@ -16,6 +16,49 @@ class CharDataFormat;
 class MeasDataFormat;
 class CfgResHandlerInf;
 class MeasDataUpdateInf;
+
+class FatalErrorDrvClz
+{
+public:
+    FatalErrorDrvClz():
+        m_cntUpCRC(0),
+        m_cntUpFrameError(0)
+    {}
+
+public:
+    inline void cntUpCRC() {
+        if (m_cntUpCRC < 0xFF)
+            ++m_cntUpCRC;
+    }
+
+    inline void resetCRC() {
+        if (m_cntUpCRC > 0)
+            --m_cntUpCRC;
+    }
+
+    inline void cntUpFrameError() {
+        if (m_cntUpFrameError < 0xFF)
+            ++m_cntUpFrameError;
+    }
+
+    inline bool resetFrameError() {
+        if (m_cntUpFrameError > 0)
+            --m_cntUpFrameError;
+    }
+
+    inline bool isCRCError() {
+        return m_cntUpCRC > 5 ? true : false;
+    }
+
+    inline bool isFrameError() {
+        return m_cntUpFrameError > 5 ? true : false;
+    }
+
+private:
+    quint8 m_cntUpCRC;
+    quint8 m_cntUpFrameError;
+
+};
 
 class AutomationModelDriverClz : public BasedModelDriverClz
 {
@@ -36,6 +79,7 @@ class AutomationModelDriverClz : public BasedModelDriverClz
         Connected,
         Disconnected,
         HandShakeException,
+        FatalErrorException
     };
 
     const int fixedServerAddress = 0xF0CC;
@@ -59,6 +103,8 @@ private:
     QModbus2Reply *lastRequest = nullptr;
     QModbus2Client *modbusDevice = nullptr;
 
+    std::unique_ptr<FatalErrorDrvClz> m_monitorError;
+
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
@@ -69,6 +115,11 @@ public slots:
 
 public:
     void startMeasTest(const UiCompMeasData data, const QSerialPortSetting::Settings setting);
+
+public:
+    void enterFSMInitState();
+    void enterFSMResetState();
+
 private:
     void connect();
 
