@@ -307,9 +307,6 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                         << "to State" << (quint32)State::AlarmQueryState;
                 sendAlarmQueryCmd();
                 state = State::AlarmQueryState;
-//                mp_refresh->update();
-//                sendMeasStartCmd();
-//                state = State::MeasRunningState;
             }
         }
         else
@@ -317,7 +314,6 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             qWarning() << "unexpected signal was received during state " << (quint32)state
                        << "  with signal name " << (quint32)signal.m_type;
         }
-
     }
         break;
 
@@ -394,9 +390,6 @@ void AutomationModelDriverClz::sendRequestCmd(const QModbus2DataUnit& writeUnit)
 {
     if (!modbusDevice)
         return;
-    //statusBar()->clearMessage();
-
-    //QModbus2DataUnit::RegisterType table = writeUnit.registerType();
 
     if (auto *reply = modbusDevice->sendReadRequest(writeUnit, fixedServerAddress)) {
         QObject::connect(reply, &QModbus2Reply::finished, this,

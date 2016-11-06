@@ -59,8 +59,6 @@ private:
     QModbus2Reply *lastRequest = nullptr;
     QModbus2Client *modbusDevice = nullptr;
 
-    //QQueue<QModbus2DataUnit> m_queue;
-
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
