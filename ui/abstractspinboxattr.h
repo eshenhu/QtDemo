@@ -56,11 +56,11 @@ static std::map<JsonGUIPrimType, FunctionPair> m_funMap =
     { JsonGUIPrimType::INVALID,    { Functions::functionDummy,   Functions::formulaDummy    }},
     { JsonGUIPrimType::VOLTAGE,    { Functions::functionVol,     Functions::formulaVol      }},
     { JsonGUIPrimType::CURRENT,    { Functions::functionCurrent, Functions::formulaCurrent  }},
-    { JsonGUIPrimType::FORCE,      { Functions::functionForce,   Functions::formulaForce  }},
+    { JsonGUIPrimType::THRUST,      { Functions::functionForce,   Functions::formulaForce  }},
     { JsonGUIPrimType::THROTTLE,   { Functions::functionThrottle,Functions::formulaThrottle  }},
     { JsonGUIPrimType::SPEED,      { Functions::functionSpeed,   Functions::formulaSpeed  }},
     { JsonGUIPrimType::TEMP,       { Functions::functionTemp,    Functions::formulaTemp  }},
-    { JsonGUIPrimType::POWEREFFEC, { Functions::functionPowerEffect, Functions::formulaPowerEffect  }},
+    { JsonGUIPrimType::EFFICIENCY, { Functions::functionPowerEffect, Functions::formulaPowerEffect  }},
     { JsonGUIPrimType::VIBRATE,    { Functions::functionVibrate, Functions::formulaVibrate  }},
     { JsonGUIPrimType::POWER,      { Functions::functionPower,   Functions::formulaPower  }}
 };

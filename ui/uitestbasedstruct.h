@@ -22,11 +22,11 @@ struct ThrottleTstData
 enum JsonGUIPrimType : quint8 { INVALID,
                                VOLTAGE,
                                CURRENT,
-                               FORCE,
+                               THRUST,
                                THROTTLE,
                                SPEED,
                                TEMP,
-                               POWEREFFEC,
+                               EFFICIENCY,
                                VIBRATE,
                                POWER };
 
