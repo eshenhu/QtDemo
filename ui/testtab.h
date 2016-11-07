@@ -10,6 +10,7 @@ class QCheckBox;
 class QComboBox;
 class QPushButton;
 class QTabWidget;
+class CfgResHandlerInf;
 
 enum TestPlanEnum {
     Voltage,

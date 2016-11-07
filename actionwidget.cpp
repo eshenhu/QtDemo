@@ -57,7 +57,7 @@ ActionWidget::ActionWidget(QWidget *parent)
       m_msgBox(nullptr)
 {
     m_measData.type = JsonGUIPrimType::INVALID;
-    m_cfgHandler = new CfgResHandler();
+    //m_cfgHandler = new CfgResHandler();
     m_reader = new CfgJsonReader();
     m_reader->load("PV11");
 
@@ -103,7 +103,7 @@ ActionWidget::ActionWidget(QWidget *parent)
                                  QMessageBox::Ok);
             return;
         }
-        m_driver->startMeasTest(m_measData, m_cfgHandler, setting);
+        m_driver->startMeasTest(m_measData, getCfgResHdl(), setting);
         //reset.
         m_measData.type = JsonGUIPrimType::INVALID;
     });
@@ -115,8 +115,8 @@ ActionWidget::ActionWidget(QWidget *parent)
 
 ActionWidget::~ActionWidget()
 {
-    if(m_cfgHandler)
-        delete m_cfgHandler;
+//    if(m_cfgHandler)
+//        delete m_cfgHandler;
     if (m_reader)
         delete m_reader;
     if (m_chartWidget)
@@ -136,7 +136,7 @@ void ActionWidget::createTabWidget()
             this, SLOT(updateUserInput(ThrottleTstData)));
 
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
-    m_subConfigTabWidget = new ConfigTab(m_cfgHandler);
+    m_subConfigTabWidget = new ConfigTab(getCfgResHdl());
     m_tabWidget->addTab(m_subConfigTabWidget, tr("Config"));
 }
 

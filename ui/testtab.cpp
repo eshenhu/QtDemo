@@ -15,6 +15,7 @@
 #include <QMessageBox>
 
 #include <QDebug>
+#include "actionwidget.h"
 
 class ConstValue
 {
@@ -192,12 +193,15 @@ QPushButton *TestTab::start_btn() const
 DistanceTstTab::DistanceTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+
     // series settings
     m_voltage = new QSpinBox();
     m_voltage->setMinimumWidth(70);
     m_voltage->setMaximumWidth(70);
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_voltage->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_voltage->setSingleStep(ConstValue::STEP_VOL);
     m_voltage->setValue(ConstValue::DEFAULT_VOL);
 
@@ -205,7 +209,8 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     m_throttle->setMinimumWidth(70);
     m_throttle->setMaximumWidth(70);
     m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_throttle->setRange(0, pCfgResHdl->max_throttle());
+    //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
     m_throttle->setSingleStep(ConstValue::STEP_THR);
     m_throttle->setValue(ConstValue::DEFAULT_THR);
 
@@ -282,25 +287,29 @@ void DistanceTstTab::validateUserInput(bool checked)
 VoltageTstTab::VoltageTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
     // series settings
     m_throttle = new QSpinBox();
     m_throttle->setMinimumWidth(70);
     m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_throttle->setRange(0, pCfgResHdl->max_throttle());
+    //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
     m_throttle->setSingleStep(ConstValue::STEP_THR);
     m_throttle->setValue(ConstValue::DEFAULT_THR);
 
     m_voltage_start = new QSpinBox();
     m_voltage_start->setMinimumWidth(70);
     m_voltage_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_voltage_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage_start->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_voltage_start->setSingleStep(ConstValue::STEP_VOL);
     m_voltage_start->setValue(ConstValue::DEFAULT_VOL);
 
     m_voltage_end = new QSpinBox();
     m_voltage_end->setMinimumWidth(70);
     m_voltage_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_voltage_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage_end->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_voltage_end->setSingleStep(ConstValue::STEP_VOL);
     m_voltage_end->setValue(ConstValue::MAX_VOL);
 
@@ -371,25 +380,29 @@ void VoltageTstTab::validateUserInput(bool checked)
 ThrottleTstTab::ThrottleTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
     // series settings
     m_voltage = new QSpinBox();
     m_voltage->setMinimumWidth(70);
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_voltage->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_voltage->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
     m_voltage->setSingleStep(ConstValue::STEP_THR);
     m_voltage->setValue(ConstValue::DEFAULT_THR);
 
     m_thro_start = new QSpinBox();
     m_thro_start->setMinimumWidth(70);
     m_thro_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_thro_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_thro_start->setRange(0, pCfgResHdl->max_throttle());
+    //m_thro_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_thro_start->setSingleStep(ConstValue::STEP_VOL);
     m_thro_start->setValue(ConstValue::DEFAULT_VOL);
 
     m_thro_end = new QSpinBox();
     m_thro_end->setMinimumWidth(70);
     m_thro_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_thro_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_thro_end->setRange(0, pCfgResHdl->max_throttle());
+    //m_thro_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
     m_thro_end->setSingleStep(ConstValue::STEP_VOL);
     m_thro_end->setValue(ConstValue::MAX_VOL);
 

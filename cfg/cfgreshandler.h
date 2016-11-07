@@ -18,7 +18,7 @@ struct CfgMotorProdVersionStu
     quint8 maxVol;    // 30v = 30
     quint8 maxCur;    // 50A = 50 2*50A = 100
     quint8 maxTorque; // 15N*M = 15
-    quint8 dummy;
+    quint8 maxThrust;  // 30kg = 30
 };
 
 const CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::ProductVersion::MAX] =
@@ -34,8 +34,8 @@ const CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::Prod
     {CfgResHandlerInf::ProductVersion::PV8,     CfgResHandlerInf::MotorType::PELEC,  1, 50,100, 50, 50, 0},
     {CfgResHandlerInf::ProductVersion::PV9,     CfgResHandlerInf::MotorType::PELEC,  2, 60, 30,200, 60, 0},
     {CfgResHandlerInf::ProductVersion::PV10,    CfgResHandlerInf::MotorType::PELEC,  2, 60, 55,110, 60, 0},
-    {CfgResHandlerInf::ProductVersion::PV11,    CfgResHandlerInf::MotorType::PELEC,  2,100, 55,180,100, 0},
-    {CfgResHandlerInf::ProductVersion::PV12,    CfgResHandlerInf::MotorType::PELEC,  2,100,100,100,100, 0}
+    {CfgResHandlerInf::ProductVersion::PV11,    CfgResHandlerInf::MotorType::PELEC,  2, 50, 55, 90, 50, 30},
+    {CfgResHandlerInf::ProductVersion::PV12,    CfgResHandlerInf::MotorType::PELEC,  2, 50,100,100,100, 0}
 };
 
 class CfgMotorBootCfgModel
@@ -103,6 +103,7 @@ public:
     quint32 max_vol() const;
     quint32 max_cur() const;
     quint32 max_torque() const;
+    quint32 max_thrust() const;
     CfgResHandlerInf::ProductVersion prod_version() const;
 
 private:
@@ -198,6 +199,15 @@ public:
     {
         Q_ASSERT(m_prodCfg != nullptr);
         return m_prodCfg->max_torque();
+    }
+    quint32 max_thrust() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_thrust();
+    }
+    quint32 max_throttle() const
+    {
+        return 100;
     }
     ProductVersion prod_version() const
     {

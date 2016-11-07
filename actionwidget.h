@@ -37,6 +37,7 @@
 #include <QMessageBox>
 #include "util/dserialportsetting.h"
 #include "ui/uitestbasedstruct.h"
+#include "cfg/cfgreshandler.h"
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -56,13 +57,11 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-class CfgResHandler;
 class CfgJsonReader;
 class CompQChartWidget;
 class AutomationModelDriverClz;
 class TestTab;
 class ConfigTab;
-
 
 class ActionWidget : public QWidget
 {
@@ -85,6 +84,11 @@ public Q_SLOTS:
 //    void updateSerieSettings();
 //    void updateSliceSettings();
 
+public:
+    static CfgResHandler* getCfgResHdl(){
+        static CfgResHandler* cfgHdl = new CfgResHandler();
+        return cfgHdl;
+    }
 
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
@@ -98,7 +102,7 @@ private:
     QDialogButtonBox* m_buttonBox;
     QSerialPortSetting*   m_settingDialog;
 
-    CfgResHandler*    m_cfgHandler;
+    //CfgResHandler*    m_cfgHandler;
     CfgJsonReader*    m_reader;
 
     UiCompMeasData    m_measData;
@@ -108,4 +112,6 @@ private:
     std::unique_ptr<QMessageBox> m_msgBox;
     void createTabWidget();
 };
+
+
 #endif // MAINWIDGET_H

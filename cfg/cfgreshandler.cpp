@@ -170,16 +170,24 @@ quint32 CfgProductVersionCfgModel::max_torque() const
     return tabelCfgMotorProdVer[(quint8)m_prod].maxTorque;
 }
 
+quint32 CfgProductVersionCfgModel::max_thrust() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxThrust;
+}
+
 CfgResHandlerInf::ProductVersion CfgProductVersionCfgModel::prod_version() const
 {
-    return CfgResHandlerInf::ProductVersion::PV11;
+    //return CfgResHandlerInf::ProductVersion::PV11;
+    return m_prod;
 }
 
 void CfgProductVersionCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/product");
 
-    m_prod = static_cast<CfgResHandlerInf::ProductVersion>(m_set.value("version", 0).toInt());
+    // eshenhu : need to be more consideration
+    //m_prod = static_cast<CfgResHandlerInf::ProductVersion>(m_set.value("version", (quint8)CfgResHandlerInf::ProductVersion::PV11).toInt());
+    m_prod = CfgResHandlerInf::ProductVersion::PV11;
     if ((quint8)m_prod >= (quint8)CfgResHandlerInf::ProductVersion::MAX)
         m_prod = CfgResHandlerInf::ProductVersion::INVALID;
 
