@@ -52,6 +52,8 @@ public:
     static const int STEP_VOL    = 1;
 
     static const int DEFAULT_THR = 50;
+    static const int DEFAULT_THR_LOW  = 20;
+    static const int DEFAULT_THR_HIGH = 80;
     static const int MIN_THR     = 0;
     static const int MAX_THR     = 99;
     static const int STEP_THR    = 1;
@@ -387,24 +389,24 @@ ThrottleTstTab::ThrottleTstTab(QWidget *parent)
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage->setRange(0, pCfgResHdl->max_vol());
     //m_voltage->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
-    m_voltage->setSingleStep(ConstValue::STEP_THR);
-    m_voltage->setValue(ConstValue::DEFAULT_THR);
+    m_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage->setValue(ConstValue::DEFAULT_VOL);
 
     m_thro_start = new QSpinBox();
     m_thro_start->setMinimumWidth(70);
     m_thro_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_thro_start->setRange(0, pCfgResHdl->max_throttle());
     //m_thro_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
-    m_thro_start->setSingleStep(ConstValue::STEP_VOL);
-    m_thro_start->setValue(ConstValue::DEFAULT_VOL);
+    m_thro_start->setSingleStep(ConstValue::STEP_THR);
+    m_thro_start->setValue(ConstValue::DEFAULT_THR_LOW);
 
     m_thro_end = new QSpinBox();
     m_thro_end->setMinimumWidth(70);
     m_thro_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_thro_end->setRange(0, pCfgResHdl->max_throttle());
     //m_thro_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
-    m_thro_end->setSingleStep(ConstValue::STEP_VOL);
-    m_thro_end->setValue(ConstValue::MAX_VOL);
+    m_thro_end->setSingleStep(ConstValue::STEP_THR);
+    m_thro_end->setValue(ConstValue::DEFAULT_THR_HIGH);
 
     m_thro_step = new QComboBox();
     m_thro_step->setMinimumWidth(70);

@@ -1,6 +1,7 @@
 #include "measdataformat.h"
 #include <climits>
 #include <QtDebug>
+#include <actionwidget.h>
 
 MeasDataFormat::MeasDataFormat()
 {
@@ -15,9 +16,18 @@ quint32 MeasDataFormat::getVol() const
     return vol;
 }
 
+/*
+ *   Protocol:
+ *       Voltage was preseted with 16bit. 0xFFFF represet the maximum
+ *       supported voltage value.
+ *       f.g. in PV11 version, the max vol is 55V, then 0xFFFF represet
+ *            55V.
+ */
 void MeasDataFormat::setVol(const quint32 &value)
 {
-    vol = value;
+    CfgResHandlerInf* cfgHandler = ActionWidget::getCfgResHdl();
+    quint32 max_value = cfgHandler->max_vol();
+    vol = (65535 / max_value) * value;
 }
 
 quint32 MeasDataFormat::getThro_1() const
@@ -180,8 +190,8 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
     if (m_start_thro <= m_end_thro)
     {
         m_data->setVol(m_vol);
-        m_data->setThro_1(m_start_thro);
-        m_data->setThro_2(m_start_thro);
+        m_data->setThro_1(m_calc_value);
+        m_data->setThro_2(m_calc_value);
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
