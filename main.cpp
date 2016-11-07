@@ -29,9 +29,63 @@
 
 #include "mainwindow.h"
 #include <QtWidgets/QApplication>
+#include <QDir>
+#include <QDateTime>
+#include <QTextStream>
+#include <QLoggingCategory>
+
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString & msg)
+{
+    static bool isOpen = false;
+    static FILE* pfile;
+    QString txt;
+    switch (type) {
+    case QtDebugMsg:
+        txt = QString("Debug: %1-%2-%3-%4-%5").arg(context.category).arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        break;
+    case QtWarningMsg:
+        txt = QString("Warning: %1-%2-%3-%4-%5").arg(context.category).arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        break;
+    case QtInfoMsg:
+        txt = QString("Info: %1-%2-%3-%4-%5").arg(context.category).arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        break;
+    case QtCriticalMsg:
+        txt = QString("Critical: %1-%2-%3-%4-%5").arg(context.category).arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        break;
+    case QtFatalMsg:
+        txt = QString("Fatal: %1-%2-%3-%4-%5").arg(context.category).arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        break;
+    }
+
+
+    if (!isOpen)
+    {
+        QDateTime time = QDateTime::currentDateTime();
+        QString strBuffer = time.toString("yyyy-MM-dd-hh-mm-ss");
+        strBuffer += QStringLiteral(".log");
+
+        pfile = fopen(qPrintable(strBuffer),"w");
+        //static QFile outFile(strBuffer);
+        //outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+        //static QTextStream ts(&outFile);
+        isOpen = true;
+    }
+    //QTextStream ts(&outFile);
+    //ts << txt << endl;
+    //fprintf(pfile, qPrintable(txt));
+    fputs(qPrintable(txt), pfile);
+    fputc('\n', pfile);
+}
 
 int main(int argc, char *argv[])
 {
+    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=true\n"
+                                                    "driver.usb.debug=true\n"
+                                                    "driver.usb.low=true\n"
+                                                    "drone.engine.debug=true"));
+    qSetMessagePattern(QStringLiteral("[%{type}] %{time} %{appname} (%{file}:%{line}) - %{message}"));
+    //qInstallMessageHandler(myMessageHandler);
     QApplication a(argc, argv);
     MainWindow window;
     window.show();

@@ -172,7 +172,7 @@ quint32 CfgProductVersionCfgModel::max_torque() const
 
 CfgResHandlerInf::ProductVersion CfgProductVersionCfgModel::prod_version() const
 {
-    return CfgResHandlerInf::ProductVersion::PV1;
+    return CfgResHandlerInf::ProductVersion::PV11;
 }
 
 void CfgProductVersionCfgModel::loadSetting()

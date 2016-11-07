@@ -553,10 +553,10 @@ bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Respo
         stream >> val.humidity >> val.envtemp >> val.pressure >> val.thro_1 >> val.thro_2
                >> val.backup_1 >> val.backup_2 >> val.motorType >> val.numOfMotor;
 
-//        qCDebug(QT_MODBUS2) << "com.comm.data = val.humidity" << val.humidity << "val.envtemp" << val.envtemp
-//                << "val.pressure" << val.pressure << "val.thro_1 " << val.thro_1 << "val.thro_2" << val.thro_2
-//                << "val.backup_1" << val.backup_1 << "val.backup_2" << val.backup_2
-//                << "val.motorType" << val.motorType << "val.numOfMotor" << val.numOfMotor;
+        qCDebug(QT_MODBUS2) << "com.comm.data = val.humidity" << val.humidity << "val.envtemp" << val.envtemp
+                << "val.pressure" << val.pressure << "val.thro_1 " << val.thro_1 << "val.thro_2" << val.thro_2
+                << "val.backup_1" << val.backup_1 << "val.backup_2" << val.backup_2
+                << "val.motorType" << val.motorType << "val.numOfMotor" << val.numOfMotor;
 
         if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
         {

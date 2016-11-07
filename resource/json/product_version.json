@@ -16,6 +16,14 @@
           "unit": "V"
         },
         {
+          "text": "THROTTLE",
+          "index": 0,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "%"
+        },
+        {
           "text": "CURRENT",
           "index": 0,
           "isSelected": true,
@@ -32,12 +40,12 @@
           "unit": "g"
         },
         {
-          "text": "THROTTLE",
+          "text": "TORQUE",
           "index": 0,
-          "isSelected": true,
+          "isSelected": false,
           "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "%"
+          "upLimit": 0,
+          "unit": "N*M"
         },
         {
           "text": "SPEED",
@@ -181,6 +189,174 @@
           "isSelected": false,
           "lowLimit": 0,
           "upLimit": 50000,
+          "unit": "RPM"
+        },
+        {
+          "text": "TEMP_1",
+          "index": 1,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "C"
+        },
+        {
+          "text": "TEMP_2",
+          "index": 17,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "C"
+        },
+        {
+          "text": "EFFICIENCY 1",
+          "index": 1,
+          "isSelected": false,
+          "lowLimit": -20,
+          "upLimit": 20,
+          "unit": "g/W"
+        },
+        {
+          "text": "EFFICIENCY 2",
+          "index": 17,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "g/A"
+        },
+        {
+          "text": "POWER",
+          "index": 1,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 1000,
+          "unit": "W"
+        }
+      ]
+    },
+    "PV11": {
+      "config": {
+        "motorType": "elec",
+        "numOfMotor": 2
+      },
+      "display": [
+        {
+          "text": "VOLTAGE",
+          "index": 255,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 55,
+          "unit": "V"
+        },
+        {
+          "text": "THROTTLE",
+          "index": 0,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "%"
+        },
+        {
+          "text": "CURRENT",
+          "index": 0,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 90,
+          "unit": "A"
+        },
+        {
+          "text": "THRUST",
+          "index": 0,
+          "isSelected": true,
+          "lowLimit": -5000,
+          "upLimit": 5000,
+          "unit": "g"
+        },
+        {
+          "text": "TORQUE",
+          "index": 0,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 50,
+          "unit": "N*M"
+        },
+        {
+          "text": "SPEED",
+          "index": 0,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 50000,
+          "unit": "RPM"
+        },
+        {
+          "text": "TEMP_1",
+          "index": 0,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "C"
+        },
+        {
+          "text": "TEMP_2",
+          "index": 16,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "C"
+        },
+        {
+          "text": "EFFICIENCY 1",
+          "index": 0,
+          "isSelected": false,
+          "lowLimit": -20,
+          "upLimit": 20,
+          "unit": "g/W"
+        },
+        {
+          "text": "EFFICIENCY 2",
+          "index": 16,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "g/A"
+        },
+        {
+          "text": "POWER",
+          "index": 0,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 1000,
+          "unit": "W"
+        },
+        {
+          "text": "CURRENT",
+          "index": 1,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 90,
+          "unit": "A"
+        },
+        {
+          "text": "THRUST",
+          "index": 1,
+          "isSelected": true,
+          "lowLimit": -5000,
+          "upLimit": 5000,
+          "unit": "g"
+        },
+        {
+          "text": "TORQUE",
+          "index": 1,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 50,
+          "unit": "N*M"
+        },
+        {
+          "text": "SPEED",
+          "index": 1,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 30000,
           "unit": "RPM"
         },
         {

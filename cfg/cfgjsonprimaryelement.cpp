@@ -98,16 +98,16 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString str) const
         return JsonGUIPrimType::VOLTAGE;
     else if (str.contains("CURRENT"))
         return JsonGUIPrimType::CURRENT;
-    else if (str.contains("FORCE"))
-        return JsonGUIPrimType::FORCE;
+    else if (str.contains("THRUST"))
+        return JsonGUIPrimType::THRUST;
     else if (str.contains("THROTTLE"))
         return JsonGUIPrimType::THROTTLE;
     else if (str.contains("SPEED"))
         return JsonGUIPrimType::SPEED;
     else if (str.contains("TEMP"))
         return JsonGUIPrimType::TEMP;
-    else if (str.contains("POWEREFFEC"))
-        return JsonGUIPrimType::POWEREFFEC;
+    else if (str.contains("EFFICIENCY"))
+        return JsonGUIPrimType::EFFICIENCY;
     else if (str.contains("VIBRATE"))
         return JsonGUIPrimType::VIBRATE;
     else if (str.contains("POWER"))
