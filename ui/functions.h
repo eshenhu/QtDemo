@@ -148,7 +148,7 @@ const static formulaT formulaCurrent = [](const qint32 v){
 };
 
 
-const static functionT functionForce = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+const static functionT functionThrust = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
@@ -157,7 +157,7 @@ const static functionT functionForce = [](const QModbus2DataUnit* data, const Js
         if ((idx.idxMotor()+1) <= config.numOfMotor())
         {     
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].lift);
-            qDebug() << "ui.function.functionForce update Force value with :" << rtn;
+            qDebug() << "com.ui.function.functionForce update Force value with :" << rtn;
         }
         else
         {
@@ -171,16 +171,42 @@ const static functionT functionForce = [](const QModbus2DataUnit* data, const Js
     return rtn;
 };
 
-const static formulaT formulaForce = [](const qint32 v){
+const static formulaT formulaThrust = [](const qint32 v){
     return (double)v;
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(config)
-    return idx.idxMotor() == 0 ? static_cast<qint32>(data->uvalues().r.s.thro_1) : static_cast<qint32>(data->uvalues().r.s.thro_2);
+    return idx.idxOneMotor() == 0 ? static_cast<qint32>(data->uvalues().r.s.thro_1) : static_cast<qint32>(data->uvalues().r.s.thro_2);
 };
 
 const static formulaT formulaThrottle = [](const qint32 v){
+    return (double)v;
+};
+
+const static functionT functionTorque = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(config)
+
+    qint32 rtn = 0;
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
+    {
+        // idx 0 ->1st one 1-> 2nd one
+        if ((idx.idxMotor()+1) <= config.numOfMotor()){
+            rtn = data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].torque;
+        }
+        else
+        {
+            qCritical() << "com.ui.functions torque idx was not legal(0 or 1) one value == " << idx.idxMotor();
+        }
+    }
+    else
+    {
+        qCritical() << "com.ui.functions torque can not enabled on non-elec motor type";
+    }
+    return rtn;
+};
+
+const static formulaT formulaTorque = [](const qint32 v){
     return (double)v;
 };
 
