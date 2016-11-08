@@ -1,7 +1,7 @@
 #include "measdataformat.h"
 #include <climits>
 #include <QtDebug>
-#include <actionwidget.h>
+//#include <actionwidget.h>
 
 MeasDataFormat::MeasDataFormat()
 {
@@ -25,9 +25,10 @@ quint32 MeasDataFormat::getVol() const
  */
 void MeasDataFormat::setVol(const quint32 &value)
 {
-    CfgResHandlerInf* cfgHandler = ActionWidget::getCfgResHdl();
-    quint32 max_value = cfgHandler->max_vol();
-    vol = (65535 / max_value) * value;
+//    CfgResHandlerInf* cfgHandler = ActionWidget::getCfgResHdl();
+//    quint32 max_value = cfgHandler->max_vol();
+//    vol = (65535 / max_value) * value;
+    vol = 100 * value;
 }
 
 quint32 MeasDataFormat::getThro_1() const

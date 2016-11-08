@@ -102,6 +102,8 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString str) const
         return JsonGUIPrimType::THRUST;
     else if (str.contains("THROTTLE"))
         return JsonGUIPrimType::THROTTLE;
+    else if (str.contains("TORQUE"))
+        return JsonGUIPrimType::TORQUE;
     else if (str.contains("SPEED"))
         return JsonGUIPrimType::SPEED;
     else if (str.contains("TEMP"))
