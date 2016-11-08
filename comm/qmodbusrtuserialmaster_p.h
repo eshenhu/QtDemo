@@ -100,6 +100,7 @@ public:
 
             quint16 serverAddr, pduSize, compPduSize;
             QDataStream out(&responseBuffer, QIODevice::ReadOnly);
+            out.setByteOrder(QDataStream::LittleEndian);
             out >> serverAddr >> pduSize >> compPduSize;
 
             if ((quint16)~pduSize != (quint16)compPduSize)
@@ -111,7 +112,7 @@ public:
                 return;
             }
 
-            pduSize = (pduSize & 0x00FF) << 8 | (pduSize & 0xFF00) >> 8;
+            //pduSize = (pduSize & 0x00FF) << 8 | (pduSize & 0xFF00) >> 8;
 
             qCDebug(QT_MODBUS2) << "(RTU client) :" << "aduSize = "
                                << pduSize << "compAduSize = " << compPduSize;

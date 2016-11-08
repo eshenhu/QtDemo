@@ -14,7 +14,7 @@ public:
     ~QRTLineSeries();
 
 public:
-    const static quint32 MAX_NUM_POINTS = 64;
+    const static quint32 MAX_NUM_POINTS = 128;
 
 public:
     void update(double v);

@@ -88,7 +88,7 @@ public:
         FatalErrorException
     };
 
-    const int fixedServerAddress = 0xF0CC;
+    const int fixedServerAddress = 0xCCF0;
     const int msecTimeInterval = 500;  //ms
 
 public:

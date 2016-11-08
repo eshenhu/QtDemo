@@ -470,6 +470,7 @@ bool QModbus2ClientPrivate::processReadRestCodeResponse(const QModbus2Response &
 
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         stream >> data->m_uvalues.r.p.status;
         data->setRegisterType(QModbus2DataUnit::ResetCode);
     }
@@ -481,6 +482,7 @@ bool QModbus2ClientPrivate::processReadHandShakeCodeResponse(const QModbus2Respo
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         stream >> data->m_uvalues.r.q.mainboardHWRev
                 >> data->m_uvalues.r.q.mainboardFirmwareRev
                   >> data->m_uvalues.r.q.sampleboardHWRev
@@ -507,6 +509,7 @@ bool QModbus2ClientPrivate::processReadFreqAdjustCodeResponse(const QModbus2Resp
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         stream >> data->m_uvalues.r.r.status;
         data->setRegisterType(QModbus2DataUnit::FreqAdjustCode);
     }
@@ -529,6 +532,7 @@ bool QModbus2ClientPrivate::processReadAlarmInfoCodeResponse(const QModbus2Respo
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         stream >> data->m_uvalues.r.t.status;
         data->setRegisterType(QModbus2DataUnit::AlarmInfoCode);
     }
@@ -540,6 +544,7 @@ bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Respo
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         QModbus2DataUnit::MeasStartRecStruct& val = data->m_uvalues.r.s;
 
 //        const QModbus2DataUnit::MeasDataUnion& data2 = data->uvalues();
@@ -571,8 +576,7 @@ bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Respo
 
             if (val.numOfMotor >= 2)
             {
-                stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
-                        >> val.motorInfo.elec.elecMotorStruct[1].current >> val.motorInfo.elec.elecMotorStruct[1].lift
+                stream >> val.motorInfo.elec.elecMotorStruct[1].current >> val.motorInfo.elec.elecMotorStruct[1].lift
                         >> val.motorInfo.elec.elecMotorStruct[1].torque >> val.motorInfo.elec.elecMotorStruct[1].speed
                         >> val.motorInfo.elec.elecMotorStruct[1].temp_1 >> val.motorInfo.elec.elecMotorStruct[1].temp_2;
             }
@@ -608,6 +612,7 @@ bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         QModbus2DataUnit::MeasStartRecStruct& val = data->m_uvalues.r.s;
 
         const QModbus2DataUnit::MeasDataUnion& data2 = data->uvalues();
@@ -652,6 +657,7 @@ bool QModbus2ClientPrivate::processReadQueryAlarmInfoCodeResponse(const QModbus2
 {
     if (data) {
         QDataStream stream(response.data());
+        stream.setByteOrder(QDataStream::LittleEndian);
         stream >> data->m_uvalues.r.u.errorCode
                >> data->m_uvalues.r.u.errorInfo;
         data->setRegisterType(QModbus2DataUnit::FatalErrorInfoCode);

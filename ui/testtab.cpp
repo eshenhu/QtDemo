@@ -88,6 +88,7 @@ TestTab::TestTab(QWidget *parent)
 
 
     m_start_btn = new QPushButton(tr("Start"));
+    m_start_btn->setCheckable(true);
     m_showgraph_btn = new QPushButton(tr("Show Graph"));
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();

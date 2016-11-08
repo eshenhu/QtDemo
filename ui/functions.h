@@ -62,6 +62,8 @@ const static formulaT formulaDummy = [](const qint32 v){
 
 const static functionT functionVol = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
+    static quint32 lastNoneZeroVol;
+    quint32 v;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
@@ -81,22 +83,33 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
 //                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
 //                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2;
 
-        qDebug() << "ui.function.functionVol update Vol value with :" << (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
+        qDebug() << "ui.function.functionVol update Vol value with :" << data->uvalues().r.s.motorInfo.elec.voltage;
 
-        return (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
+        v = (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
+        if (v){
+            lastNoneZeroVol = v;
+        }
+        else{
+            v = lastNoneZeroVol;
+        }
     }
     else
     {
+        v = 0;
         qCritical() << "com.ui.functions Voltage can not enabled on non-elec motor type";
     }
-    return (qint32)0;
+    return v;
 };
 
+/*
+ *  unit : 10mv
+ */
 const static formulaT formulaVol = [](const qint32 v){
-    return (double)v;
+    return (double)(v/100);
 };
 
 const static functionT functionCurrent = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    static quint32 lastNoneZeroVol;
     qint32 rtn = 0;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
@@ -107,9 +120,17 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
             qDebug() << "ui.function.functionVol update Current value with :"
                      << static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].current);
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].current);
+
+            if (rtn){
+                lastNoneZeroVol = rtn;
+            }
+            else{
+                rtn = lastNoneZeroVol;
+            }
         }
         else
         {
+            rtn = 0;
             qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
         }
     }
@@ -119,9 +140,11 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
     }
     return rtn;
 };
-
+/*
+ *  unit:   1mA
+ */
 const static formulaT formulaCurrent = [](const qint32 v){
-    return (double)v;
+    return (double)(v/1000);
 };
 
 

@@ -59,7 +59,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     m_measData.type = JsonGUIPrimType::INVALID;
     //m_cfgHandler = new CfgResHandler();
     m_reader = new CfgJsonReader();
-    m_reader->load("PV1");
+    m_reader->load("PV11");
 
     createTabWidget();
     //createChartView();

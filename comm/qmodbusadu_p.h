@@ -83,7 +83,8 @@ public:
         Q_ASSERT_X(!m_data.isEmpty(), "QModbusAdu::serverAddress()", "Empty ADU.");
         //return quint8(m_data.at(0));
         // big-endian little-endian problem here?
-        return quint16(quint8(m_data.at(0)) << 8 | quint8(m_data.at(1)));
+        //return quint16(quint8(m_data.at(0)) << 8 | quint8(m_data.at(1)));
+        return quint16(quint8(m_data.at(1)) << 8 | quint8(m_data.at(0)));
     }
 
     inline int pduDataSize() const
@@ -171,8 +172,8 @@ public:
                                     char delimiter = '\n') {
         QByteArray result;
         QDataStream out(&result, QIODevice::WriteOnly);
+        out.setByteOrder(QDataStream::LittleEndian);
         quint16 aduSize = pdu.size();
-        aduSize = (aduSize & 0x00FF) << 8 | (aduSize & 0xFF00) >> 8;
 
         out << quint16(serverAddress) << (quint16)aduSize << (quint16)~aduSize << pdu;
 
@@ -180,7 +181,10 @@ public:
             out << calculateLRC(result, result.size());
             return ":" + result.toHex() + "\r" + delimiter;
         } else {
-            out << calculateCRC(result.mid(6), result.size() - 6);
+            //out << calculateCRC(result.mid(6), result.size() - 6);
+            const quint16 crc = calculateCRC(result.mid(6), result.size() - 6);
+            out << (quint8)((crc & 0xFF00) >> 8);
+            out << (quint8)(crc & 0x00FF);
         }
         return result;
     }
