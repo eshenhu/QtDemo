@@ -21,6 +21,8 @@ public:
     quint32 getDis() const;
     void setDis(const quint32 &value);
 
+    void reset();
+
 private:
     quint32 vol;
     quint32 thro_1;
@@ -66,16 +68,17 @@ class AbstractPeriodicalMeasDataUpdate : public AbstractMeasDataUpdate
     };
 
 public:
-    AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                     const quint32 durationInSec, const quint32 intervalInMSec = 500);
+    AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                     const quint32 boot_thro, const quint32 durationInSec, const quint32 intervalInMSec = 500);
     virtual ~AbstractPeriodicalMeasDataUpdate() {m_phase = Phase::Phase_SoftStart;}
 
 private:
     quint32 m_tick;
     quint32 m_delay_start;
+    quint32 m_PRP_delay;
     quint32 m_soft_delay;
     quint32 m_boot_voltage;
-//    quint32 m_totalDurationInSec;
+    quint32 m_boot_thro;
     quint32 m_durationInSec;
     quint32 m_intervalInMSec;
     Phase m_phase;
@@ -97,7 +100,7 @@ class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
     PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
-                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+                                const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                 const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalVolMeasDataUpdate(){}
 
@@ -117,7 +120,7 @@ class PeriodicalThroMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
     PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
-                                 const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                  const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalThroMeasDataUpdate(){}
 
@@ -133,24 +136,24 @@ public:
     bool updateValue() override;
 };
 
-class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
-{
-public:
-    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol, const quint32 thro,
-                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 totalInSec, const quint32 durationInSec, const quint32 intervalInMSec = 500);
-    ~PeriodicalDisMeasDataUpdate(){}
+//class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
+//{
+//public:
+//    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol, const quint32 thro,
+//                                const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+//                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+//    ~PeriodicalDisMeasDataUpdate(){}
 
-private:
-    const quint32 m_step;
-    const quint32 m_start_dis;
-    const quint32 m_end_dis;
-    const quint32 m_vol;
-    const quint32 m_thro;
-    quint32 m_calc_value;
+//private:
+//    const quint32 m_step;
+//    const quint32 m_start_dis;
+//    const quint32 m_end_dis;
+//    const quint32 m_vol;
+//    const quint32 m_thro;
+//    quint32 m_calc_value;
 
-    // MeasDataUpdateInf interface
-public:
-    bool updateValue() override;
-};
+//    // MeasDataUpdateInf interface
+//public:
+//    bool updateValue() override;
+//};
 #endif // MEASDATAFORMAT_H

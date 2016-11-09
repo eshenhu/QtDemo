@@ -61,12 +61,20 @@ void MeasDataFormat::setDis(const quint32 &value)
     dis = value;
 }
 
-AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
-                                                                   const quint32 durationInSec, const quint32 intervalInMSec):
+void MeasDataFormat::reset()
+{
+    vol = thro_1 = thro_2 = 0;
+    dis = 0xFFFFFFFF;
+}
+
+AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                                                   const quint32 boot_thro, const quint32 durationInSec, const quint32 intervalInMSec):
     m_tick(0),
     m_delay_start(delay_start),
+    m_PRP_delay(PRP_delay),
     m_soft_delay(soft_delay),
     m_boot_voltage(boot_voltage),
+    m_boot_thro(boot_thro),
     m_durationInSec(durationInSec),
     m_intervalInMSec(intervalInMSec),
     m_phase(Phase::Phase_SoftStart)
@@ -94,13 +102,25 @@ bool AbstractPeriodicalMeasDataUpdate::update()
     {
         if (m_tick <= 1000 * m_delay_start/m_intervalInMSec)
         {
-            m_data->setVol(0);
+            //m_data->setVol(0);
+            m_data->setThro_1(0);
+            m_data->setThro_2(0);
+
+            static quint32 step = 1000 * m_delay_start / m_intervalInMSec;
+            quint32 vol = m_boot_voltage * m_tick / step;
+            m_data->setVol(vol);
         }
-        else if (m_tick <= 1000 * (m_delay_start + m_soft_delay)/m_intervalInMSec)
+        else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec)
+        {
+            // do nothing here, keep as previous.
+        }
+        else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay +m_soft_delay)/m_intervalInMSec)
         {
             static quint32 step = 1000 * m_soft_delay / m_intervalInMSec;
-            quint32 vol = m_boot_voltage * (m_tick - 1000 * m_delay_start/m_intervalInMSec) / step;
-            m_data->setVol(vol);
+            quint32 thro = m_boot_thro * (m_tick - 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec) / step;
+            //m_data->setVol(vol);
+            m_data->setThro_1(thro);
+            m_data->setThro_2(thro);
         }
         else
         {
@@ -123,9 +143,9 @@ bool AbstractPeriodicalMeasDataUpdate::update()
 }
 
 PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
-                                                         const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                                          const quint32 durationInSec, const quint32 intervalInMSec):
-    AbstractPeriodicalMeasDataUpdate(delay_start, soft_delay, boot_voltage, durationInSec, intervalInMSec),
+    AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay, soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
     m_start_vol(start),
     m_end_vol(end),
     m_thro(thro),
@@ -153,7 +173,7 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value > m_end_vol)
+        if(m_calc_value > (m_end_vol + m_step))
         {
             rtn = true;
         }
@@ -166,9 +186,9 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
 }
 
 PeriodicalThroMeasDataUpdate::PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
-                                                           const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
+                                                           const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                                            const quint32 durationInSec, const quint32 intervalInMSec)
-    :AbstractPeriodicalMeasDataUpdate(delay_start, soft_delay, boot_voltage, durationInSec, intervalInMSec),
+    :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, start, durationInSec, intervalInMSec),
       m_start_thro(start),
       m_end_thro(end),
       m_step(0),
@@ -196,7 +216,7 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value > m_end_thro)
+        if(m_calc_value > (m_end_thro + m_step))
         {
             rtn = true;
         }

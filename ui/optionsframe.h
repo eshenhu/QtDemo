@@ -21,6 +21,8 @@ public:
         D30S = 30,
         D60S = 60 };
 
+    static const quint32 DEFAULT_BOOT_VOL = 10;
+
     struct Settings {
         int duration = DURATION::D30S;
         int startDelay = DURATION::D5S;

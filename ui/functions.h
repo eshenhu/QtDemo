@@ -141,10 +141,10 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
     return rtn;
 };
 /*
- *  unit:   1mA
+ *  unit:   10mA
  */
 const static formulaT formulaCurrent = [](const qint32 v){
-    return (double)(v/1000);
+    return (double)(v/100);
 };
 
 
@@ -171,8 +171,11 @@ const static functionT functionThrust = [](const QModbus2DataUnit* data, const J
     return rtn;
 };
 
+/*
+ * Actually this value shoudle be calibrated at each boot time. -- eshenhu
+*/
 const static formulaT formulaThrust = [](const qint32 v){
-    return (double)v;
+    return (double)v/11934;
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -206,8 +209,11 @@ const static functionT functionTorque = [](const QModbus2DataUnit* data, const J
     return rtn;
 };
 
+/*
+ * Actually this value shoudle be calibrated at each boot time. -- eshenhu
+*/
 const static formulaT formulaTorque = [](const qint32 v){
-    return (double)v;
+    return (double)(v/15619);
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){

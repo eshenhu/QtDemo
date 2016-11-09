@@ -9,15 +9,16 @@
 #include "driver/measdataformat.h"
 #include "cfg/cfgreshandler.h"
 #include "util/qserialporthelper.h"
+#include "actionwidget.h"
 
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
     state(State::InitState),
     mp_data(new MeasDataFormat()),
-    mp_cfgRes(new CfgResHandler(this)),
     mp_refresh(nullptr),
     m_monitorError(new FatalErrorDrvClz)
 {
+    mp_cfgRes = ActionWidget::getCfgResHdl();
     m_sendTimer.setSingleShot(true);
     QObject::connect(&m_sendTimer, &QTimer::timeout, this, [this]() { processSendTimeout(); });
 
@@ -105,15 +106,17 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
 //    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
 //                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
 //                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+    mp_data->reset();
+
     if (data.type == JsonGUIPrimType::VOLTAGE){
-        mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step,
-                                                     data.data.u.thro, res->boot_delay(), res->boot_rape(), res->bootVol(),
+        mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step, data.data.u.thro,
+                                                     res->boot_delay(), res->boot_PRP(), res->boot_rape(), res->bootVol(),
                                                      data.data.u.duration);
         mp_refresh->setSeed(mp_data);
     }
     else if (data.type == JsonGUIPrimType::THROTTLE){
-        mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step,
-                                                      data.data.v.vol, res->boot_delay(), res->boot_rape(), res->bootVol(),
+        mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step, data.data.v.vol,
+                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), res->bootVol(),
                                                       data.data.v.duration);
         mp_refresh->setSeed(mp_data);
     }
@@ -544,10 +547,10 @@ void AutomationModelDriverClz::sendHandShakeCmd()
 void AutomationModelDriverClz::sendFreqAdjustCmd()
 {
     QModbus2DataUnit::FreqAdjustStruct v;
-//    v.freqValue_1 = mp_cfgRes->HZ();
-//    v.freqValue_2 = mp_cfgRes->HZ();
-    v.freqValue_1 = 0;
-    v.freqValue_2 = 1;
+
+    v.freqValue_1 = mp_cfgRes->HZ();
+    v.freqValue_2 = mp_cfgRes->HZ();
+
     QModbus2DataUnit data(QModbus2DataUnit::FreqAdjustCode, v);
     sendRequestCmd(data);
 }

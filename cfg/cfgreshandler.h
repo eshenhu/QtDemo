@@ -46,13 +46,12 @@ public:
 
 public:
     void set_boot_delay(const quint32 &boot_delay);
+    void set_PRP(const quint32 &PRP);
     void set_boot_rape(const quint32 &boot_rape);
 
     quint32 boot_delay() const;
+    quint32 PRP() const;
     quint32 boot_rape() const;
-
-    quint32 duration() const;
-    void set_duration(const quint32 &duration);
 
     quint32 bootVol() const;
     void setBootVol(const quint32 &bootVol);
@@ -63,7 +62,7 @@ private:
 private:
     quint32 m_boot_delay;
     quint32 m_boot_rape;
-    quint32 m_duration;
+    quint32 m_PRP;
     quint32 m_bootVol;
     QSettings& m_set;
 };
@@ -144,17 +143,16 @@ public:
         Q_ASSERT(m_bootCfg != nullptr);
         return m_bootCfg->boot_delay();
     }
+    inline quint32 boot_PRP() const
+    {
+        Q_ASSERT(m_bootCfg != nullptr);
+        return m_bootCfg->PRP();
+    }
     inline quint32 boot_rape() const
     {
         Q_ASSERT(m_bootCfg != nullptr);
         return m_bootCfg->boot_rape();
     }
-    inline quint32 duration() const
-    {
-        Q_ASSERT(m_bootCfg != nullptr);
-        return m_bootCfg->duration();
-    }
-
     inline quint32 bootVol() const
     {
         Q_ASSERT(m_bootCfg != nullptr);

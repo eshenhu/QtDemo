@@ -49,7 +49,7 @@ void CfgMotorBootCfgModel::loadSetting()
     m_set.beginGroup("cfg/motor");
     m_boot_delay = m_set.value("boot_delay", 5).toInt();
     m_boot_rape  = m_set.value("boot_rape", 10).toInt();
-    m_duration = m_set.value("duration", 10).toInt();
+    m_PRP = m_set.value("duration", 10).toInt();
     m_bootVol = m_set.value("boot_vol", 5).toInt();
     m_set.endGroup();
 }
@@ -65,15 +65,15 @@ void CfgMotorBootCfgModel::setBootVol(const quint32 &bootVol)
     m_set.setValue("cfg/motor/boot_vol", m_bootVol);
 }
 
-quint32 CfgMotorBootCfgModel::duration() const
+quint32 CfgMotorBootCfgModel::PRP() const
 {
-    return m_duration;
+    return m_PRP;
 }
 
-void CfgMotorBootCfgModel::set_duration(const quint32 &duration)
+void CfgMotorBootCfgModel::set_PRP(const quint32 &PRP)
 {
-    m_duration = duration;
-    m_set.setValue("cfg/motor/duration", m_duration);
+    m_PRP = PRP;
+    m_set.setValue("cfg/motor/PRP", m_PRP);
 }
 
 void CfgMotorBootCfgModel::set_boot_delay(const quint32 &boot_delay)
