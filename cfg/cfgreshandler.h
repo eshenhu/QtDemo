@@ -24,7 +24,7 @@ struct CfgMotorProdVersionStu
 const CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::ProductVersion::MAX] =
 {
     {CfgResHandlerInf::ProductVersion::INVALID, CfgResHandlerInf::MotorType::INVALID,0,  0,  0,  0, 0,  0},
-    {CfgResHandlerInf::ProductVersion::PV1,     CfgResHandlerInf::MotorType::PELEC,  1, 15,  1, 30, 15, 0},
+    {CfgResHandlerInf::ProductVersion::PV1,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 20, 30, 15, 0},
     {CfgResHandlerInf::ProductVersion::PV2,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0},
     {CfgResHandlerInf::ProductVersion::PV3,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0},
     {CfgResHandlerInf::ProductVersion::PV4,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 30, 50, 15, 0},
@@ -153,11 +153,11 @@ public:
         Q_ASSERT(m_bootCfg != nullptr);
         return m_bootCfg->boot_rape();
     }
-    inline quint32 bootVol() const
-    {
-        Q_ASSERT(m_bootCfg != nullptr);
-        return m_bootCfg->bootVol();
-    }
+//    inline quint32 bootVol() const
+//    {
+//        Q_ASSERT(m_bootCfg != nullptr);
+//        return m_bootCfg->bootVol();
+//    }
     inline quint32 vane() const
     {
         Q_ASSERT(m_deviceCfg != nullptr);

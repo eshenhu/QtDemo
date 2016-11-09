@@ -106,17 +106,18 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
 //    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
 //                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
 //                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+
     mp_data->reset();
 
     if (data.type == JsonGUIPrimType::VOLTAGE){
         mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step, data.data.u.thro,
-                                                     res->boot_delay(), res->boot_PRP(), res->boot_rape(), res->bootVol(),
+                                                     res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.u.vol_beg,
                                                      data.data.u.duration);
         mp_refresh->setSeed(mp_data);
     }
     else if (data.type == JsonGUIPrimType::THROTTLE){
         mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step, data.data.v.vol,
-                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), res->bootVol(),
+                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.v.vol,
                                                       data.data.v.duration);
         mp_refresh->setSeed(mp_data);
     }

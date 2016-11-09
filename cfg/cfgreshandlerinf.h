@@ -18,7 +18,7 @@ public:
     virtual quint32 boot_delay() const = 0;
     virtual quint32 boot_rape() const = 0;
     virtual quint32 boot_PRP() const = 0;
-    virtual quint32 bootVol() const = 0;
+//    virtual quint32 bootVol() const = 0;
 
     virtual quint32 vane() const = 0;
     virtual quint32 HZ() const = 0;

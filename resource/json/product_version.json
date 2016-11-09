@@ -44,8 +44,8 @@
           "index": 0,
           "isSelected": false,
           "lowLimit": 0,
-          "upLimit": 0,
-          "unit": "N*M"
+          "upLimit": 5000,
+          "unit": "N*mm"
         },
         {
           "text": "SPEED",
@@ -276,8 +276,8 @@
           "index": 0,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 50,
-          "unit": "N*M"
+          "upLimit": 5000,
+          "unit": "N*mm"
         },
         {
           "text": "SPEED",
@@ -348,8 +348,8 @@
           "index": 1,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 50,
-          "unit": "N*M"
+          "upLimit": 5000,
+          "unit": "N*mm"
         },
         {
           "text": "SPEED",
