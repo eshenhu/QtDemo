@@ -43,7 +43,7 @@
           "text": "TORQUE",
           "index": 0,
           "isSelected": false,
-          "lowLimit": 0,
+          "lowLimit": -5000,
           "upLimit": 5000,
           "unit": "N*mm"
         },
@@ -267,7 +267,7 @@
           "text": "THRUST",
           "index": 0,
           "isSelected": true,
-          "lowLimit": 0,
+          "lowLimit": -5000,
           "upLimit": 5000,
           "unit": "g"
         },
@@ -275,7 +275,7 @@
           "text": "TORQUE",
           "index": 0,
           "isSelected": true,
-          "lowLimit": 0,
+          "lowLimit": -5000,
           "upLimit": 5000,
           "unit": "N*mm"
         },
@@ -339,7 +339,7 @@
           "text": "THRUST",
           "index": 1,
           "isSelected": true,
-          "lowLimit": 0,
+          "lowLimit": -5000,
           "upLimit": 5000,
           "unit": "g"
         },
@@ -347,7 +347,7 @@
           "text": "TORQUE",
           "index": 1,
           "isSelected": true,
-          "lowLimit": 0,
+          "lowLimit": -5000,
           "upLimit": 5000,
           "unit": "N*mm"
         },
