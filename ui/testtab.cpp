@@ -102,7 +102,9 @@ TestTab::TestTab(QWidget *parent)
 
     m_tabWidget = new QTabWidget;
     m_tabWidget->setTabPosition(QTabWidget::West);
-    tabList[TestPlanEnum::Distance] = new DistanceTstTab();
+
+    m_disTstTab = new DistanceTstTab();
+    tabList[TestPlanEnum::Distance] = m_disTstTab;
 
     m_volTstTab = new VoltageTstTab();
     tabList[TestPlanEnum::Voltage] = m_volTstTab;
@@ -110,23 +112,29 @@ TestTab::TestTab(QWidget *parent)
     m_throTstTab = new ThrottleTstTab();
     tabList[TestPlanEnum::Throttle] = m_throTstTab;
 
-    tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
+    //Multipule test can be regarded as Throttle Test.
+    //tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
+    tabList[TestPlanEnum::Multiplue] = new ThrottleTstTab();
     tabList[TestPlanEnum::Aging] = new AgingTstTab();
     //tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
     tabList[TestPlanEnum::Manual] = new ManualTstTab();
 
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Voltage], tr("Voltage"));
-    connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
-        emit updateUserSelection(data);
-    } );
+//    connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
+//        emit updateUserSelection(data);
+//    } );
+    connect(m_volTstTab, SIGNAL(updateUserSelection(VoltageTstData)),
+                                this, SIGNAL(updateUserSelection(VoltageTstData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Throttle], tr("Throttle"));
-    connect(m_throTstTab, &ThrottleTstTab::updateUserSelection, [this](ThrottleTstData data){
-        emit updateUserSelection(data);
-    } );
+    connect(m_throTstTab, SIGNAL(updateUserSelection(ThrottleTstData)),
+            this, SIGNAL(updateUserSelection(ThrottleTstData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
+    connect(m_disTstTab, SIGNAL(updateUserSelection(DistanceTstData)),
+            this, SIGNAL(updateUserSelection(DistanceTstData)));
+
     m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
     //m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
@@ -259,11 +267,11 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();
     seriesSettingsLayout->addRow(tr("Vol(V)"), m_voltage);
-    seriesSettingsLayout->addRow(tr("Thrott(%)"), m_throttle);
-    seriesSettingsLayout->addRow(tr("Dis Beg(mm)"), m_disStart);
-    seriesSettingsLayout->addRow(tr("Dis End(mm)"), m_disEnd);
-    seriesSettingsLayout->addRow(tr("Dis Stp(mm)"), m_disStep);
-    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
+    seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
+    seriesSettingsLayout->addRow(tr("Dis Bg(mm)"), m_disStart);
+    seriesSettingsLayout->addRow(tr("Dis Ed(mm)"), m_disEnd);
+    seriesSettingsLayout->addRow(tr("Dis Sp(mm)"), m_disStep);
+    seriesSettingsLayout->addRow(tr("Dur (sec)"), m_duration);
     seriesSettingsLayout->addRow(m_apply_btn);
 
     QFormLayout *outputListLayout = new QFormLayout();
@@ -284,6 +292,16 @@ void DistanceTstTab::validateUserInput(bool checked)
                              QMessageBox::Close);
         warningBox.exec();
     }
+
+    //DistanceTstData
+    DistanceTstData data;
+    data.vol = m_voltage->value();
+    data.thro = m_throttle->value();
+    data.dis_beg = m_disStart->value();
+    data.dis_end = m_disEnd->value();
+    data.dis_step = (quint16)m_disStep->currentText().toInt();
+    data.duration = (quint16)m_duration->currentText().toInt();
+    emit updateUserSelection(data);
 }
 
 

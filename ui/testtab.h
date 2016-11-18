@@ -37,6 +37,8 @@ public:
 public:
     explicit DistanceTstTab(QWidget *parent = 0);
 
+Q_SIGNALS:
+    void updateUserSelection(DistanceTstData data);
 
 private slots:
     void validateUserInput(bool checked = false);
@@ -140,10 +142,12 @@ private:
 
     VoltageTstTab* m_volTstTab;
     ThrottleTstTab* m_throTstTab;
+    DistanceTstTab* m_disTstTab;
 
 Q_SIGNALS:
     void updateUserSelection(ThrottleTstData data);
     void updateUserSelection(VoltageTstData data);
+    void updateUserSelection(DistanceTstData data);
 
 private:
     void enableTestTab(TestPlanEnum);

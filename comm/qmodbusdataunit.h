@@ -124,7 +124,7 @@ public:
 
     enum class MeasStartRecStatusEnum : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
     enum class MotorTypeEnum  : quint8 { OILE = 0, ELECE = 1} ;
-    enum class LimitStatusEnum : quint8 { UPLIMIT = 0, DOWNLIMIT = 1, RUNNING = 2 };
+    enum class LimitStatusEnum : quint8 { REACHED = 0, UPLIMIT = 1, DOWNLIMIT = 2, RUNNING = 3, NOTARR = 0xFF };
 
     struct ElecMotorStruct
     {

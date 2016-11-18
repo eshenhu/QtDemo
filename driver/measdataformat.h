@@ -2,7 +2,7 @@
 #define MEASDATAFORMAT_H
 
 #include <qglobal.h>
-#include <QObject>
+#include "ui/uitestbasedstruct.h"
 class MeasDataFormat
 {
 public:
@@ -23,7 +23,11 @@ public:
 
     void reset();
 
+    JsonGUIPrimType getType() const;
+    void setType(const JsonGUIPrimType &value);
+
 private:
+    JsonGUIPrimType type;
     quint32 vol;
     quint32 thro_1;
     quint32 thro_2;

@@ -5,6 +5,7 @@
 
 MeasDataFormat::MeasDataFormat()
 {
+    type = JsonGUIPrimType::INVALID;
     vol = 0;
     thro_1 = 0;
     thro_2 = 0;
@@ -63,8 +64,19 @@ void MeasDataFormat::setDis(const quint32 &value)
 
 void MeasDataFormat::reset()
 {
+    type = JsonGUIPrimType::INVALID;
     vol = thro_1 = thro_2 = 0;
     dis = 0xFFFFFFFF;
+}
+
+JsonGUIPrimType MeasDataFormat::getType() const
+{
+    return type;
+}
+
+void MeasDataFormat::setType(const JsonGUIPrimType &value)
+{
+    type = value;
 }
 
 AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
@@ -173,7 +185,7 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value > (m_end_vol + m_step))
+        if(m_calc_value >= (m_end_vol + m_step))
         {
             rtn = true;
         }
@@ -216,7 +228,7 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value > (m_end_thro + m_step))
+        if(m_calc_value >= (m_end_thro + m_step))
         {
             rtn = true;
         }

@@ -76,7 +76,8 @@ public:
         FreqAdjustState,
         StartBtnQueryState,
         AlarmQueryState,
-        MeasOptionsState,
+        DistanceStepIntoLowState,
+        DistanceStepIntoBegState,
         MeasRunningState,
         MeasFinishedState,
     };
@@ -139,11 +140,13 @@ private:
     void sendHandShakeCmd();
     void sendFreqAdjustCmd();
     void sendAlarmQueryCmd();
+    void sendMeasDisStartCmd(DistanceTstDataEnum);
     void sendMeasStartCmd();
 
     void processDataHandlerSingleShot(const SignalOverLine& signal);
     void processReceivedDataUnit(const QModbus2DataUnit& data);
     bool processReceivedHandShakeDataUnit(const QModbus2DataUnit* data);
+    QModbus2DataUnit::LimitStatusEnum processReceivedMeasDistanceDataUnit(const QModbus2DataUnit* data);
     bool processReceivedMeasDataUnit(const QModbus2DataUnit* const data);
 };
 

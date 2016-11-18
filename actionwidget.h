@@ -79,6 +79,7 @@ public:
 public Q_SLOTS:
     void updateUserInput(VoltageTstData data);
     void updateUserInput(ThrottleTstData data);
+    void updateUserInput(DistanceTstData data);
 //    void slotMeasStartAction(bool checked);
 //    void updateChartSettings();
 //    void updateSerieSettings();

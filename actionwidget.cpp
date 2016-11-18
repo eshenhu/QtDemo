@@ -134,6 +134,8 @@ void ActionWidget::createTabWidget()
             this, SLOT(updateUserInput(VoltageTstData)));
     connect(m_subTestTabWidget, SIGNAL(updateUserSelection(ThrottleTstData)),
             this, SLOT(updateUserInput(ThrottleTstData)));
+    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(DistanceTstData)),
+            this, SLOT(updateUserInput(DistanceTstData)));
 
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
     m_subConfigTabWidget = new ConfigTab(getCfgResHdl());
@@ -148,6 +150,7 @@ void ActionWidget::createTabWidget()
 
 //    if (m_animationsCheckBox->checkState() == Qt::Checked)
 //        m_chartView->chart()->setAnimationOptions(QChart::AllAnimations);
+
 //    else
 //        m_chartView->chart()->setAnimationOptions(QChart::NoAnimation);
 
@@ -173,6 +176,12 @@ void ActionWidget::updateUserInput(ThrottleTstData data)
 {
     m_measData.type = JsonGUIPrimType::THROTTLE;
     m_measData.data.v = data;
+}
+
+void ActionWidget::updateUserInput(DistanceTstData data)
+{
+    m_measData.type = JsonGUIPrimType::DISTANCE;
+    m_measData.data.w = data;
 }
 
 QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()

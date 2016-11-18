@@ -19,6 +19,21 @@ struct ThrottleTstData
    quint16 duration;
 };
 
+struct DistanceTstData
+{
+    quint16 vol;
+    quint16 thro;
+    quint16 dis_beg;
+    quint16 dis_end;
+    quint16 dis_step;
+    quint16 duration;
+};
+
+
+enum DistanceTstDataEnum : quint32 {
+    ZEROPOS = 0x7FFFFFFF
+};
+
 enum JsonGUIPrimType : quint8 { INVALID,
                                VOLTAGE,
                                CURRENT,
@@ -29,7 +44,8 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                TEMP,
                                EFFICIENCY,
                                VIBRATE,
-                               POWER };
+                               POWER,
+                               DISTANCE};
 
 //enum UiMeasType
 //{
@@ -41,6 +57,7 @@ enum JsonGUIPrimType : quint8 { INVALID,
 union UiMeasData{
     VoltageTstData u;
     ThrottleTstData v;
+    DistanceTstData w;
 };
 
 struct UiCompMeasData{
