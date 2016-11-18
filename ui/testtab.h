@@ -38,7 +38,7 @@ public:
     explicit DistanceTstTab(QWidget *parent = 0);
 
 Q_SIGNALS:
-    void updateUserSelection(DistanceTstData data);
+    void updateUserSelection(UiCompMeasData data);
 
 private slots:
     void validateUserInput(bool checked = false);
@@ -59,7 +59,7 @@ public:
     explicit VoltageTstTab(QWidget *parent = 0);
 
 Q_SIGNALS:
-    void updateUserSelection(VoltageTstData data);
+    void updateUserSelection(UiCompMeasData data);
 
 public slots:
     void validateUserInput(bool checked = false);
@@ -77,22 +77,18 @@ class ThrottleTstTab : public QWidget
     QPushButton *m_apply_btn;
 
 public:
-    explicit ThrottleTstTab(QWidget *parent = 0);
+    explicit ThrottleTstTab(TestCasePrimType type, QWidget *parent = 0);
 
 Q_SIGNALS:
-    void updateUserSelection(ThrottleTstData data);
+    void updateUserSelection(UiCompMeasData data);
 
 public slots:
     void validateUserInput(bool checked = false);
+
+private:
+    TestCasePrimType m_type;
 };
 
-class MultipleTstTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit MultipleTstTab(QWidget *parent = 0);
-};
 class AgingTstTab : public QWidget
 {
     Q_OBJECT
@@ -143,11 +139,11 @@ private:
     VoltageTstTab* m_volTstTab;
     ThrottleTstTab* m_throTstTab;
     DistanceTstTab* m_disTstTab;
+    ThrottleTstTab* m_multiTstTab;
+
 
 Q_SIGNALS:
-    void updateUserSelection(ThrottleTstData data);
-    void updateUserSelection(VoltageTstData data);
-    void updateUserSelection(DistanceTstData data);
+    void updateUserSelection(UiCompMeasData data);
 
 private:
     void enableTestTab(TestPlanEnum);

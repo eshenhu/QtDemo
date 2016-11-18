@@ -29,7 +29,12 @@ public:
     enum DistanceStepStageEnum {
         SDis1 = 1,
         SDis2 = 2,
-        SDis5 = 5
+        SDis5 = 5,
+        SDis10 = 10,
+        SDis15 = 15,
+        SDis20 = 20,
+        SDis25 = 25,
+        SDis30 = 30
     };
 
     enum ThrottleStepStageEnum {
@@ -109,12 +114,14 @@ TestTab::TestTab(QWidget *parent)
     m_volTstTab = new VoltageTstTab();
     tabList[TestPlanEnum::Voltage] = m_volTstTab;
 
-    m_throTstTab = new ThrottleTstTab();
+    m_throTstTab = new ThrottleTstTab(TestCasePrimType::TCTHROTTLE);
     tabList[TestPlanEnum::Throttle] = m_throTstTab;
 
     //Multipule test can be regarded as Throttle Test.
     //tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
-    tabList[TestPlanEnum::Multiplue] = new ThrottleTstTab();
+    m_multiTstTab = new ThrottleTstTab(TestCasePrimType::TCMULTIPULE);
+    tabList[TestPlanEnum::Multiplue] = m_multiTstTab;
+
     tabList[TestPlanEnum::Aging] = new AgingTstTab();
     //tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
     tabList[TestPlanEnum::Manual] = new ManualTstTab();
@@ -124,18 +131,21 @@ TestTab::TestTab(QWidget *parent)
 //    connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
 //        emit updateUserSelection(data);
 //    } );
-    connect(m_volTstTab, SIGNAL(updateUserSelection(VoltageTstData)),
-                                this, SIGNAL(updateUserSelection(VoltageTstData)));
+    connect(m_volTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+                                this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Throttle], tr("Throttle"));
-    connect(m_throTstTab, SIGNAL(updateUserSelection(ThrottleTstData)),
-            this, SIGNAL(updateUserSelection(ThrottleTstData)));
+    connect(m_throTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+            this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
-    connect(m_disTstTab, SIGNAL(updateUserSelection(DistanceTstData)),
-            this, SIGNAL(updateUserSelection(DistanceTstData)));
+    connect(m_disTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+            this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
+    connect(m_multiTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+            this, SIGNAL(updateUserSelection(UiCompMeasData)));
+
     m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
     //m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Manual], tr("Manual"));
@@ -229,7 +239,7 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     m_disStart->setMinimumWidth(70);
     m_disStart->setMaximumWidth(70);
     m_disStart->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_disStart->setRange(ConstValue::DIS_START, ConstValue::DIS_END);
+    m_disStart->setRange(ConstValue::DIS_START, pCfgResHdl->max_distance());
     m_disStart->setSingleStep(ConstValue::DIS_STEP);
     m_disStart->setValue(ConstValue::DIS_START);
 
@@ -237,9 +247,9 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     m_disEnd->setMinimumWidth(70);
     m_disEnd->setMaximumWidth(70);
     m_disEnd->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_disEnd->setRange(ConstValue::DIS_START, ConstValue::DIS_END);
+    m_disEnd->setRange(ConstValue::DIS_START, pCfgResHdl->max_distance());
     m_disEnd->setSingleStep(ConstValue::DIS_STEP);
-    m_disEnd->setValue(ConstValue::DIS_END);
+    m_disEnd->setValue(pCfgResHdl->max_distance());
 
     m_disStep = new QComboBox();
     m_disStep->setMinimumWidth(70);
@@ -247,7 +257,13 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis1));
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis2));
     m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis5));
-    m_disStep->setCurrentIndex(0);
+    m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis10));
+    m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis15));
+    m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis20));
+    m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis25));
+    m_disStep->addItem(QString::number(ConstValue::DistanceStepStageEnum::SDis30));
+
+    m_disStep->setCurrentIndex(3);
 
     m_duration = new QComboBox();
     m_duration->setMinimumWidth(70);
@@ -294,14 +310,17 @@ void DistanceTstTab::validateUserInput(bool checked)
     }
 
     //DistanceTstData
-    DistanceTstData data;
+    UiCompMeasData val;
+    val.type = TestCasePrimType::TCTHROTTLE;
+
+    DistanceTstData& data = val.data.w;
     data.vol = m_voltage->value();
     data.thro = m_throttle->value();
     data.dis_beg = m_disStart->value();
     data.dis_end = m_disEnd->value();
     data.dis_step = (quint16)m_disStep->currentText().toInt();
     data.duration = (quint16)m_duration->currentText().toInt();
-    emit updateUserSelection(data);
+    emit updateUserSelection(val);
 }
 
 
@@ -389,17 +408,21 @@ void VoltageTstTab::validateUserInput(bool checked)
         return;
     }
 
-    VoltageTstData data;
+    UiCompMeasData val;
+    val.type = TestCasePrimType::TCVOLTAGE;
+    VoltageTstData& data = val.data.u;
+
     data.thro = m_throttle->value();
     data.vol_beg = m_voltage_start->value();
     data.vol_end = m_voltage_end->value();
     data.vol_step = (quint16)m_voltage_step->currentText().toInt();
     data.duration = (quint16)m_duration->currentText().toInt();
-    emit updateUserSelection(data);
+    emit updateUserSelection(val);
 }
 
-ThrottleTstTab::ThrottleTstTab(QWidget *parent)
-    : QWidget(parent)
+ThrottleTstTab::ThrottleTstTab(TestCasePrimType type, QWidget *parent)
+    :m_type(type),
+     QWidget(parent)
 {
     CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
     // series settings
@@ -477,20 +500,18 @@ void ThrottleTstTab::validateUserInput(bool checked)
         return;
     }
 
-    ThrottleTstData data;
+    UiCompMeasData val;
+    val.type = m_type;
+
+    ThrottleTstData& data = val.data.v;
     data.vol = m_voltage->value();
     data.thro_beg = m_thro_start->value();
     data.thro_end = m_thro_end->value();
     data.thro_step = (quint16)m_thro_step->currentText().toInt();
     data.duration = (quint16)m_duration->currentText().toInt();
-    emit updateUserSelection(data);
+    emit updateUserSelection(val);
 }
 
-MultipleTstTab::MultipleTstTab(QWidget *parent)
-    : QWidget(parent)
-{
-
-}
 
 AgingTstTab::AgingTstTab(QWidget *parent)
     : QWidget(parent)

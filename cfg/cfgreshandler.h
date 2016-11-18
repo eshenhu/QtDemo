@@ -19,23 +19,24 @@ struct CfgMotorProdVersionStu
     quint8 maxCur;    // 50A = 50 2*50A = 100
     quint8 maxTorque; // 15N*M = 15
     quint8 maxThrust;  // 30kg = 30
+    quint16 maxDistance; // 500mm = 500
 };
 
-const CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::ProductVersion::MAX] =
+const static CfgMotorProdVersionStu tabelCfgMotorProdVer[(quint8)CfgResHandlerInf::ProductVersion::MAX] =
 {
-    {CfgResHandlerInf::ProductVersion::INVALID, CfgResHandlerInf::MotorType::INVALID,0,  0,  0,  0, 0,  0},
-    {CfgResHandlerInf::ProductVersion::PV1,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 20, 30, 15, 0},
-    {CfgResHandlerInf::ProductVersion::PV2,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0},
-    {CfgResHandlerInf::ProductVersion::PV3,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0},
-    {CfgResHandlerInf::ProductVersion::PV4,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 30, 50, 15, 0},
-    {CfgResHandlerInf::ProductVersion::PV5,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0},
-    {CfgResHandlerInf::ProductVersion::PV6,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0},
-    {CfgResHandlerInf::ProductVersion::PV7,     CfgResHandlerInf::MotorType::PELEC,  1, 50, 55, 90, 50, 0},
-    {CfgResHandlerInf::ProductVersion::PV8,     CfgResHandlerInf::MotorType::PELEC,  1, 50,100, 50, 50, 0},
-    {CfgResHandlerInf::ProductVersion::PV9,     CfgResHandlerInf::MotorType::PELEC,  2, 60, 30,200, 60, 0},
-    {CfgResHandlerInf::ProductVersion::PV10,    CfgResHandlerInf::MotorType::PELEC,  2, 60, 55,110, 60, 0},
-    {CfgResHandlerInf::ProductVersion::PV11,    CfgResHandlerInf::MotorType::PELEC,  2, 50, 55, 90, 50, 30},
-    {CfgResHandlerInf::ProductVersion::PV12,    CfgResHandlerInf::MotorType::PELEC,  2, 50,100,100,100, 0}
+    {CfgResHandlerInf::ProductVersion::INVALID, CfgResHandlerInf::MotorType::INVALID,0,  0,  0,  0, 0,  0,  0},
+    {CfgResHandlerInf::ProductVersion::PV1,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 20, 30, 15, 15,  0},
+    {CfgResHandlerInf::ProductVersion::PV2,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV3,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV4,     CfgResHandlerInf::MotorType::PELEC,  1, 15, 30, 50, 15, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV5,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 30,100, 30, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV6,     CfgResHandlerInf::MotorType::PELEC,  1, 30, 55, 55, 30, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV7,     CfgResHandlerInf::MotorType::PELEC,  1, 50, 55, 90, 50, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV8,     CfgResHandlerInf::MotorType::PELEC,  1, 50,100, 50, 50, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV9,     CfgResHandlerInf::MotorType::PELEC,  2, 60, 30,200, 60, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV10,    CfgResHandlerInf::MotorType::PELEC,  2, 60, 55,110, 60, 0,  0},
+    {CfgResHandlerInf::ProductVersion::PV11,    CfgResHandlerInf::MotorType::PELEC,  2, 50, 55, 90, 50, 30, 500},
+    {CfgResHandlerInf::ProductVersion::PV12,    CfgResHandlerInf::MotorType::PELEC,  2, 50,100,100,100, 0,  0}
 };
 
 class CfgMotorBootCfgModel
@@ -103,6 +104,7 @@ public:
     quint32 max_cur() const;
     quint32 max_torque() const;
     quint32 max_thrust() const;
+    quint32 max_distance() const;
     CfgResHandlerInf::ProductVersion prod_version() const;
 
 private:
@@ -207,11 +209,18 @@ public:
     {
         return 100;
     }
+    quint32 max_distance() const
+    {
+        Q_ASSERT(m_prodCfg != nullptr);
+        return m_prodCfg->max_distance();
+    }
     ProductVersion prod_version() const
     {
         Q_ASSERT(m_prodCfg != nullptr);
         return m_prodCfg->prod_version();
     }
+
+
 };
 
 #endif // CFGRESHANDLER_H

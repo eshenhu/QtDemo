@@ -31,6 +31,7 @@ public:
     virtual quint32 max_torque() const = 0;
     virtual quint32 max_thrust() const = 0;
     virtual quint32 max_throttle() const = 0;
+    virtual quint32 max_distance() const = 0;
     virtual ProductVersion prod_version() const = 0;
 };
 

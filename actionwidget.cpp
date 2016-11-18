@@ -56,7 +56,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     : QWidget(parent),
       m_msgBox(nullptr)
 {
-    m_measData.type = JsonGUIPrimType::INVALID;
+    m_measData.type = TestCasePrimType::TCINVALID;
     //m_cfgHandler = new CfgResHandler();
     m_reader = new CfgJsonReader();
     m_reader->load("PV11");
@@ -88,6 +88,14 @@ ActionWidget::ActionWidget(QWidget *parent)
         }
     });
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
+
+        if (m_measData.type == TestCasePrimType::TCINVALID){
+            QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
+                                                         "Please make your selection"),
+                                 QMessageBox::Ok);
+            return;
+        }
+
         QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
         if (setting.name.isEmpty()){
             QMessageBox::warning(this, tr("Warning"),
@@ -97,15 +105,9 @@ ActionWidget::ActionWidget(QWidget *parent)
             return;
         }
 
-        if (m_measData.type == JsonGUIPrimType::INVALID){
-            QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
-                                                         "Please make your selection"),
-                                 QMessageBox::Ok);
-            return;
-        }
         m_driver->startMeasTest(m_measData, getCfgResHdl(), setting);
         //reset.
-        m_measData.type = JsonGUIPrimType::INVALID;
+        m_measData.type = TestCasePrimType::TCINVALID;
     });
 
 
@@ -130,12 +132,18 @@ void ActionWidget::createTabWidget()
     m_tabWidget->setTabBarAutoHide(true);
 
     m_subTestTabWidget = new TestTab();
-    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(VoltageTstData)),
-            this, SLOT(updateUserInput(VoltageTstData)));
-    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(ThrottleTstData)),
-            this, SLOT(updateUserInput(ThrottleTstData)));
-    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(DistanceTstData)),
-            this, SLOT(updateUserInput(DistanceTstData)));
+//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(UiCompMeasData)),
+//            this, SLOT(updateUserInput(UiCompMeasData)));
+
+    connect(m_subTestTabWidget, &TestTab::updateUserSelection, [this](UiCompMeasData data){
+        m_measData = data;
+    });
+//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(ThrottleTstData)),
+//            this, SLOT(updateUserInput(ThrottleTstData)));
+//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(DistanceTstData)),
+//            this, SLOT(updateUserInput(DistanceTstData)));
+//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(MultipuleTstData)),
+//            this, SLOT(updateUserInput(MultipuleTstData)));
 
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
     m_subConfigTabWidget = new ConfigTab(getCfgResHdl());
@@ -166,23 +174,29 @@ const CfgJsonReader *ActionWidget::reader() const
     return m_reader;
 }
 
-void ActionWidget::updateUserInput(VoltageTstData data)
-{
-    m_measData.type = JsonGUIPrimType::VOLTAGE;
-    m_measData.data.u = data;
-}
+//void ActionWidget::updateUserInput(UiCompMeasData data)
+//{
+//    m_measData = data;
+//}
 
-void ActionWidget::updateUserInput(ThrottleTstData data)
-{
-    m_measData.type = JsonGUIPrimType::THROTTLE;
-    m_measData.data.v = data;
-}
+//void ActionWidget::updateUserInput(ThrottleTstData data)
+//{
+//    m_measData.type = TestCasePrimType::TCTHROTTLE;
+//    m_measData.data.v = data;
+//}
 
-void ActionWidget::updateUserInput(DistanceTstData data)
-{
-    m_measData.type = JsonGUIPrimType::DISTANCE;
-    m_measData.data.w = data;
-}
+//void ActionWidget::updateUserInput(DistanceTstData data)
+//{
+//    m_measData.type = TestCasePrimType::TCDISTANCE;
+//    m_measData.data.w = data;
+//}
+
+//void ActionWidget::updateUserInput(MultipuleTstData data)
+//{
+//    m_measData.type = TestCasePrimType::TCMULTIPULE;
+//    m_measData.data.x = data;
+//}
+
 
 QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
 {

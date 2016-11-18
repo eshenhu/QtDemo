@@ -77,9 +77,11 @@ public:
     const CfgJsonReader *reader() const;
 
 public Q_SLOTS:
-    void updateUserInput(VoltageTstData data);
-    void updateUserInput(ThrottleTstData data);
-    void updateUserInput(DistanceTstData data);
+//    void updateUserInput(UiCompMeasData data);
+//    void updateUserInput(ThrottleTstData data);
+//    void updateUserInput(DistanceTstData data);
+//    void updateUserInput(MultipuleTstData data);
+
 //    void slotMeasStartAction(bool checked);
 //    void updateChartSettings();
 //    void updateSerieSettings();

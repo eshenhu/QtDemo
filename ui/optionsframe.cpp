@@ -10,8 +10,7 @@ OptionsFrame::OptionsFrame(CfgMotorBootCfgModel* cfg, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    CfgResHandlerInf* res = ActionWidget::getCfgResHdl();
-
+    //CfgResHandlerInf* res = ActionWidget::getCfgResHdl();
 
     ui->startdelay_comboBox->setCurrentIndex(2);
     ui->PRP_comboBox->setCurrentIndex(2);

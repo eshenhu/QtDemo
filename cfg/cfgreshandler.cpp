@@ -175,6 +175,11 @@ quint32 CfgProductVersionCfgModel::max_thrust() const
     return tabelCfgMotorProdVer[(quint8)m_prod].maxThrust;
 }
 
+quint32 CfgProductVersionCfgModel::max_distance() const
+{
+    return tabelCfgMotorProdVer[(quint8)m_prod].maxDistance;
+}
+
 CfgResHandlerInf::ProductVersion CfgProductVersionCfgModel::prod_version() const
 {
     //return CfgResHandlerInf::ProductVersion::PV11;

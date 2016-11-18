@@ -5,7 +5,6 @@
 
 MeasDataFormat::MeasDataFormat()
 {
-    type = JsonGUIPrimType::INVALID;
     vol = 0;
     thro_1 = 0;
     thro_2 = 0;
@@ -64,19 +63,8 @@ void MeasDataFormat::setDis(const quint32 &value)
 
 void MeasDataFormat::reset()
 {
-    type = JsonGUIPrimType::INVALID;
     vol = thro_1 = thro_2 = 0;
     dis = 0xFFFFFFFF;
-}
-
-JsonGUIPrimType MeasDataFormat::getType() const
-{
-    return type;
-}
-
-void MeasDataFormat::setType(const JsonGUIPrimType &value)
-{
-    type = value;
 }
 
 AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
@@ -229,6 +217,42 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
 
         m_calc_value += m_step;
         if(m_calc_value >= (m_end_thro + m_step))
+        {
+            rtn = true;
+        }
+    }
+    else
+    {
+        rtn = true;
+    }
+    return rtn;
+}
+
+PeriodicalDisMeasDataUpdate::PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol, const quint32 thro,
+                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                                         const quint32 durationInSec, const quint32 intervalInMSec)
+    :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
+      m_step(step),
+      m_start_dis(start),
+      m_end_dis(end),
+      m_vol(vol),
+      m_thro(thro),
+      m_calc_value(start)
+{
+}
+
+bool PeriodicalDisMeasDataUpdate::updateValue()
+{
+    bool rtn = false;
+    if (m_start_dis <= m_end_dis)
+    {
+        m_data->setVol(m_vol);
+        m_data->setThro_1(m_thro);
+        m_data->setThro_2(m_thro);
+        m_data->setDis(m_calc_value);
+
+        m_calc_value += m_step;
+        if(m_calc_value >= (m_end_dis + m_step))
         {
             rtn = true;
         }

@@ -107,23 +107,26 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
 //                                const quint32 delay_start, const quint32 soft_delay, const quint32 boot_voltage,
 //                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
 
+    m_uiCfgData = data;
     mp_data->reset();
-    mp_data->setType(data.type);
 
-    if (data.type == JsonGUIPrimType::VOLTAGE){
+    if (data.type == TestCasePrimType::TCVOLTAGE){
         mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step, data.data.u.thro,
                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.u.vol_beg,
                                                      data.data.u.duration);
         mp_refresh->setSeed(mp_data);
     }
-    else if (data.type == JsonGUIPrimType::THROTTLE){
+    else if (data.type == TestCasePrimType::TCTHROTTLE || data.type == TestCasePrimType::TCMULTIPULE){
         mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step, data.data.v.vol,
                                                       res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.v.vol,
                                                       data.data.v.duration);
         mp_refresh->setSeed(mp_data);
     }
-    else if (data.type == JsonGUIPrimType::DISTANCE){
-
+    else if (data.type == TestCasePrimType::TCDISTANCE){
+        mp_refresh = new PeriodicalDisMeasDataUpdate(data.data.w.dis_beg, data.data.w.dis_end, data.data.w.dis_step, data.data.w.vol, data.data.w.thro,
+                                                     res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.w.vol,
+                                                     data.data.w.duration);
+        mp_refresh->setSeed(mp_data);
     }
     else{
         qCWarning(DRONE_LOGGING) << tr("com.engine Sorry, we don't support this selection temporaily ");
@@ -230,7 +233,7 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
 {
     QModbus2DataUnit::LimitStatusEnum rtn = QModbus2DataUnit::LimitStatusEnum::REACHED;
 
-    if (data->uvalues().r.s.motorType == QModbus2DataUnit::MotorTypeEnum::ELECE)
+    if (data->uvalues().r.s.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
     {
         rtn = static_cast<QModbus2DataUnit::LimitStatusEnum>(data->uvalues().r.s.motorInfo.elec.limitStatus);
     }
@@ -249,6 +252,11 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
 bool AutomationModelDriverClz::processReceivedMeasDataUnit(const QModbus2DataUnit * const data)
 {
     return true;
+}
+
+void AutomationModelDriverClz::doLaterReceivedMeasDataUnit(const QModbus2DataUnit * const data)
+{
+
 }
 
 void AutomationModelDriverClz::processSendTimeout()
@@ -472,14 +480,14 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             {
                 // What's a fuck implemention on this 'DISTANCE' type! fuck me!
                 // A better way of this implemention here is introducing FSM.
-                if (mp_data->getType() == JsonGUIPrimType::DISTANCE)
+                if (m_uiCfgData.type == TestCasePrimType::TCDISTANCE)
                 {
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                                           << "to State" << (qint32)State::DistanceStepIntoLowState;
 //                    mp_data->reset();
 //                    mp_data->setDis(DistanceTstDataEnum::ZEROPOS);
 //                    sendMeasStartCmd();
-                    sendMeasDisStartCmd(DistanceTstDataEnum::ZEROPOS);
+                    QTimer::singleShot(msecTimeInterval, [this](){ sendMeasDisStartCmd(DistanceTstDataEnum::GOTOZEROPOS);});
                     state = State::DistanceStepIntoLowState;
                 }
                 else
@@ -487,7 +495,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                                           << "to State" << (qint32)State::MeasRunningState;
                     mp_refresh->update();
-                    sendMeasStartCmd();
+                    QTimer::singleShot(msecTimeInterval, [this](){ sendMeasStartCmd();});
                     state = State::MeasRunningState;
                 }
             }
@@ -507,18 +515,33 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                    || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
                    ))
         {
-            if (QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT
-                    == processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit))
+            const QModbus2DataUnit::LimitStatusEnum disState = processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit);
+            if (QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT == disState)
             {
                 qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)State::DistanceStepIntoLowState
-                        << "to State" << (int)State::FreqAdjustState;
-                sendFreqAdjustCmd();
-                state = State::FreqAdjustState;
+                        << "to State" << (int)State::DistanceStepIntoBegState;
+                QTimer::singleShot(msecTimeInterval, [this](){
+                    sendMeasDisStartCmd(m_uiCfgData.data.w.dis_beg);
+                });
+
+                state = State::DistanceStepIntoBegState;
+            }
+            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState)
+            {
+                qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state
+                           << "  with signal name " << (quint32)signal.m_type
+                           << " with POS state" << (quint32)disState;
+
+                QTimer::singleShot(msecTimeInterval, [this](){
+                    sendMeasDisStartCmd(DistanceTstDataEnum::GOTOZEROPOS);
+                });
             }
             else
             {
                 qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
-                           << "  with signal name " << (quint32)signal.m_type;
+                           << "  with signal name " << (quint32)signal.m_type
+                           << " with POS " << (quint32)disState;
+                enterFSMResetState(tr("Unexpected signal was received!"));
             }
         }
         else
@@ -535,20 +558,28 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                    || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
                    ))
         {
-            if (QModbus2DataUnit::LimitStatusEnum::REACHED
-                    == processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit))
+            const QModbus2DataUnit::LimitStatusEnum disState = processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit);
+            if (QModbus2DataUnit::LimitStatusEnum::REACHED == disState)
             {
                 qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)State::DistanceStepIntoBegState
                         << "to State" << (int)State::MeasRunningState;
-                sendFreqAdjustCmd();
-                state = State::FreqAdjustState;
+                mp_refresh->update();
+                QTimer::singleShot(msecTimeInterval, [this](){ sendMeasStartCmd();});
+                state = State::MeasRunningState;
+            }
+            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState)
+            {
+                qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state
+                           << "  with signal name " << (quint32)signal.m_type;
+                QTimer::singleShot(msecTimeInterval, [this](){ sendMeasDisStartCmd(m_uiCfgData.data.w.dis_beg); });
             }
             else
             {
                 qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
-                           << "  with signal name " << (quint32)signal.m_type;
+                           << "  with signal name " << (quint32)signal.m_type
+                           << " with POS " << (quint32)disState;
+                enterFSMResetState(tr("Unexpected signal was received!"));
             }
-
         }
         else
         {
@@ -562,18 +593,19 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
     {
         if( signal.m_type == SignalType::ECHO &&
                 (  signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::MeasStartCode
-                || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
-                ))
+                   || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
+                   ))
         {
             if (processReceivedMeasDataUnit(signal.m_info.mp_dataUnit))
             {
                 emit updateData(signal.m_info.mp_dataUnit);
             }
+
             QTimer::singleShot(msecTimeInterval, [this](){
                 if (mp_refresh->update())
                 {
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
-                            << "to State - State::MeasFinishedState";
+                                          << "to State - State::MeasFinishedState";
                     enterFSMResetState(tr("Measurement Finished!"));
                 }
                 else
@@ -581,6 +613,8 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                     sendMeasStartCmd();
                 }
             });
+            // We lazy some hard work in each end of the loop.
+            doLaterReceivedMeasDataUnit(signal.m_info.mp_dataUnit);
         }
         else
         {
@@ -652,10 +686,10 @@ void AutomationModelDriverClz::sendAlarmQueryCmd()
     sendRequestCmd(data);
 }
 
-void AutomationModelDriverClz::sendMeasDisStartCmd(DistanceTstDataEnum data)
+void AutomationModelDriverClz::sendMeasDisStartCmd(const quint32 val)
 {
     QModbus2DataUnit::MeasStartStruct v;
-    v.distance = static_cast<quint32>(data);
+    v.distance = val;
     v.thro_1 = 0;
     v.thro_2 = 0;
     v.vol = 0;

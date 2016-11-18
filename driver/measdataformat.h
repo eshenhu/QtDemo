@@ -23,11 +23,7 @@ public:
 
     void reset();
 
-    JsonGUIPrimType getType() const;
-    void setType(const JsonGUIPrimType &value);
-
 private:
-    JsonGUIPrimType type;
     quint32 vol;
     quint32 thro_1;
     quint32 thro_2;
@@ -44,8 +40,7 @@ public:
     virtual void setSeed(MeasDataFormat* data) = 0;
 };
 
-Q_DECLARE_INTERFACE(MeasDataUpdateInf, "com.meas.driver.MeasDataUpdateInf")
-
+//Q_DECLARE_INTERFACE(MeasDataUpdateInf, "com.meas.driver.MeasDataUpdateInf/1.0")
 
 class AbstractMeasDataUpdate : public MeasDataUpdateInf
 {
@@ -140,24 +135,24 @@ public:
     bool updateValue() override;
 };
 
-//class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
-//{
-//public:
-//    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 vol, const quint32 thro,
-//                                const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
-//                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
-//    ~PeriodicalDisMeasDataUpdate(){}
+class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
+{
+public:
+    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol, const quint32 thro,
+                                const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+    ~PeriodicalDisMeasDataUpdate(){}
 
-//private:
-//    const quint32 m_step;
-//    const quint32 m_start_dis;
-//    const quint32 m_end_dis;
-//    const quint32 m_vol;
-//    const quint32 m_thro;
-//    quint32 m_calc_value;
+private:
+    const quint32 m_step;
+    const quint32 m_start_dis;
+    const quint32 m_end_dis;
+    const quint32 m_vol;
+    const quint32 m_thro;
+    quint32 m_calc_value;
 
-//    // MeasDataUpdateInf interface
-//public:
-//    bool updateValue() override;
-//};
+    // MeasDataUpdateInf interface
+public:
+    bool updateValue() override;
+};
 #endif // MEASDATAFORMAT_H

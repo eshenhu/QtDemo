@@ -102,6 +102,7 @@ private:
     State state = State::InitState;
     QSerialPortSetting::Settings m_settingDialog;
 
+    UiCompMeasData  m_uiCfgData;
     MeasDataFormat* mp_data;
     CfgResHandlerInf* mp_cfgRes;
     MeasDataUpdateInf* mp_refresh;
@@ -140,14 +141,19 @@ private:
     void sendHandShakeCmd();
     void sendFreqAdjustCmd();
     void sendAlarmQueryCmd();
-    void sendMeasDisStartCmd(DistanceTstDataEnum);
+    void sendMeasDisStartCmd(const quint32);
+    void sendMeasDisSpecCmd();
     void sendMeasStartCmd();
 
     void processDataHandlerSingleShot(const SignalOverLine& signal);
     void processReceivedDataUnit(const QModbus2DataUnit& data);
+
     bool processReceivedHandShakeDataUnit(const QModbus2DataUnit* data);
     QModbus2DataUnit::LimitStatusEnum processReceivedMeasDistanceDataUnit(const QModbus2DataUnit* data);
+
+
     bool processReceivedMeasDataUnit(const QModbus2DataUnit* const data);
+    void doLaterReceivedMeasDataUnit(const QModbus2DataUnit* const data);
 };
 
 #endif // AUTOMATIONMODELDRIVERCLZ_H
