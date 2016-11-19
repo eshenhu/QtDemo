@@ -34,7 +34,8 @@ SOURCES += main.cpp \
     ui/qextcheckbox.cpp \
     ui/compqchartwidget.cpp \
     ui/qrtlineseries.cpp \
-    util/qserialporthelper.cpp
+    util/qserialporthelper.cpp \
+    util/utildatarecordingclz.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -77,7 +78,8 @@ HEADERS += \
     ui/qrtlineseries.h \
     util/qserialporthelper.h \
     util/dserialportsetting.h \
-    ui/uitestbasedstruct.h
+    ui/uitestbasedstruct.h \
+    util/utildatarecordingclz.h
 
 FORMS += \
     ui/testinfoconfig.ui \
