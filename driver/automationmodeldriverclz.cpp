@@ -526,7 +526,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
 
                 state = State::DistanceStepIntoBegState;
             }
-            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState)
+            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState
+                     || QModbus2DataUnit::LimitStatusEnum::REACHED == disState
+                     || QModbus2DataUnit::LimitStatusEnum::NOTARR == disState)
             {
                 qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state
                            << "  with signal name " << (quint32)signal.m_type
@@ -559,7 +561,8 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                    ))
         {
             const QModbus2DataUnit::LimitStatusEnum disState = processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit);
-            if (QModbus2DataUnit::LimitStatusEnum::REACHED == disState)
+            if (QModbus2DataUnit::LimitStatusEnum::REACHED == disState
+                    || QModbus2DataUnit::LimitStatusEnum::UPLIMIT == disState)
             {
                 qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)State::DistanceStepIntoBegState
                         << "to State" << (int)State::MeasRunningState;
@@ -567,7 +570,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 QTimer::singleShot(msecTimeInterval, [this](){ sendMeasStartCmd();});
                 state = State::MeasRunningState;
             }
-            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState)
+            else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState
+                     || QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT == disState)
+
             {
                 qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state
                            << "  with signal name " << (quint32)signal.m_type;
@@ -601,8 +606,13 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 emit updateData(signal.m_info.mp_dataUnit);
             }
 
-            QTimer::singleShot(msecTimeInterval, [this](){
-                if (mp_refresh->update())
+            QModbus2DataUnit::LimitStatusEnum limitStatus = processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit);
+
+            QTimer::singleShot(msecTimeInterval, [this, limitStatus](){
+                if (mp_refresh->update()
+                        || (m_uiCfgData.type == TestCasePrimType::TCDISTANCE
+                            && QModbus2DataUnit::LimitStatusEnum::UPLIMIT == limitStatus)
+                   )
                 {
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                                           << "to State - State::MeasFinishedState";
