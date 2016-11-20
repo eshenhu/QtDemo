@@ -311,7 +311,7 @@ void DistanceTstTab::validateUserInput(bool checked)
 
     //DistanceTstData
     UiCompMeasData val;
-    val.type = TestCasePrimType::TCTHROTTLE;
+    val.type = TestCasePrimType::TCDISTANCE;
 
     DistanceTstData& data = val.data.w;
     data.vol = m_voltage->value();
