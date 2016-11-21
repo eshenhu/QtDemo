@@ -1,6 +1,7 @@
 #ifndef UTILDATARECORDINGCLZ_H
 #define UTILDATARECORDINGCLZ_H
 
+#include <QString>
 
 class UtilDataRecordingClz
 {
@@ -9,16 +10,20 @@ public:
 
 public:
     // Singleton
-    UtilDataRecordingClz* getInstance(){
-        static UtilDataRecordingClz* p = new UtilDataRecordingClz();
-        return p;
+    UtilDataRecordingClz getInstance(){
+        static UtilDataRecordingClz v;
+        return v;
     }
 
-    void newRec();
-    void loadRec();
+    bool newRec();
+    //bool closeRec();
+
+    const QString& getCfgFileName() const;
+    const QString& getRecFileName() const;
+
 private:
-
-
+    QString m_cfgFile;
+    QString m_recFile;
 };
 
 #endif // UTILDATARECORDINGCLZ_H

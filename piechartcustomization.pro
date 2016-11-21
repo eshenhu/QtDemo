@@ -35,7 +35,9 @@ SOURCES += main.cpp \
     ui/compqchartwidget.cpp \
     ui/qrtlineseries.cpp \
     util/qserialporthelper.cpp \
-    util/utildatarecordingclz.cpp
+    util/utildatarecordingclz.cpp \
+    cfg/cfgjsonrecelement.cpp \
+    cfg/datajsonrecelement.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -79,7 +81,9 @@ HEADERS += \
     util/qserialporthelper.h \
     util/dserialportsetting.h \
     ui/uitestbasedstruct.h \
-    util/utildatarecordingclz.h
+    util/utildatarecordingclz.h \
+    cfg/cfgjsonrecelement.h \
+    cfg/datajsonrecelement.h
 
 FORMS += \
     ui/testinfoconfig.ui \
