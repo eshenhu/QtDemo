@@ -46,9 +46,6 @@ class QComboBox;
 class QTabWidget;
 QT_END_NAMESPACE
 
-class PenTool;
-class BrushTool;
-class CustomSlice;
 class QSerialPortSetting;
 
 QT_CHARTS_BEGIN_NAMESPACE
@@ -77,15 +74,7 @@ public:
     const CfgJsonReader *reader() const;
 
 public Q_SLOTS:
-//    void updateUserInput(UiCompMeasData data);
-//    void updateUserInput(ThrottleTstData data);
-//    void updateUserInput(DistanceTstData data);
-//    void updateUserInput(MultipuleTstData data);
-
-//    void slotMeasStartAction(bool checked);
 //    void updateChartSettings();
-//    void updateSerieSettings();
-//    void updateSliceSettings();
 
 public:
     static CfgResHandler* getCfgResHdl(){

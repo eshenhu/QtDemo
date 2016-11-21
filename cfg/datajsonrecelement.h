@@ -2,7 +2,7 @@
 #define DATAJSONRECELEMENT_H
 
 #include <QVector>
-
+#include <QFile>
 /*
  *  It was perferred use C++ template. --eshenhu
 */
@@ -51,13 +51,13 @@ class DataJsonRecElementE2
 public:
     DataJsonRecElementE2();
 
-    const QString toString();
+    const QString toString() const;
 
     bool hardReset();
     bool reset();
     bool incCursor();
     bool setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis);
-    bool setPosStatus();
+    bool setPosStatus(quint32);
 
 private:
     QVector<quint32> m_data;
@@ -79,9 +79,6 @@ public:
 
 public:
     static DataJsonRecElementE2& getElem(bool isNew = false);
-
-public:
-    static DataJsonRecElementE2 g_ele;
 };
 
 class DataJsonRecElementE2::DataJsonRecElementE2FileHelper
@@ -95,7 +92,10 @@ public:
     bool writeData(const DataJsonRecElementE2&);
     //const QVector<DataJsonRecElementE2>& loadData(const QString& filename);
 
+    const QString& getTitle();
 private:
+    //QString m_filename;
+    QFile m_fileHandler;
 };
 
 

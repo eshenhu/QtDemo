@@ -49,6 +49,7 @@
 #include "cfg/cfgreshandler.h"
 #include "cfg/cfgjsonprimaryelement.h"
 #include "driver/automationmodeldriverclz.h"
+#include "cfg/datajsonrecelement.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -60,6 +61,8 @@ ActionWidget::ActionWidget(QWidget *parent)
     //m_cfgHandler = new CfgResHandler();
     m_reader = new CfgJsonReader();
     m_reader->load("PV11");
+
+    //DataJsonRecElementE2 ele;
 
     createTabWidget();
     //createChartView();
