@@ -41,6 +41,11 @@ public:
     }
 
     //CfgJsonRecElementBuilder& loadFile(const QFile&);
+    CfgJsonRecElementBuilder& PV(const CfgResHandlerInf::ProductVersion v)
+    {
+        m_pv = v;
+        return *this;
+    }
 
     CfgJsonRecElementBuilder& manufacture(const QString& v)
     {

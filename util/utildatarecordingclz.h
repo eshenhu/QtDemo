@@ -10,7 +10,7 @@ public:
 
 public:
     // Singleton
-    UtilDataRecordingClz getInstance(){
+    static UtilDataRecordingClz& getInstance(){
         static UtilDataRecordingClz v;
         return v;
     }

@@ -65,10 +65,6 @@ private:
 public:
     class DataJsonRecElementE2GetHelper;
     class DataJsonRecElementE2FileHelper;
-
-public:
-    static DataJsonRecElementE2GetHelper  m_getHelper;
-    static DataJsonRecElementE2FileHelper m_fileHelper;
 };
 
 
@@ -78,7 +74,7 @@ public:
     DataJsonRecElementE2GetHelper() = default;
 
 public:
-    static DataJsonRecElementE2& getElem(bool isNew = false);
+     DataJsonRecElementE2& getElem(bool isNew = false);
 };
 
 class DataJsonRecElementE2::DataJsonRecElementE2FileHelper
@@ -87,15 +83,16 @@ public:
     DataJsonRecElementE2FileHelper() = default;
 
 public:
+    static QFile m_fileHandler;
+
+public:
     bool newFile(const QString& path);
     bool closeFile();
     bool writeData(const DataJsonRecElementE2&);
     //const QVector<DataJsonRecElementE2>& loadData(const QString& filename);
 
-    const QString& getTitle();
-private:
-    //QString m_filename;
-    QFile m_fileHandler;
+    const QString getTitle();
+
 };
 
 

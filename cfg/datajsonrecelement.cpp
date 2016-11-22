@@ -81,7 +81,7 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::newFile(const QString
     }
 
     QTextStream out(&m_fileHandler);
-    out << this->getTitle() << "\n";
+    //out << this->getTitle() << "\n";
 
     return true;
 }
@@ -107,7 +107,7 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::writeData(const DataJ
 }
 
 // It should be improved here!  Why there are so many items left to be improved?! fuck me.
-const QString &DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
+const QString DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
 {
     QStringList list;
     list << "#" << "voltage" << "throttle 1" << "throttle 2" << "distance"

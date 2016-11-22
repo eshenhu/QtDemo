@@ -51,6 +51,9 @@
 #include "driver/automationmodeldriverclz.h"
 #include "cfg/datajsonrecelement.h"
 
+#include "util/utildatarecordingclz.h"
+#include "cfg/cfgjsonrecelement.h"
+
 QT_CHARTS_USE_NAMESPACE
 
 ActionWidget::ActionWidget(QWidget *parent)
@@ -62,6 +65,21 @@ ActionWidget::ActionWidget(QWidget *parent)
     m_reader = new CfgJsonReader();
     m_reader->load("PV11");
 
+
+    UtilDataRecordingClz::getInstance().newRec();
+
+    qWarning() << "UtilDataRecordingClz.getInstance().getCfgName" << UtilDataRecordingClz::getInstance().getCfgFileName();
+    qWarning() << "UtilDataRecordingClz.getInstance().getRecName" << UtilDataRecordingClz::getInstance().getRecFileName();
+
+    CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder().build();
+    ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
+
+    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+    helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
+    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+
+    helper.writeData(e2);
+    helper.closeFile();
     //DataJsonRecElementE2 ele;
 
     createTabWidget();
