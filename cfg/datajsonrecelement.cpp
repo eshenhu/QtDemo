@@ -4,6 +4,8 @@
 #include <QDebug>
 
 #include "ui/qextcheckbox.h"
+#include "cfg/datajsonrecelement.h"
+#include "actionwidget.h"
 
 //DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getElem(bool isNew)
 //{
@@ -70,26 +72,34 @@ bool DataJsonRecElementE2::setPosStatus(quint32 v)
 
 bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::newFile(const QString &path)
 {
-    if (m_fileHandler.exists())
-        m_fileHandler.close();
+    if (getFile().exists())
+        getFile().close();
 
-    m_fileHandler.setFileName(path);
-    if (!m_fileHandler.open(QIODevice::Append | QIODevice::Text)){
+    getFile().setFileName(path);
+    if (!getFile().open(QIODevice::Append | QIODevice::Text)){
         qWarning() << QString("cfg.dataJsonRecElementE2 Failed to open file %1 for writing. ")
                       .arg(path);
         return false;
     }
 
-    QTextStream out(&m_fileHandler);
-    //out << this->getTitle() << "\n";
+    QTextStream out(&getFile());
+    out << this->getTitle() << ",";
+
+    QStringList list;
+    foreach (const JsonGUIElement& ele, ActionWidget::getCfgJsonHdl()->guiList()->elem()){
+        list << ele.str();
+    }
+
+    QString str = list.join(",");
+    out << str << '\n';
 
     return true;
 }
 
 bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::closeFile()
 {
-    if (m_fileHandler.exists())
-        m_fileHandler.close();
+    if (getFile().exists())
+        getFile().close();
     return true;
 }
 
@@ -100,7 +110,8 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::writeData(const DataJ
 //    if (!saveFile.open(QIODevice::Append | QIODevice::Text))
 //        return;
 
-    QTextStream out(&m_fileHandler);
+    QFile& file = getFile();
+    QTextStream out(&file);
     out << v.toString() << '\n';
 
     return true;

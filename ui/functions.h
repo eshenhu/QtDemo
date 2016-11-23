@@ -4,7 +4,7 @@
 #include <QDebug>
 #include "cfg/cfgjsonprimaryelement.h"
 #include "comm/qmodbusdataunit.h"
-
+#include "actionwidget.h"
 
 /*
  *     struct ElecMotorCompStruct
@@ -67,29 +67,29 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
-        qDebug() << "ui.function.functionVol update Vol value with : humidity" << (qint32)data->uvalues().r.s.humidity
-                 << "envtemp" <<  (qint32)data->uvalues().r.s.envtemp
-                 << "pressure" <<  (qint32)data->uvalues().r.s.pressure
-                 << "thro_1" <<  (qint32)data->uvalues().r.s.thro_1
-                 << "thro_2" <<  (qint32)data->uvalues().r.s.thro_2
-                 << "motorType" <<  (qint32)data->uvalues().r.s.motorType
-                 << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
-                 << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
-                 << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
-                 << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
-                 << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
-                 << "torque [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].torque
-                 << "speed [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].speed
-                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
-                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2
-                 << "current [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].current
-                 << "lift [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].lift
-                 << "torque [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].torque
-                 << "speed [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].speed
-                 << "temp_1 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_1
-                 << "temp_2 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_2;
+//        qDebug() << "ui.function.functionVol update Vol value with : humidity" << (qint32)data->uvalues().r.s.humidity
+//                 << "envtemp" <<  (qint32)data->uvalues().r.s.envtemp
+//                 << "pressure" <<  (qint32)data->uvalues().r.s.pressure
+//                 << "thro_1" <<  (qint32)data->uvalues().r.s.thro_1
+//                 << "thro_2" <<  (qint32)data->uvalues().r.s.thro_2
+//                 << "motorType" <<  (qint32)data->uvalues().r.s.motorType
+//                 << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
+//                 << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
+//                 << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
+//                 << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
+//                 << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
+//                 << "torque [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].torque
+//                 << "speed [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].speed
+//                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
+//                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2
+//                 << "current [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].current
+//                 << "lift [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].lift
+//                 << "torque [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].torque
+//                 << "speed [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].speed
+//                 << "temp_1 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_1
+//                 << "temp_2 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_2;
 
-        qDebug() << "ui.function.functionVol update Vol value with :" << data->uvalues().r.s.motorInfo.elec.voltage;
+//        qDebug() << "ui.function.functionVol update Vol value with :" << data->uvalues().r.s.motorInfo.elec.voltage;
 
         v = (qint32)data->uvalues().r.s.motorInfo.elec.voltage;
         if (v){
@@ -251,7 +251,11 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
 };
 
 const static formulaT formulaSpeed = [](const qint32 v){
-    return (double)v;
+    //y = 60 000 000 / (x * 6 * (pole / 2))
+    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+    quint32 vanes = pCfgResHdl->vane();
+
+    return (double)(20000000L/(v*vanes));
 };
 
 const static functionT functionTemp = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -279,8 +283,9 @@ const static functionT functionTemp = [](const QModbus2DataUnit* data, const Jso
     return rtn;
 };
 
+//y = x / 4095.00 * 1023.75
 const static formulaT formulaTemp = [](const qint32 v){
-    return (double)v;
+    return (double)(v)*1023.75/4095;
 };
 
 const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){

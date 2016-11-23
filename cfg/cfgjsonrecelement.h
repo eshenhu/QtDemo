@@ -7,10 +7,10 @@ class QFile;
 
 class CfgJsonRecElement
 {
-public:
+private:
     CfgJsonRecElement() = default;
     //CfgJsonRecElement(const QFile&);
-
+public:
     bool loadCfg(const QString&);
     bool saveCfg(const QString&);
 
@@ -25,7 +25,7 @@ private:
     CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder& builder);
 
 private:
-    CfgResHandlerInf::ProductVersion m_pv = CfgResHandlerInf::ProductVersion::PV11;
+    CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
 };
@@ -33,7 +33,9 @@ private:
 class CfgJsonRecElement::CfgJsonRecElementBuilder
 {
 public:
-    CfgJsonRecElementBuilder(){}
+    CfgJsonRecElementBuilder(){
+        m_pv = CfgResHandlerInf::ProductVersion::PV11;
+    }
 
     CfgJsonRecElementBuilder(CfgResHandlerInf::ProductVersion v)
     {
@@ -65,7 +67,7 @@ public:
     }
 
 public:
-    CfgResHandlerInf::ProductVersion m_pv = CfgResHandlerInf::ProductVersion::PV11;
+    CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
 };

@@ -47,12 +47,12 @@
 #include "ui/configtab.h"
 #include "ui/testtab.h"
 #include "cfg/cfgreshandler.h"
-#include "cfg/cfgjsonprimaryelement.h"
-#include "driver/automationmodeldriverclz.h"
-#include "cfg/datajsonrecelement.h"
 
-#include "util/utildatarecordingclz.h"
-#include "cfg/cfgjsonrecelement.h"
+#include "driver/automationmodeldriverclz.h"
+//#include "cfg/datajsonrecelement.h"
+
+//#include "util/utildatarecordingclz.h"
+//#include "cfg/cfgjsonrecelement.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -62,29 +62,34 @@ ActionWidget::ActionWidget(QWidget *parent)
 {
     m_measData.type = TestCasePrimType::TCINVALID;
     //m_cfgHandler = new CfgResHandler();
-    m_reader = new CfgJsonReader();
-    m_reader->load("PV11");
+    //m_reader = new CfgJsonReader();
+    //m_reader->load("PV11");
+
+    //---------------------------------------------
+//    UtilDataRecordingClz::getInstance().newRec();
+
+//    qWarning() << "UtilDataRecordingClz.getInstance().getCfgName" << UtilDataRecordingClz::getInstance().getCfgFileName();
+//    qWarning() << "UtilDataRecordingClz.getInstance().getRecName" << UtilDataRecordingClz::getInstance().getRecFileName();
+
+//    CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder().build();
+//    ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
+
+//    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+//    helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
+//    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+
+//    helper.writeData(e2);
+//    e2.incCursor();
+//    helper.writeData(e2);
+//    helper.closeFile();
+
+    //------------------------------------------------
 
 
-    UtilDataRecordingClz::getInstance().newRec();
-
-    qWarning() << "UtilDataRecordingClz.getInstance().getCfgName" << UtilDataRecordingClz::getInstance().getCfgFileName();
-    qWarning() << "UtilDataRecordingClz.getInstance().getRecName" << UtilDataRecordingClz::getInstance().getRecFileName();
-
-    CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder().build();
-    ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
-
-    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
-    helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
-    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
-
-    helper.writeData(e2);
-    helper.closeFile();
-    //DataJsonRecElementE2 ele;
 
     createTabWidget();
     //createChartView();
-    m_chartWidget = new CompQChartWidget(m_reader, this);
+    m_chartWidget = new CompQChartWidget(getCfgJsonHdl(), this);
 
     QHBoxLayout *baseLayout = new QHBoxLayout();
     baseLayout->addWidget(m_tabWidget, 0);
@@ -140,8 +145,8 @@ ActionWidget::~ActionWidget()
 {
 //    if(m_cfgHandler)
 //        delete m_cfgHandler;
-    if (m_reader)
-        delete m_reader;
+//    if (m_reader)
+//        delete m_reader;
     if (m_chartWidget)
         delete m_chartWidget;
 }
@@ -188,12 +193,6 @@ void ActionWidget::createTabWidget()
 //    else
 //        m_chartView->chart()->legend()->hide();
 //}
-
-
-const CfgJsonReader *ActionWidget::reader() const
-{
-    return m_reader;
-}
 
 //void ActionWidget::updateUserInput(UiCompMeasData data)
 //{

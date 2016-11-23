@@ -11,6 +11,10 @@
 #include "util/qserialporthelper.h"
 #include "actionwidget.h"
 
+#include "cfg/datajsonrecelement.h"
+#include "util/utildatarecordingclz.h"
+#include "cfg/cfgjsonrecelement.h"
+
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
     state(State::InitState),
@@ -101,6 +105,29 @@ void AutomationModelDriverClz::resetMeasDataUnit()
 
 void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const CfgResHandlerInf* res, const QSerialPortSetting::Settings setting)
 {
+    /*
+     * Data recording
+    */
+    UtilDataRecordingClz::getInstance().newRec();
+
+    qInfo() << "com.automationModeDriver -> UtilDataRecordingClz.getInstance().getCfgName"
+               << UtilDataRecordingClz::getInstance().getCfgFileName();
+    qInfo() << "com.automationModeDriver -> UtilDataRecordingClz.getInstance().getRecName"
+               << UtilDataRecordingClz::getInstance().getRecFileName();
+
+    CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder()
+            .manufacture(QStringLiteral("TongYi"))
+            .vanes(4)
+            .build();
+
+    ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
+
+    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+    helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
+
+    /*
+     * create Test Case.
+    */
     if (mp_refresh)
         delete mp_refresh;
 //    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
@@ -241,6 +268,10 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
     {
         qCWarning(DRONE_LOGGING) << "com.comm.state -- MeasDistance-- other than ELECE dont support distance test";
     }
+
+    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+    e2.setPosStatus(static_cast<quint32>(rtn));
+
     return rtn;
 }
 

@@ -182,7 +182,6 @@ quint32 CfgProductVersionCfgModel::max_distance() const
 
 CfgResHandlerInf::ProductVersion CfgProductVersionCfgModel::prod_version() const
 {
-    //return CfgResHandlerInf::ProductVersion::PV11;
     return m_prod;
 }
 

@@ -16,6 +16,7 @@
 #include <QMargins>
 #include "ui/qrtlineseries.h"
 #include "comm/qmodbusdataunit.h"
+#include "cfg/datajsonrecelement.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -49,6 +50,18 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data)
     {
         box->update(data);
     }
+
+    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem();
+
+    quint32 startIdx = static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::REC_VOL_POS);
+    foreach (QExtCheckBox* box, checkboxList)
+    {
+        e2.setData(startIdx, box->pushData());
+        ++startIdx;
+    }
+
+    static DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+    helper.writeData(e2);
 }
 
 QChartView* CompQChartWidget::makeNewChart()

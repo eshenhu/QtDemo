@@ -2,6 +2,7 @@
 #include <climits>
 #include <QtDebug>
 //#include <actionwidget.h>
+#include "cfg/datajsonrecelement.h"
 
 MeasDataFormat::MeasDataFormat()
 {
@@ -80,8 +81,15 @@ AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32
     m_phase(Phase::Phase_SoftStart)
 {
 }
-
 bool AbstractPeriodicalMeasDataUpdate::update()
+{
+    this->updateData();
+
+    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+    e2.setMetaData(m_data->getVol(), m_data->getThro_1(), m_data->getThro_2(), m_data->getDis());
+}
+
+bool AbstractPeriodicalMeasDataUpdate::updateData()
 {
     bool rtn = false;
 
@@ -141,6 +149,8 @@ bool AbstractPeriodicalMeasDataUpdate::update()
             << "vol=" << m_data->getVol() << "thro_1" << m_data->getThro_1()
             << "m_delay_start" << m_delay_start << "m_PRP_delay" << m_PRP_delay
             << "m_soft_delay" << m_soft_delay;
+
+
     return rtn;
 }
 

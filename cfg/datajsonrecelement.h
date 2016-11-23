@@ -11,6 +11,7 @@
  */
 class DataJsonRecElementE2
 {
+public:
     enum class ELEMCURSOR : quint8
     {
         CURSOR_POS      = 0,
@@ -58,6 +59,15 @@ public:
     bool incCursor();
     bool setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis);
     bool setPosStatus(quint32);
+    bool setData(const quint32 idx, const quint32 v){
+        if (idx < m_data.size()){
+            m_data[idx] = v;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 private:
     QVector<quint32> m_data;
@@ -82,8 +92,11 @@ class DataJsonRecElementE2::DataJsonRecElementE2FileHelper
 public:
     DataJsonRecElementE2FileHelper() = default;
 
-public:
-    static QFile m_fileHandler;
+private:
+    QFile& getFile(){
+        static QFile m_fileHandler;
+        return m_fileHandler;
+    }
 
 public:
     bool newFile(const QString& path);
@@ -92,8 +105,8 @@ public:
     //const QVector<DataJsonRecElementE2>& loadData(const QString& filename);
 
     const QString getTitle();
-
 };
 
+//QFile DataJsonRecElementE2::DataJsonRecElementE2FileHelper::m_fileHandler;
 
 #endif // DATAJSONRECELEMENT_H

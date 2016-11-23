@@ -93,6 +93,9 @@ public:
      *     false: ongoing test
      */
     bool update() override;
+
+private:
+    bool updateData();
 };
 
 class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate

@@ -38,6 +38,7 @@
 #include "util/dserialportsetting.h"
 #include "ui/uitestbasedstruct.h"
 #include "cfg/cfgreshandler.h"
+#include "cfg/cfgjsonprimaryelement.h"
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -82,6 +83,12 @@ public:
         return cfgHdl;
     }
 
+    static CfgJsonReader* getCfgJsonHdl(){
+        static CfgJsonReader* cfgReader = new CfgJsonReader();
+        cfgReader->load("PV11");
+        return cfgReader;
+    }
+
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
 
@@ -95,7 +102,7 @@ private:
     QSerialPortSetting*   m_settingDialog;
 
     //CfgResHandler*    m_cfgHandler;
-    CfgJsonReader*    m_reader;
+    //CfgJsonReader*    m_reader;
 
     UiCompMeasData    m_measData;
 
