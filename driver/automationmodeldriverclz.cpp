@@ -262,7 +262,22 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
 
     if (data->uvalues().r.s.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
     {
-        rtn = static_cast<QModbus2DataUnit::LimitStatusEnum>(data->uvalues().r.s.motorInfo.elec.limitStatus);
+
+        const quint8 value = data->uvalues().r.s.motorInfo.elec.limitStatus;
+        if (value == (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXINVALID)
+            rtn = QModbus2DataUnit::LimitStatusEnum::INVALID;
+        else if (value & (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXZEROPOS)
+            rtn = QModbus2DataUnit::LimitStatusEnum::ZEROPOS;
+        else if (value & (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXREACHED)
+            rtn = QModbus2DataUnit::LimitStatusEnum::REACHED;
+        else if (value & (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXRUNNING)
+            rtn = QModbus2DataUnit::LimitStatusEnum::RUNNING;
+        else if (value & (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXUPLIMIT)
+            rtn = QModbus2DataUnit::LimitStatusEnum::UPLIMIT;
+        else if (value & (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXDOWNLIMIT)
+            rtn = QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT;
+        else
+            rtn = QModbus2DataUnit::LimitStatusEnum::NOTARR;
     }
     else
     {
@@ -559,7 +574,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             }
             else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState
                      || QModbus2DataUnit::LimitStatusEnum::REACHED == disState
-                     || QModbus2DataUnit::LimitStatusEnum::NOTARR == disState)
+                     || QModbus2DataUnit::LimitStatusEnum::INVALID == disState
+                     || QModbus2DataUnit::LimitStatusEnum::NOTARR == disState
+                     || QModbus2DataUnit::LimitStatusEnum::ZEROPOS == disState )
             {
                 qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state
                            << "  with signal name " << (quint32)signal.m_type
@@ -602,7 +619,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 state = State::MeasRunningState;
             }
             else if (QModbus2DataUnit::LimitStatusEnum::RUNNING == disState
-                     || QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT == disState)
+                     || QModbus2DataUnit::LimitStatusEnum::DOWNLIMIT == disState
+                     || QModbus2DataUnit::LimitStatusEnum::INVALID == disState
+                     || QModbus2DataUnit::LimitStatusEnum::ZEROPOS == disState)
 
             {
                 qCDebug(DRONE_LOGGING) << "other signal was received during state " << (quint32)state

@@ -52,7 +52,7 @@ struct MultipuleTstData
 
 enum DistanceTstDataEnum : quint32 {
     ZEROPOS     = 0,
-    GOTOZEROPOS  = 0xFFFFFFFE
+    GOTOZEROPOS  = 0xFFFFFFEE
 };
 
 enum JsonGUIPrimType : quint8 { INVALID,

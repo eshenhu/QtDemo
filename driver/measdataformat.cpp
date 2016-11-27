@@ -83,10 +83,12 @@ AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32
 }
 bool AbstractPeriodicalMeasDataUpdate::update()
 {
-    this->updateData();
+    bool rtn = this->updateData();
 
-    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem();
     e2.setMetaData(m_data->getVol(), m_data->getThro_1(), m_data->getThro_2(), m_data->getDis());
+
+    return rtn;
 }
 
 bool AbstractPeriodicalMeasDataUpdate::updateData()
@@ -185,7 +187,7 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value >= (m_end_vol + m_step))
+        if(m_calc_value > (m_end_vol + m_step))
         {
             rtn = true;
         }
@@ -228,7 +230,7 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
         m_data->setDis(UINT_MAX);
 
         m_calc_value += m_step;
-        if(m_calc_value >= (m_end_thro + m_step))
+        if(m_calc_value > (m_end_thro + m_step))
         {
             rtn = true;
         }
@@ -264,7 +266,7 @@ bool PeriodicalDisMeasDataUpdate::updateValue()
         m_data->setDis(m_calc_value);
 
         m_calc_value += m_step;
-        if(m_calc_value >= (m_end_dis + m_step))
+        if(m_calc_value > (m_end_dis + m_step))
         {
             rtn = true;
         }

@@ -255,7 +255,10 @@ const static formulaT formulaSpeed = [](const qint32 v){
     CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
     quint32 vanes = pCfgResHdl->vane();
 
-    return (double)(20000000L/(v*vanes));
+    if (v > 0)
+        return (double)(20000000L/(v*vanes));
+    else
+        return (double)0;
 };
 
 const static functionT functionTemp = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
