@@ -2,7 +2,7 @@
 #define MEASDATAFORMAT_H
 
 #include <qglobal.h>
-#include "ui/uitestbasedstruct.h"
+#include "ui/uiheader.h"
 class MeasDataFormat
 {
 public:

@@ -75,6 +75,7 @@ private:
 public:
     class DataJsonRecElementE2GetHelper;
     class DataJsonRecElementE2FileHelper;
+    class DataJsonRecElementE2FileReaderHandler;
 };
 
 
@@ -102,11 +103,23 @@ public:
     bool newFile(const QString& path);
     bool closeFile();
     bool writeData(const DataJsonRecElementE2&);
-    //const QVector<DataJsonRecElementE2>& loadData(const QString& filename);
+    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
 
     const QString getTitle();
 };
 
-//QFile DataJsonRecElementE2::DataJsonRecElementE2FileHelper::m_fileHandler;
+
+//It should be improved here with iterator methods. -- eshenhu why another "SHOULD"? f*ck.
+class DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler
+{
+public:
+    DataJsonRecElementE2FileReaderHandler() = default;
+
+    const QVector<DataJsonRecElementE2>& data() const;
+
+private:
+    QString m_filename;
+    QVector<DataJsonRecElementE2> m_data;
+};
 
 #endif // DATAJSONRECELEMENT_H

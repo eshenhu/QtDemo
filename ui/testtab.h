@@ -2,7 +2,7 @@
 #define TESTTAB_H
 
 #include <QWidget>
-#include "ui/uitestbasedstruct.h"
+#include "ui/uiheader.h"
 
 class QSpinBox;
 class QDialogButtonBox;
@@ -11,16 +11,6 @@ class QComboBox;
 class QPushButton;
 class QTabWidget;
 class CfgResHandlerInf;
-
-enum TestPlanEnum {
-    Voltage,
-    Throttle,
-    Distance,
-    Multiplue,
-    Aging,
-    Calibrate,
-    Manual
-};
 
 class DistanceTstTab : public QWidget
 {

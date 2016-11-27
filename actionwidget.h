@@ -36,7 +36,7 @@
 #include <qspinbox.h>
 #include <QMessageBox>
 #include "util/dserialportsetting.h"
-#include "ui/uitestbasedstruct.h"
+#include "ui/uiheader.h"
 #include "cfg/cfgreshandler.h"
 #include "cfg/cfgjsonprimaryelement.h"
 

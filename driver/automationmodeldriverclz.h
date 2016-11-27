@@ -7,7 +7,7 @@
 #include "util/qserialporthelper.h"
 #include "comm/qmodbusdataunit.h"
 #include "driver/signaloverline.h"
-#include "ui/uitestbasedstruct.h"
+#include "ui/uiheader.h"
 #include "qtcore/qloggingcategory.h"
 
 class QModbus2Client;

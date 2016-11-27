@@ -2,6 +2,7 @@
 #define CFGJSONRECELEMENT_H
 
 #include "cfg/cfgreshandlerinf.h"
+#include "ui/uiheader.h"
 #include <QString>
 class QFile;
 
@@ -28,6 +29,7 @@ private:
     CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
+    TestPlanEnum m_plan = TestPlanEnum::Invaild;
 };
 
 class CfgJsonRecElement::CfgJsonRecElementBuilder
@@ -61,12 +63,19 @@ public:
         return *this;
     }
 
+    CfgJsonRecElementBuilder& plans(const TestPlanEnum v)
+    {
+        m_plan = v;
+        return *this;
+    }
+
 public:
     CfgJsonRecElement build(){
         return CfgJsonRecElement(*this);
     }
 
 public:
+    TestPlanEnum m_plan = TestPlanEnum::Invaild;
     CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;

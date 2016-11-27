@@ -4,7 +4,7 @@
 #include <QJsonObject>
 #include <QString>
 #include "comm/qmodbusdataunit.h"
-#include "ui/uitestbasedstruct.h"
+#include "ui/uiheader.h"
 class indexOnMotor
 {
 public:

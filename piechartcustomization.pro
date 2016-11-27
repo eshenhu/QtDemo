@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     util/qserialporthelper.cpp \
     util/utildatarecordingclz.cpp \
     cfg/cfgjsonrecelement.cpp \
-    cfg/datajsonrecelement.cpp
+    cfg/datajsonrecelement.cpp \
+    chartsview/chartsviewheaders.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -80,10 +81,11 @@ HEADERS += \
     ui/qrtlineseries.h \
     util/qserialporthelper.h \
     util/dserialportsetting.h \
-    ui/uitestbasedstruct.h \
     util/utildatarecordingclz.h \
     cfg/cfgjsonrecelement.h \
-    cfg/datajsonrecelement.h
+    cfg/datajsonrecelement.h \
+    ui/uiheader.h \
+    chartsview/chartsviewheaders.h
 
 FORMS += \
     ui/testinfoconfig.ui \

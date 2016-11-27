@@ -26,7 +26,13 @@ void QExtCheckBox::update(const QModbus2DataUnit *data)
     AbstractSpinBoxAttr::update(data);
     if (QCheckBox::isChecked() && m_assoChartView != nullptr)
     {
-        const QChart* chart = m_assoChartView->chart();
+        QChart* chart = m_assoChartView->chart();
+
+        QStringList title = chart->title().split(':');
+        QStringList newTitle;
+        newTitle << title[0] << QString::number(this->pushData());
+        chart->setTitle(newTitle.join(':'));
+
         foreach (QAbstractSeries* series, chart->series())
         {
             static_cast<QRTLineSeries*>(series)->update(this->pushData());

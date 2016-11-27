@@ -1,6 +1,18 @@
 #ifndef UITESTBASEDSTRUCT_H
 #define UITESTBASEDSTRUCT_H
 
+
+enum TestPlanEnum {
+    Invaild,
+    Voltage,
+    Throttle,
+    Distance,
+    Multiplue,
+    Aging,
+    Calibrate,
+    Manual
+};
+
 struct VoltageTstData
 {
    quint16 thro;

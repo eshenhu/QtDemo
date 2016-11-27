@@ -142,3 +142,8 @@ DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getEl
     }
     return g_ele;
 }
+
+const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::data() const
+{
+    return m_data;
+}

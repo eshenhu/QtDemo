@@ -37,6 +37,7 @@ bool CfgJsonRecElement::saveCfg(const QString& str)
 
 void CfgJsonRecElement::read(const QJsonObject &json)
 {
+    m_plan = static_cast<TestPlanEnum>(json["plan"].toInt());
     m_pv = static_cast<CfgResHandlerInf::ProductVersion>(json["pv"].toInt());
     m_manufacture = json["manufacture"].toString();
     m_vanes = json["vanes"].toInt();
@@ -44,6 +45,7 @@ void CfgJsonRecElement::read(const QJsonObject &json)
 
 void CfgJsonRecElement::write(QJsonObject &json) const
 {
+    json["plan"] = static_cast<quint8>(m_plan);
     json["pv"] = static_cast<quint8>(m_pv);
     json["manufacture"] = m_manufacture;
     json["vanes"] = m_vanes;
@@ -51,6 +53,7 @@ void CfgJsonRecElement::write(QJsonObject &json) const
 
 CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder &builder)
 {
+    m_plan = builder.m_plan;
     m_pv = builder.m_pv;
     m_manufacture = builder.m_manufacture;
     m_vanes = builder.m_vanes;

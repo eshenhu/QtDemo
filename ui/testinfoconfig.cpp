@@ -31,6 +31,14 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
 //    });
     //connect(ui->ESCFreq_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFreqChanged(int)));
 
+    const QIntValidator* validator = new QIntValidator(0, 100, this);
+    ui->Thr_Min_LE->setValidator(validator);
+    ui->Thr_Max_LE->setValidator(validator);
+
+//    connect(ui->THRUnit_combox, SIGNAL(currentIndexChanged(int)),
+
+//            static_cast<void (QSpinBox::*)(int)>
+
     m_model->setHZ(ui->ESCFreq_combox->currentIndex());
 
     m_model->setVane(ui->propVanes_combox->currentText().toInt());
