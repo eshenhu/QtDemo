@@ -83,15 +83,7 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::newFile(const QString
     }
 
     QTextStream out(&getFile());
-    out << this->getTitle() << ",";
-
-    QStringList list;
-    foreach (const JsonGUIElement& ele, ActionWidget::getCfgJsonHdl()->guiList()->elem()){
-        list << ele.str();
-    }
-
-    QString str = list.join(",");
-    out << str << '\n';
+    out << this->getTitle() << "\n";
 
     return true;
 }
@@ -124,10 +116,15 @@ const QString DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
     list << "#" << "voltage" << "throttle 1" << "throttle 2" << "distance"
          << "position";
 
-    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-    foreach (const QExtCheckBox* box, checkboxList)
-    {
-        list << box->str();
+//    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+//    foreach (const QExtCheckBox* box, checkboxList)
+//    {
+//        list << box->str();
+//    }
+
+//    QStringList list;
+    foreach (const JsonGUIElement& ele, ActionWidget::getCfgJsonHdl()->guiList()->elem()){
+        list << ele.str();
     }
 
     return list.join(",");
