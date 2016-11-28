@@ -77,17 +77,17 @@ public:
 public Q_SLOTS:
 //    void updateChartSettings();
 
-public:
-    static CfgResHandler* getCfgResHdl(){
-        static CfgResHandler* cfgHdl = new CfgResHandler();
-        return cfgHdl;
-    }
+//public:
+//    static CfgResHandler* getCfgResHdl(){
+//        static CfgResHandler* cfgHdl = new CfgResHandler();
+//        return cfgHdl;
+//    }
 
-    static CfgJsonReader* getCfgJsonHdl(){
-        static CfgJsonReader* cfgReader = new CfgJsonReader();
-        cfgReader->load("PV11");
-        return cfgReader;
-    }
+//    static CfgJsonReader* getCfgJsonHdl(){
+//        static CfgJsonReader* cfgReader = new CfgJsonReader();
+//        cfgReader->load("PV11");
+//        return cfgReader;
+//    }
 
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();

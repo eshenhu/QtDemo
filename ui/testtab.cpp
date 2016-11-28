@@ -15,7 +15,7 @@
 #include <QMessageBox>
 
 #include <QDebug>
-#include "actionwidget.h"
+#include "unireslocation.h"
 
 class ConstValue
 {
@@ -214,7 +214,7 @@ QPushButton *TestTab::start_btn() const
 DistanceTstTab::DistanceTstTab(QWidget *parent)
     : QWidget(parent)
 {
-    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
 
     // series settings
     m_voltage = new QSpinBox();
@@ -327,7 +327,7 @@ void DistanceTstTab::validateUserInput(bool checked)
 VoltageTstTab::VoltageTstTab(QWidget *parent)
     : QWidget(parent)
 {
-    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     // series settings
     m_throttle = new QSpinBox();
     m_throttle->setMinimumWidth(70);
@@ -424,7 +424,7 @@ ThrottleTstTab::ThrottleTstTab(TestCasePrimType type, QWidget *parent)
     :m_type(type),
      QWidget(parent)
 {
-    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     // series settings
     m_voltage = new QSpinBox();
     m_voltage->setMinimumWidth(70);

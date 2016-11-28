@@ -17,6 +17,7 @@
 #include "ui/qrtlineseries.h"
 #include "comm/qmodbusdataunit.h"
 #include "cfg/datajsonrecelement.h"
+#include "ui/qcxtchart.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -51,6 +52,14 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data)
         box->update(data);
     }
 
+    foreach(const QChartView* chartView ,m_chartsViewVector){
+        QCxtChart* chart = static_cast<QCxtChart*>(chartView->chart());
+        chart->updateCharts();
+    }
+
+    /*
+     * Record the log.
+     */
     DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem();
 
     quint32 startIdx = static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::REC_VOL_POS);
@@ -69,7 +78,7 @@ QChartView* CompQChartWidget::makeNewChart()
     QRTLineSeries *series = new QRTLineSeries();
     //*series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
 
-    QChart *chart = new QChart();
+    QCxtChart *chart = new QCxtChart();
     chart->addSeries(series);
     //chart->setTheme(QChart::ChartThemeBrownSand);
     //chart->setMargins(QMargins(0,0,0,0));
@@ -102,7 +111,28 @@ void CompQChartWidget::createChartsView()
     for (int idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
     {
         QChartView* chartView = CompQChartWidget::makeNewChart();
+
+        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+        const quint32 sizeOfCheckBox = checkboxList.size();
+
+        const QExtCheckBox* box;
+        if (idx < sizeOfCheckBox){
+           box = checkboxList[idx];
+        }
+        else{
+            qDebug() << "compQChartWidget:: more than checked box options";
+            break;
+        }
+        QChart* chart = chartView->chart();
+        QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
+        chart->setTitle(box->str() + '(' + box->unit() + ')');
+        //yaxis->setTitleText(box->unit());
+        yaxis->setLabelFormat(QStringLiteral("%d"));
+        yaxis->setTickCount(5);
+        yaxis->setRange(box->lowLimit(), box->upLimit());
+
         chartView->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
+
         //m_lhsLayout->addWidget(chartView, 0, Qt::AlignTop);
         row = idx/div;
         col = idx%div;
@@ -115,20 +145,23 @@ void CompQChartWidget::createCheckBoxView()
     const JsonPVConfig* config = m_reader->config();
     foreach (const JsonGUIElement& ele, m_reader->guiList()->elem())
     {
-        QCheckBox* checkbox = QExtCheckBox::makeExtCheckBox(*config, ele, this);
-        checkbox->setChecked(ele.isSelected());
-        checkbox->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+        /*memory leakage here -- eshenhu*/
+        QExtCheckBox* checkbox = QExtCheckBox::makeExtCheckBox(*config, ele);
 
-        m_rhsLayout->addWidget(checkbox, 0, Qt::AlignVertical_Mask);
-        m_rhsLayout->addStretch();
+
+//        checkbox->setChecked(ele.isSelected());
+//        checkbox->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+
+//        m_rhsLayout->addWidget(checkbox, 0, Qt::AlignVertical_Mask);
+//        m_rhsLayout->addStretch();
     }
-    QPushButton* applyButton = new QPushButton(tr("Apply"));
+//    QPushButton* applyButton = new QPushButton(tr("Apply"));
 
-    connect(applyButton, &QPushButton::clicked, [this](){
-        updateChartsView();
-    });
+//    connect(applyButton, &QPushButton::clicked, [this](){
+//        updateChartsView();
+//    });
 
-    m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
+//    m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
 }
 
 //void CompQChartWidget::createContextMenu()
@@ -139,39 +172,39 @@ void CompQChartWidget::createCheckBoxView()
 //    this->setContextMenuPolicy(Qt::ActionsContextMenu);
 //}
 
-void CompQChartWidget::updateChartsView()
-{
-    int idx = 0;
-    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-    foreach (QExtCheckBox* box, checkboxList)
-    {
-        box->setAssoChartView(nullptr);
+//void CompQChartWidget::updateChartsView()
+//{
+//    int idx = 0;
+//    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+//    foreach (QExtCheckBox* box, checkboxList)
+//    {
+//        box->setAssoChartView(nullptr);
 
-        if (box->isChecked())
-        {
-            if (idx > MAX_NUM_CHARTS_SUPPORT)
-            {
-                qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
-                return;
-            }
+//        if (box->isChecked())
+//        {
+//            if (idx > MAX_NUM_CHARTS_SUPPORT)
+//            {
+//                qWarning() << "ui.chartsview Total Number of Charts was exceeded the MAX Support Charts" << MAX_NUM_CHARTS_SUPPORT;
+//                return;
+//            }
 
-            if (idx < m_chartsViewVector.size())
-            {
-                box->setAssoChartView(m_chartsViewVector[idx]);
-                QChart* chart = m_chartsViewVector[idx]->chart();
-                QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
-                chart->setTitle(box->str() + '(' + box->unit() + ')');
-                //yaxis->setTitleText(box->unit());
-                yaxis->setLabelFormat(QStringLiteral("%d"));
-                yaxis->setTickCount(5);
-                yaxis->setRange(box->lowLimit(), box->upLimit());
-            }
-            else
-            {
-                qWarning() << "ui.chartsview Total Number of Charts " << m_chartsViewVector.size()
-                           << "was exceeded the Vector Charts" << MAX_NUM_CHARTS_SUPPORT;
-            }
-            ++idx;
-        }
-    }
-}
+//            if (idx < m_chartsViewVector.size())
+//            {
+//                box->setAssoChartView(m_chartsViewVector[idx]);
+//                QChart* chart = m_chartsViewVector[idx]->chart();
+//                QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
+//                chart->setTitle(box->str() + '(' + box->unit() + ')');
+//                //yaxis->setTitleText(box->unit());
+//                yaxis->setLabelFormat(QStringLiteral("%d"));
+//                yaxis->setTickCount(5);
+//                yaxis->setRange(box->lowLimit(), box->upLimit());
+//            }
+//            else
+//            {
+//                qWarning() << "ui.chartsview Total Number of Charts " << m_chartsViewVector.size()
+//                           << "was exceeded the Vector Charts" << MAX_NUM_CHARTS_SUPPORT;
+//            }
+//            ++idx;
+//        }
+//    }
+//}

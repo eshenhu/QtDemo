@@ -14,6 +14,10 @@ public:
     {}
     indexOnMotor() = default;
 
+    bool operator==(const indexOnMotor& l) const{
+        return m_idxMotor == l.idxMotor() && m_idxOneMotor == l.idxOneMotor();
+    }
+
     inline quint8 idxMotor() const { return m_idxMotor; }
     inline quint8 idxOneMotor() const { return m_idxOneMotor; }
 
@@ -21,6 +25,8 @@ private:
     quint8 m_idxMotor;
     quint8 m_idxOneMotor;
 };
+
+
 
 class JsonPVConfig{
 public:

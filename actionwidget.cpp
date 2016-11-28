@@ -49,6 +49,7 @@
 #include "cfg/cfgreshandler.h"
 
 #include "driver/automationmodeldriverclz.h"
+#include "unireslocation.h"
 //#include "cfg/datajsonrecelement.h"
 
 //#include "util/utildatarecordingclz.h"
@@ -89,7 +90,7 @@ ActionWidget::ActionWidget(QWidget *parent)
 
     createTabWidget();
     //createChartView();
-    m_chartWidget = new CompQChartWidget(getCfgJsonHdl(), this);
+    m_chartWidget = new CompQChartWidget(UniResLocation::getCfgJsonHdl(), this);
 
     QHBoxLayout *baseLayout = new QHBoxLayout();
     baseLayout->addWidget(m_tabWidget, 0);
@@ -131,7 +132,7 @@ ActionWidget::ActionWidget(QWidget *parent)
             return;
         }
 
-        m_driver->startMeasTest(m_measData, getCfgResHdl(), setting);
+        m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
         //reset.
         m_measData.type = TestCasePrimType::TCINVALID;
     });
@@ -172,7 +173,7 @@ void ActionWidget::createTabWidget()
 //            this, SLOT(updateUserInput(MultipuleTstData)));
 
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
-    m_subConfigTabWidget = new ConfigTab(getCfgResHdl());
+    m_subConfigTabWidget = new ConfigTab(UniResLocation::getCfgResHdl());
     m_tabWidget->addTab(m_subConfigTabWidget, tr("Config"));
 }
 

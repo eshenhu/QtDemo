@@ -9,11 +9,11 @@
 #include "driver/measdataformat.h"
 #include "cfg/cfgreshandler.h"
 #include "util/qserialporthelper.h"
-#include "actionwidget.h"
 
 #include "cfg/datajsonrecelement.h"
 #include "util/utildatarecordingclz.h"
 #include "cfg/cfgjsonrecelement.h"
+#include "unireslocation.h"
 
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
@@ -22,7 +22,7 @@ AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     mp_refresh(nullptr),
     m_monitorError(new FatalErrorDrvClz)
 {
-    mp_cfgRes = ActionWidget::getCfgResHdl();
+    mp_cfgRes = UniResLocation::getCfgResHdl();
     m_sendTimer.setSingleShot(true);
     QObject::connect(&m_sendTimer, &QTimer::timeout, this, [this]() { processSendTimeout(); });
 

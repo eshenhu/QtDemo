@@ -5,6 +5,8 @@ class QMouseEvent;
 
 #include <QtCharts/QChartGlobal>
 #include <QtCharts/QChart>
+#include "actionwidget.h"
+#include "ui/qextcheckbox.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -12,16 +14,21 @@ class QCxtChart : public QChart
 {
     Q_OBJECT
 public:
-    QCxtChart(const QVector<QAction*>& actions);
+    QCxtChart();
 
-private:
-    void createContextMenu();
+public:
+    void updateCharts();
+
+//private:
+//    void createContextMenu(QGraphicsSceneContextMenuEvent *event);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+//    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
-    const QVector<QAction*>& m_UIActions;
+    //QList<QCxtAction*> m_actions;
+    const QExtCheckBox* m_dataSrc;
 };
 
 #endif // QCXTCHART_H

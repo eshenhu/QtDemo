@@ -4,7 +4,7 @@
 #include <QDebug>
 #include "cfg/cfgjsonprimaryelement.h"
 #include "comm/qmodbusdataunit.h"
-#include "actionwidget.h"
+#include "unireslocation.h"
 
 /*
  *     struct ElecMotorCompStruct
@@ -252,7 +252,7 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
 
 const static formulaT formulaSpeed = [](const qint32 v){
     //y = 60 000 000 / (x * 6 * (pole / 2))
-    CfgResHandlerInf* pCfgResHdl = ActionWidget::getCfgResHdl();
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     quint32 vanes = pCfgResHdl->vane();
 
     if (v > 0)

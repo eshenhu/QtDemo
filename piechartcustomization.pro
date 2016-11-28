@@ -89,7 +89,8 @@ HEADERS += \
     cfg/datajsonrecelement.h \
     ui/uiheader.h \
     chartsview/chartsviewheaders.h \
-    ui/qcxtchart.h
+    ui/qcxtchart.h \
+    unireslocation.h
 
 FORMS += \
     ui/testinfoconfig.ui \

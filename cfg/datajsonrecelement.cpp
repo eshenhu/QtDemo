@@ -6,6 +6,7 @@
 #include "ui/qextcheckbox.h"
 #include "cfg/datajsonrecelement.h"
 #include "actionwidget.h"
+#include "unireslocation.h"
 
 //DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getElem(bool isNew)
 //{
@@ -123,7 +124,7 @@ const QString DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
 //    }
 
 //    QStringList list;
-    foreach (const JsonGUIElement& ele, ActionWidget::getCfgJsonHdl()->guiList()->elem()){
+    foreach (const JsonGUIElement& ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
         list << ele.str();
     }
 

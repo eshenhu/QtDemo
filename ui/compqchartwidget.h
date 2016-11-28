@@ -37,13 +37,12 @@ private:
     void createChartsView();
     void createCheckBoxView();
     //void createContextMenu();
-    void updateChartsView();
+    //void updateChartsView();
 
 private:
     QWidget* m_chartsWidget;
     QWidget* m_checkBoxWidget;
     QVector<QChartView*> m_chartsViewVector;
-    QVector<QAction*> m_UIActions;
     QHBoxLayout* m_layout;
     //QVBoxLayout* m_lhsLayout;
     QGridLayout* m_lhsLayout;
