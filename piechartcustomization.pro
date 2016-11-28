@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     util/utildatarecordingclz.cpp \
     cfg/cfgjsonrecelement.cpp \
     cfg/datajsonrecelement.cpp \
-    chartsview/chartsviewheaders.cpp
+    chartsview/chartsviewheaders.cpp \
+    ui/qcxtchart.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -87,7 +88,8 @@ HEADERS += \
     cfg/cfgjsonrecelement.h \
     cfg/datajsonrecelement.h \
     ui/uiheader.h \
-    chartsview/chartsviewheaders.h
+    chartsview/chartsviewheaders.h \
+    ui/qcxtchart.h
 
 FORMS += \
     ui/testinfoconfig.ui \

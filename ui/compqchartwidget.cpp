@@ -131,6 +131,14 @@ void CompQChartWidget::createCheckBoxView()
     m_rhsLayout->addWidget(applyButton, 1, Qt::AlignTop);
 }
 
+//void CompQChartWidget::createContextMenu()
+//{
+//    spreadsheet->addAction(cutAction);
+//    spreadsheet->addAction(copyAction);
+//    spreadsheet->addAction(pasteAction);
+//    this->setContextMenuPolicy(Qt::ActionsContextMenu);
+//}
+
 void CompQChartWidget::updateChartsView()
 {
     int idx = 0;
