@@ -21,7 +21,6 @@ public:
 private:
     ActionWidget* m_widget;
     QLabel *statusIndLabel;
-    QSerialPortSetting* settingDialog;
 signals:
 
 public slots:

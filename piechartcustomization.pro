@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     cfg/cfgjsonrecelement.cpp \
     cfg/datajsonrecelement.cpp \
     chartsview/chartsviewheaders.cpp \
-    ui/qcxtchart.cpp
+    ui/qcxtchart.cpp \
+    chartsview/chartviewerwin.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -90,11 +91,13 @@ HEADERS += \
     ui/uiheader.h \
     chartsview/chartsviewheaders.h \
     ui/qcxtchart.h \
-    unireslocation.h
+    unireslocation.h \
+    chartsview/chartviewerwin.h
 
 FORMS += \
     ui/testinfoconfig.ui \
-    ui/optionsframe.ui
+    ui/optionsframe.ui \
+    chartsview/chartviewerwin.ui
 
 SUBDIRS += \
     comm/doc/snippets/snippets.pro \

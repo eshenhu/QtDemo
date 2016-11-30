@@ -113,7 +113,9 @@ public:
     QWidget* tabList[TestPlanEnum::Manual + 1];
     QWidget* lastActiveWidget;
 
-    QPushButton *start_btn() const;
+    const QPushButton *start_btn() const;
+
+    const QPushButton *showgraph_btn() const;
 
 private:
     //QComboBox *m_testSeletionComboBox;

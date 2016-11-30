@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget* parent)
     createActions();
     createStatusBar();
     m_widget = new ActionWidget();
-    m_widget->setSettingDialog(settingDialog);
     setCentralWidget(m_widget);
 
     resize(900, 600);

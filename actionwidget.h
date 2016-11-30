@@ -69,11 +69,6 @@ public:
     explicit ActionWidget(QWidget *parent = 0);
     ~ActionWidget();
 
-    void setSettingDialog(QSerialPortSetting *settingDialog);
-    QSerialPortSetting *settingDialog() const;
-
-    const CfgJsonReader *reader() const;
-
 public Q_SLOTS:
 //    void updateChartSettings();
 

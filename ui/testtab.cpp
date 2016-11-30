@@ -197,9 +197,14 @@ TestTab::TestTab(QWidget *parent)
 //    }
 //}
 
-QPushButton *TestTab::start_btn() const
+const QPushButton *TestTab::start_btn() const
 {
     return m_start_btn;
+}
+
+const QPushButton *TestTab::showgraph_btn() const
+{
+    return m_showgraph_btn;
 }
 
 //void TestTab::enableTestTab(TestPlanEnum e)

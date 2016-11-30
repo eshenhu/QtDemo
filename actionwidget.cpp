@@ -54,6 +54,8 @@
 
 //#include "util/utildatarecordingclz.h"
 //#include "cfg/cfgjsonrecelement.h"
+#include "chartsview/chartsviewheaders.h"
+#include "chartsview/chartviewerwin.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -137,6 +139,12 @@ ActionWidget::ActionWidget(QWidget *parent)
         m_measData.type = TestCasePrimType::TCINVALID;
     });
 
+    connect(m_subTestTabWidget->showgraph_btn(), &QPushButton::clicked, [this](bool checked){
+        Q_UNUSED(checked)
+
+        ChartViewerWin* chartViewer = new ChartViewerWin();
+        chartViewer->show();
+    });
 
 //    updateSerieSettings();
 //    updateChartSettings();
@@ -321,16 +329,6 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
         p.name = QString("");
     }
     return p;
-}
-
-QSerialPortSetting *ActionWidget::settingDialog() const
-{
-    return m_settingDialog;
-}
-
-void ActionWidget::setSettingDialog(QSerialPortSetting *settingDialog)
-{
-    m_settingDialog = settingDialog;
 }
 
 //#include "moc_actionwidget.cpp"
