@@ -10,7 +10,6 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
     ui(new Ui::ChartViewerWin)
 {
     ui->setupUi(this);
-    setFixedSize(ui->graphicsView->width(), ui->graphicsView->height());
 
     createSceneAndView();
     createWidgets();
