@@ -42,7 +42,9 @@ SOURCES += main.cpp \
     cfg/datajsonrecelement.cpp \
     chartsview/chartsviewheaders.cpp \
     ui/qcxtchart.cpp \
-    chartsview/chartviewerwin.cpp
+    chartsview/chartviewerwin.cpp \
+    chartsview/multichartwidget.cpp \
+    chartsview/customtablemodel.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -92,7 +94,9 @@ HEADERS += \
     chartsview/chartsviewheaders.h \
     ui/qcxtchart.h \
     unireslocation.h \
-    chartsview/chartviewerwin.h
+    chartsview/chartviewerwin.h \
+    chartsview/multichartwidget.h \
+    chartsview/customtablemodel.h
 
 FORMS += \
     ui/testinfoconfig.ui \

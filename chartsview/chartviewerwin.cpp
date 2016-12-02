@@ -11,8 +11,8 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    createSceneAndView();
-    createWidgets();
+    //createSceneAndView();
+    //createWidgets();
 }
 
 ChartViewerWin::~ChartViewerWin()
@@ -22,9 +22,9 @@ ChartViewerWin::~ChartViewerWin()
 
 void ChartViewerWin::createSceneAndView()
 {
-    m_scene = new QGraphicsScene(this);
-    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
-    ui->graphicsView->setScene(m_scene);
+//    m_scene = new QGraphicsScene(this);
+//    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
+//    ui->graphicsView->setScene(m_scene);
 }
 
 void ChartViewerWin::createWidgets()
@@ -48,11 +48,11 @@ void ChartViewerWin::createWidgets()
     chart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
 
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
+//    QVBoxLayout layout
 
-    layout->addItem(chart);
+//    layout->addItem(chart);
 
-    QGraphicsWidget *widget = new QGraphicsWidget;
-    widget->setLayout(layout);
-    m_scene->addItem(widget);
+//    QGraphicsWidget *widget = new QGraphicsWidget;
+//    widget->setLayout(layout);
+//    m_scene->addItem(widget);
 }

@@ -31,7 +31,7 @@ public:
 
 private:
     Ui::ChartViewerWin *ui;
-    QGraphicsScene* m_scene;
+//    QGraphicsScene* m_scene;
 };
 
 #endif // CHARTVIEWERWIN_H
