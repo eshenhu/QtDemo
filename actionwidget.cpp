@@ -42,6 +42,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSerialPortInfo>
+#include <QString>
 
 #include "ui/compqchartwidget.h"
 #include "ui/configtab.h"
@@ -118,25 +119,53 @@ ActionWidget::ActionWidget(QWidget *parent)
     });
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
 
-        if (m_measData.type == TestCasePrimType::TCINVALID){
-            QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
-                                                         "Please make your selection"),
-                                 QMessageBox::Ok);
-            return;
-        }
+        // why it lead to crash? --eshenhu
+        //QPushButton* button = qobject_cast<QPushButton*>(sender());
 
-        QSerialPortSetting::Settings setting = this->doAutoSelectSerialPlugInPort();
-        if (setting.name.isEmpty()){
-            QMessageBox::warning(this, tr("Warning"),
-                                 tr("Scanning serial port failed \n"
-                                    "Please check your cable connection status"),
-                                 QMessageBox::Ok);
-            return;
-        }
+        QSerialPortSetting::Settings setting;
+        if (checked)
+        {
+            bool isStatusOK = false;
+            do{
+                if (m_measData.type == TestCasePrimType::TCINVALID){
+                    QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
+                                                                 "Please make your selection"),
+                                         QMessageBox::Ok);
+                    break;
+                }
 
-        m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
-        //reset.
-        m_measData.type = TestCasePrimType::TCINVALID;
+                setting = this->doAutoSelectSerialPlugInPort();
+                if (setting.name.isEmpty()){
+                    QMessageBox::warning(this, tr("Warning"),
+                                         tr("Scanning serial port failed \n"
+                                            "Please check your cable connection status"),
+                                         QMessageBox::Ok);
+                    break;
+                }
+
+                isStatusOK = true;
+                break;
+            }while(1);
+
+            if (isStatusOK){
+                m_subTestTabWidget->start_btn()->setText(QStringLiteral("Stop"));
+                m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
+
+                m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
+                //reset.
+                m_measData.type = TestCasePrimType::TCINVALID;
+            }
+            else{
+                m_subTestTabWidget->start_btn()->setChecked(false);
+            }
+        }
+        else
+        {
+            m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
+            m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
+
+            m_driver->enterFSMResetState(tr("Info: User stop the ongoing test"));
+        }
     });
 
     connect(m_subTestTabWidget->showgraph_btn(), &QPushButton::clicked, [this](bool checked){

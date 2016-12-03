@@ -113,9 +113,9 @@ public:
     QWidget* tabList[TestPlanEnum::Manual + 1];
     QWidget* lastActiveWidget;
 
-    const QPushButton *start_btn() const;
+    QPushButton *start_btn() const;
 
-    const QPushButton *showgraph_btn() const;
+    QPushButton *showgraph_btn() const;
 
 private:
     //QComboBox *m_testSeletionComboBox;
@@ -132,6 +132,9 @@ private:
     ThrottleTstTab* m_throTstTab;
     DistanceTstTab* m_disTstTab;
     ThrottleTstTab* m_multiTstTab;
+
+//    QIcon m_playIcon = QIcon(":/play.png");
+//    QIcon m_pauseIcon = QIcon(":/play.png");
 
 
 Q_SIGNALS:

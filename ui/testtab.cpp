@@ -92,9 +92,11 @@ TestTab::TestTab(QWidget *parent)
     //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
 
 
-    m_start_btn = new QPushButton(tr("Start"));
+    m_start_btn = new QPushButton(QIcon(":/ui/ui/play.png"), tr("Start"));
+    m_start_btn->setStyleSheet("QPushButton { text-align:left; padding:12px}");
     m_start_btn->setCheckable(true);
-    m_showgraph_btn = new QPushButton(tr("Show Graph"));
+    m_showgraph_btn = new QPushButton(QIcon(":/ui/ui/fileopen.png"), tr("Show Graph"));
+    m_showgraph_btn->setStyleSheet("QPushButton { text-align:left; padding:12px}");
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();
     seriesSettingsLayout->addRow(m_start_btn);
@@ -197,12 +199,12 @@ TestTab::TestTab(QWidget *parent)
 //    }
 //}
 
-const QPushButton *TestTab::start_btn() const
+QPushButton *TestTab::start_btn() const
 {
     return m_start_btn;
 }
 
-const QPushButton *TestTab::showgraph_btn() const
+QPushButton *TestTab::showgraph_btn() const
 {
     return m_showgraph_btn;
 }
