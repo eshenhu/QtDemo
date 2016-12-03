@@ -25,8 +25,8 @@ DataJsonRecElementE2::DataJsonRecElementE2():
 const QString DataJsonRecElementE2::toString() const
 {
     QStringList list;
-    foreach (const quint32& v, m_data){
-        list << QString::number(v);
+    foreach (double v, m_data){
+        list << QString::number(v, 'f', 3);
     }
 
     return list.join(QStringLiteral(","));
@@ -58,16 +58,16 @@ bool DataJsonRecElementE2::incCursor()
 
 bool DataJsonRecElementE2::setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis)
 {
-    m_data[static_cast<quint32>(ELEMCURSOR::VOL_POS)] = vol;
-    m_data[static_cast<quint32>(ELEMCURSOR::THRO1_POS)] = thro1;
-    m_data[static_cast<quint32>(ELEMCURSOR::THRO2_POS)] = thro2;
-    m_data[static_cast<quint32>(ELEMCURSOR::DISTANCE_POS)] = dis;
+    m_data[static_cast<quint32>(ELEMCURSOR::VOL_POS)] = static_cast<double>(vol);
+    m_data[static_cast<quint32>(ELEMCURSOR::THRO1_POS)] = static_cast<double>(thro1);
+    m_data[static_cast<quint32>(ELEMCURSOR::THRO2_POS)] = static_cast<double>(thro2);
+    m_data[static_cast<quint32>(ELEMCURSOR::DISTANCE_POS)] = static_cast<double>(dis);
     return true;
 }
 
 bool DataJsonRecElementE2::setPosStatus(quint32 v)
 {
-    m_data[static_cast<quint32>(ELEMCURSOR::REC_POSSTATUS_POS)] = v;
+    m_data[static_cast<quint32>(ELEMCURSOR::REC_POSSTATUS_POS)] = static_cast<double>(v);
     return true;
 }
 

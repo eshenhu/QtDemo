@@ -59,8 +59,8 @@ public:
     bool incCursor();
     bool setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis);
     bool setPosStatus(quint32);
-    bool setData(const quint32 idx, const quint32 v){
-        if (idx < m_data.size()){
+    bool setData(const quint32 idx, const double v){
+        if (idx < static_cast<quint32>(m_data.size())){
             m_data[idx] = v;
             return true;
         }
@@ -70,7 +70,7 @@ public:
     }
 
 private:
-    QVector<quint32> m_data;
+    QVector<double> m_data;
 
 public:
     class DataJsonRecElementE2GetHelper;
