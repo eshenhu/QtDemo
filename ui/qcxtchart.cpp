@@ -33,7 +33,9 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     int idx = 0;
     foreach(JsonGUIElement ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
         //const QString str = QString("%2").arg(ele.str(), 0).arg(ele.unit(), 30);
-        const QString str = QString::asprintf("%-15s\t%8s",
+
+        const QString str = QString::asprintf("%-3d%-15s\t%8s",
+                        ele.idx().idxMotor(),
                         ele.str().toLatin1().constData(),
                         ele.unit().toLatin1().constData());
         QAction* action = menu.addAction(str);

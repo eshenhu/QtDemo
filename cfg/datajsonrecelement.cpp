@@ -26,7 +26,7 @@ const QString DataJsonRecElementE2::toString() const
 {
     QStringList list;
     foreach (double v, m_data){
-        list << QString::number(v, 'f', 3);
+        list << QString::number(v, 'f', 2);
     }
 
     return list.join(QStringLiteral(","));
