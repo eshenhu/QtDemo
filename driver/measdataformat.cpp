@@ -32,6 +32,11 @@ void MeasDataFormat::setVol(const quint32 &value)
     vol = 100 * value;
 }
 
+void MeasDataFormat::setVol(const double &value)
+{
+    vol = static_cast<quint32>(100 * value);
+}
+
 quint32 MeasDataFormat::getThro_1() const
 {
     return thro_1;
@@ -156,7 +161,7 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
     return rtn;
 }
 
-PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
+PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const double start, const double end, const double step, const quint32 thro,
                                                          const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                                          const quint32 durationInSec, const quint32 intervalInMSec):
     AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay, soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),

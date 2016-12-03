@@ -16,9 +16,9 @@ enum TestPlanEnum {
 struct VoltageTstData
 {
    quint16 thro;
-   quint16 vol_beg;
-   quint16 vol_end;
-   quint16 vol_step;
+   double vol_beg;
+   double vol_end;
+   double vol_step;
    quint16 duration;
 };
 

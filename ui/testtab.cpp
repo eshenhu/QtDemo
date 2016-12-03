@@ -51,10 +51,10 @@ public:
         D30Sec = 30
     };
 
-    static const int DEFAULT_VOL = 10;
-    static const int MIN_VOL     = 0;
-    static const int MAX_VOL     = 20;
-    static const int STEP_VOL    = 1;
+    static constexpr double DEFAULT_VOL = 10.00;
+    static constexpr double MIN_VOL     = 0.00;
+    static constexpr double MAX_VOL     = 20.00;
+    static constexpr double STEP_VOL    = 1.00;
 
     static const int DEFAULT_THR = 50;
     static const int DEFAULT_THR_LOW  = 20;
@@ -84,9 +84,9 @@ TestTab::TestTab(QWidget *parent)
     QFormLayout *chartSettingsLayout = new QFormLayout();
     //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
     chartSettingsLayout->addRow("Vol Limit", m_volCheckBox);
-    chartSettingsLayout->addRow("Animations", m_animationsCheckBox);
-    chartSettingsLayout->addRow("Legend", m_legendCheckBox);
-    QGroupBox *chartSettings = new QGroupBox("Chart");
+    chartSettingsLayout->addRow("Cur Limit", m_animationsCheckBox);
+    chartSettingsLayout->addRow("Temp Limit", m_legendCheckBox);
+    QGroupBox *chartSettings = new QGroupBox("Limit Protection");
     chartSettings->setLayout(chartSettingsLayout);
 
     //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
@@ -311,7 +311,7 @@ void DistanceTstTab::validateUserInput(bool checked)
     if(m_disStart->value() >= m_disEnd->value())
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The END value is larger than START value"),
+                             tr("The END value must be larger than START value"),
                              QMessageBox::Close);
         warningBox.exec();
     }
@@ -344,7 +344,7 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_throttle->setSingleStep(ConstValue::STEP_THR);
     m_throttle->setValue(ConstValue::DEFAULT_THR);
 
-    m_voltage_start = new QSpinBox();
+    m_voltage_start = new QDoubleSpinBox();
     m_voltage_start->setMinimumWidth(70);
     m_voltage_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage_start->setRange(0, pCfgResHdl->max_vol());
@@ -352,7 +352,7 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_voltage_start->setSingleStep(ConstValue::STEP_VOL);
     m_voltage_start->setValue(ConstValue::DEFAULT_VOL);
 
-    m_voltage_end = new QSpinBox();
+    m_voltage_end = new QDoubleSpinBox();
     m_voltage_end->setMinimumWidth(70);
     m_voltage_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage_end->setRange(0, pCfgResHdl->max_vol());
@@ -360,12 +360,18 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_voltage_end->setSingleStep(ConstValue::STEP_VOL);
     m_voltage_end->setValue(ConstValue::MAX_VOL);
 
-    m_voltage_step = new QComboBox();
+    m_voltage_step = new QDoubleSpinBox();
     m_voltage_step->setMinimumWidth(70);
-    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S1));
-    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S2));
-    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S5));
-    m_voltage_step->setCurrentIndex(0);
+
+    m_voltage_step->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_voltage_step->setRange(0, pCfgResHdl->max_vol());
+    m_voltage_step->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage_step->setValue(ConstValue::STEP_VOL);
+
+//    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S1));
+//    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S2));
+//    m_voltage_step->addItem(QString::number(ConstValue::VolStepStageEnum::S5));
+//    m_voltage_step->setCurrentIndex(0);
 
     m_duration = new QComboBox();
     m_duration->setMinimumWidth(70);
@@ -409,7 +415,7 @@ void VoltageTstTab::validateUserInput(bool checked)
     if(m_voltage_start->value() >= m_voltage_end->value())
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The END value is larger than START value"),
+                             tr("The END value must be larger than START value"),
                              QMessageBox::Close);
         warningBox.exec();
         return;
@@ -422,7 +428,7 @@ void VoltageTstTab::validateUserInput(bool checked)
     data.thro = m_throttle->value();
     data.vol_beg = m_voltage_start->value();
     data.vol_end = m_voltage_end->value();
-    data.vol_step = (quint16)m_voltage_step->currentText().toInt();
+    data.vol_step = m_voltage_step->value();
     data.duration = (quint16)m_duration->currentText().toInt();
     emit updateUserSelection(val);
 }
@@ -501,7 +507,7 @@ void ThrottleTstTab::validateUserInput(bool checked)
     if(m_thro_start->value() >= m_thro_end->value())
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The START value is larger than END value"),
+                             tr("The START value must be larger than END value"),
                              QMessageBox::Close);
         warningBox.exec();
         return;

@@ -5,6 +5,7 @@
 #include "ui/uiheader.h"
 
 class QSpinBox;
+class QDoubleSpinBox;
 class QDialogButtonBox;
 class QCheckBox;
 class QComboBox;
@@ -39,9 +40,9 @@ class VoltageTstTab : public QWidget
     Q_OBJECT
 private:
     QSpinBox *m_throttle;
-    QSpinBox *m_voltage_start;
-    QSpinBox *m_voltage_end;
-    QComboBox *m_voltage_step;
+    QDoubleSpinBox *m_voltage_start;
+    QDoubleSpinBox *m_voltage_end;
+    QDoubleSpinBox *m_voltage_step;
     QComboBox *m_duration;
     QPushButton *m_apply_btn;
 

@@ -11,6 +11,7 @@ public:
 
     quint32 getVol() const;
     void setVol(const quint32 &value);
+    void setVol(const double &value);
 
     quint32 getThro_1() const;
     void setThro_1(const quint32 &value);
@@ -101,17 +102,17 @@ private:
 class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
-    PeriodicalVolMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 thro,
+    PeriodicalVolMeasDataUpdate(const double start, const double end, const double step, const quint32 thro,
                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                 const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalVolMeasDataUpdate(){}
 
 private:
-    quint32 m_step;
-    const quint32 m_start_vol;
-    const quint32 m_end_vol;
+    double m_step;
+    const double m_start_vol;
+    const double m_end_vol;
     const quint32 m_thro;
-    quint32 m_calc_value;
+    double m_calc_value;
 
     // MeasDataUpdateInf interface
 public:

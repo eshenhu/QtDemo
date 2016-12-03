@@ -72,7 +72,7 @@
          </size>
         </property>
         <property name="text">
-         <string>同一光电</string>
+         <string>实录光电</string>
         </property>
        </widget>
       </item>

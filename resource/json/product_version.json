@@ -45,7 +45,7 @@
           "isSelected": false,
           "lowLimit": -5000,
           "upLimit": 5000,
-          "unit": "N*mm"
+          "unit": "N*m"
         },
         {
           "text": "SPEED",
@@ -349,7 +349,7 @@
           "isSelected": true,
           "lowLimit": -5000,
           "upLimit": 5000,
-          "unit": "N*mm"
+          "unit": "N*m"
         },
         {
           "text": "SPEED",

@@ -35,7 +35,7 @@ public:
     Q_ENUMS(Vanes)
 
     struct Settings {
-        QString manufacture = tr("同一光电");
+        QString manufacture = tr("实录光电");
         QString serialNumber = "SN_";
         QString motorModel = "Motor_";
         QString escModel = "ESC" ;
