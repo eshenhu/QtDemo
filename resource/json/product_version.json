@@ -45,7 +45,7 @@
           "isSelected": false,
           "lowLimit": -5000,
           "upLimit": 5000,
-          "unit": "N*m"
+          "unit": "N.m"
         },
         {
           "text": "SPEED",
@@ -241,7 +241,7 @@
       "display": [
         {
           "text": "VOLTAGE",
-          "index": 255,
+          "index": 0,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 55,
@@ -277,7 +277,7 @@
           "isSelected": true,
           "lowLimit": -5000,
           "upLimit": 5000,
-          "unit": "N*mm"
+          "unit": "N.m"
         },
         {
           "text": "SPEED",
@@ -349,7 +349,7 @@
           "isSelected": true,
           "lowLimit": -5000,
           "upLimit": 5000,
-          "unit": "N*m"
+          "unit": "N.m"
         },
         {
           "text": "SPEED",
