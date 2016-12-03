@@ -73,12 +73,12 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data)
     helper.writeData(e2);
 }
 
-QChartView* CompQChartWidget::makeNewChart()
+QChartView* CompQChartWidget::makeNewChart(QExtCheckBox* box)
 {
     QRTLineSeries *series = new QRTLineSeries();
     //*series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
 
-    QCxtChart *chart = new QCxtChart();
+    QCxtChart *chart = new QCxtChart(box);
     chart->addSeries(series);
     //chart->setTheme(QChart::ChartThemeBrownSand);
     //chart->setMargins(QMargins(0,0,0,0));
@@ -108,14 +108,13 @@ void CompQChartWidget::createChartsView()
     const int div = 2;
     int row = 0;
     int col = 0;
-    for (int idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
-    {
-        QChartView* chartView = CompQChartWidget::makeNewChart();
-
+    for (quint32 idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
+    {     
         const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
         const quint32 sizeOfCheckBox = checkboxList.size();
 
-        const QExtCheckBox* box;
+        QExtCheckBox* box;
+
         if (idx < sizeOfCheckBox){
            box = checkboxList[idx];
         }
@@ -123,6 +122,8 @@ void CompQChartWidget::createChartsView()
             qDebug() << "compQChartWidget:: more than checked box options";
             break;
         }
+        QChartView* chartView = CompQChartWidget::makeNewChart(box);
+
         QChart* chart = chartView->chart();
         QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
         chart->setTitle(box->str() + '(' + box->unit() + ')');

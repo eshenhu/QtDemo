@@ -63,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -79,7 +79,7 @@
   <customwidget>
    <class>MultiChartWidget</class>
    <extends>QWidget</extends>
-   <header>chartsview\multichartwidget.h</header>
+   <header>chartsview/multichartwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

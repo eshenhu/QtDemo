@@ -14,7 +14,7 @@ class QCxtChart : public QChart
 {
     Q_OBJECT
 public:
-    QCxtChart();
+    QCxtChart(QExtCheckBox*);
 
 public:
     void updateCharts();
@@ -28,7 +28,7 @@ protected:
 
 private:
     //QList<QCxtAction*> m_actions;
-    const QExtCheckBox* m_dataSrc;
+    QExtCheckBox* m_dataSrc;
 };
 
 #endif // QCXTCHART_H

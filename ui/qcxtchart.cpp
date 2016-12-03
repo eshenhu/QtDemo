@@ -5,8 +5,9 @@
 #include "ui/qrtlineseries.h"
 #include "unireslocation.h"
 
-QCxtChart::QCxtChart():
-    QChart()
+QCxtChart::QCxtChart(QExtCheckBox* box):
+    QChart(),
+    m_dataSrc(box)
 {
     //createContextMenu();
 }

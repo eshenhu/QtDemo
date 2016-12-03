@@ -18,7 +18,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QGridLayout;
 class QModbus2DataUnit;
-
+class QExtCheckBox;
 class CompQChartWidget : public QWidget
 {
     Q_OBJECT
@@ -33,7 +33,7 @@ public slots:
     void updateData(const QModbus2DataUnit* data);
 
 private:
-    QChartView* makeNewChart();
+    QChartView* makeNewChart(QExtCheckBox*);
     void createChartsView();
     void createCheckBoxView();
     //void createContextMenu();
