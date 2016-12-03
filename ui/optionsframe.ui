@@ -88,11 +88,6 @@
         </property>
         <item>
          <property name="text">
-          <string>1</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
           <string>2</string>
          </property>
         </item>
@@ -104,11 +99,6 @@
         <item>
          <property name="text">
           <string>10</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>15</string>
          </property>
         </item>
        </widget>
@@ -157,22 +147,17 @@
         </property>
         <item>
          <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>2</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>5</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>10</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>15</string>
+          <string>3</string>
          </property>
         </item>
        </widget>
@@ -212,17 +197,17 @@
         </property>
         <item>
          <property name="text">
-          <string>5</string>
+          <string>1</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>10</string>
+          <string>2</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>15</string>
+          <string>3</string>
          </property>
         </item>
        </widget>

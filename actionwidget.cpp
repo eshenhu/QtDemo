@@ -127,21 +127,21 @@ ActionWidget::ActionWidget(QWidget *parent)
         {
             bool isStatusOK = false;
             do{
-                if (m_measData.type == TestCasePrimType::TCINVALID){
-                    QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
-                                                                 "Please make your selection"),
-                                         QMessageBox::Ok);
-                    break;
-                }
+//                if (m_measData.type == TestCasePrimType::TCINVALID){
+//                    QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
+//                                                                 "Please make your selection"),
+//                                         QMessageBox::Ok);
+//                    break;
+//                }
 
-                setting = this->doAutoSelectSerialPlugInPort();
-                if (setting.name.isEmpty()){
-                    QMessageBox::warning(this, tr("Warning"),
-                                         tr("Scanning serial port failed \n"
-                                            "Please check your cable connection status"),
-                                         QMessageBox::Ok);
-                    break;
-                }
+//                setting = this->doAutoSelectSerialPlugInPort();
+//                if (setting.name.isEmpty()){
+//                    QMessageBox::warning(this, tr("Warning"),
+//                                         tr("Scanning serial port failed \n"
+//                                            "Please check your cable connection status"),
+//                                         QMessageBox::Ok);
+//                    break;
+//                }
 
                 isStatusOK = true;
                 break;
@@ -151,7 +151,7 @@ ActionWidget::ActionWidget(QWidget *parent)
                 m_subTestTabWidget->start_btn()->setText(QStringLiteral("Stop"));
                 m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
 
-                m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
+//                m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
                 //reset.
                 m_measData.type = TestCasePrimType::TCINVALID;
             }

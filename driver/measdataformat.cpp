@@ -204,7 +204,7 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
     return rtn;
 }
 
-PeriodicalThroMeasDataUpdate::PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
+PeriodicalThroMeasDataUpdate::PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol,
                                                            const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                                            const quint32 durationInSec, const quint32 intervalInMSec)
     :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, start, durationInSec, intervalInMSec),
@@ -247,7 +247,7 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
     return rtn;
 }
 
-PeriodicalDisMeasDataUpdate::PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol, const quint32 thro,
+PeriodicalDisMeasDataUpdate::PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol, const quint32 thro,
                                                          const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                                          const quint32 durationInSec, const quint32 intervalInMSec)
     :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),

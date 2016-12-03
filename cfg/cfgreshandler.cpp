@@ -131,7 +131,29 @@ void CfgDeviceCfgModel::loadSetting()
     m_set.beginGroup("cfg/device");
     m_vane = m_set.value("vane", 1).toInt();
     m_HZ  = m_set.value("HZ", 50).toInt();
+    m_lowThroLimit = m_set.value("ThroLowLimit", 0).toInt();
+    m_highThroLimit = m_set.value("ThroHighLimit", 90).toInt();
     m_set.endGroup();
+}
+
+quint32 CfgDeviceCfgModel::highThroLimit() const
+{
+    return m_highThroLimit;
+}
+
+void CfgDeviceCfgModel::setHighThroLimit(const quint32 &highThroLimit)
+{
+    m_highThroLimit = highThroLimit;
+}
+
+quint32 CfgDeviceCfgModel::lowThroLimit() const
+{
+    return m_lowThroLimit;
+}
+
+void CfgDeviceCfgModel::setLowThroLimit(const quint32 &lowThroLimit)
+{
+    m_lowThroLimit = lowThroLimit;
 }
 
 CfgProductVersionCfgModel::CfgProductVersionCfgModel(QSettings &set):

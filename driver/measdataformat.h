@@ -122,7 +122,7 @@ public:
 class PeriodicalThroMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
-    PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol,
+    PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol,
                                  const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                  const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalThroMeasDataUpdate(){}
@@ -131,7 +131,7 @@ private:
     const quint32 m_start_thro;
     const quint32 m_end_thro;
     quint32 m_step;
-    const quint32 m_vol;
+    const double m_vol;
     quint32 m_calc_value;
 
     // MeasDataUpdateInf interface
@@ -142,7 +142,7 @@ public:
 class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 {
 public:
-    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const quint32 vol, const quint32 thro,
+    PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol, const quint32 thro,
                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
                                 const quint32 durationInSec, const quint32 intervalInMSec = 500);
     ~PeriodicalDisMeasDataUpdate(){}
@@ -151,7 +151,7 @@ private:
     const quint32 m_step;
     const quint32 m_start_dis;
     const quint32 m_end_dis;
-    const quint32 m_vol;
+    const double m_vol;
     const quint32 m_thro;
     quint32 m_calc_value;
 

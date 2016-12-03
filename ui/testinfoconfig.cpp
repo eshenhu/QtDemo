@@ -35,6 +35,9 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
     ui->Thr_Min_LE->setValidator(validator);
     ui->Thr_Max_LE->setValidator(validator);
 
+    m_model->setLowThroLimit(ui->Thr_Min_LE->text().toInt());
+    m_model->setHighThroLimit(ui->Thr_Max_LE->text().toInt());
+
 //    connect(ui->THRUnit_combox, SIGNAL(currentIndexChanged(int)),
 
 //            static_cast<void (QSpinBox::*)(int)>

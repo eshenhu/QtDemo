@@ -51,10 +51,10 @@ public:
         D30Sec = 30
     };
 
-    static constexpr double DEFAULT_VOL = 10.00;
-    static constexpr double MIN_VOL     = 0.00;
-    static constexpr double MAX_VOL     = 20.00;
-    static constexpr double STEP_VOL    = 1.00;
+    static constexpr double DEFAULT_VOL = 10.0;
+    static constexpr double MIN_VOL     = 0.0;
+    static constexpr double MAX_VOL     = 20.0;
+    static constexpr double STEP_VOL    = 1.0;
 
     static const int DEFAULT_THR = 50;
     static const int DEFAULT_THR_LOW  = 20;
@@ -224,7 +224,8 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
 
     // series settings
-    m_voltage = new QSpinBox();
+    m_voltage = new QDoubleSpinBox();
+    m_voltage->setDecimals(1);
     m_voltage->setMinimumWidth(70);
     m_voltage->setMaximumWidth(70);
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -345,6 +346,7 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_throttle->setValue(ConstValue::DEFAULT_THR);
 
     m_voltage_start = new QDoubleSpinBox();
+    m_voltage_start->setDecimals(1);
     m_voltage_start->setMinimumWidth(70);
     m_voltage_start->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage_start->setRange(0, pCfgResHdl->max_vol());
@@ -353,6 +355,7 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_voltage_start->setValue(ConstValue::DEFAULT_VOL);
 
     m_voltage_end = new QDoubleSpinBox();
+    m_voltage_end->setDecimals(1);
     m_voltage_end->setMinimumWidth(70);
     m_voltage_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage_end->setRange(0, pCfgResHdl->max_vol());
@@ -361,6 +364,7 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
     m_voltage_end->setValue(ConstValue::MAX_VOL);
 
     m_voltage_step = new QDoubleSpinBox();
+    m_voltage_step->setDecimals(1);
     m_voltage_step->setMinimumWidth(70);
 
     m_voltage_step->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -405,7 +409,6 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
 
     QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
         Q_UNUSED(checked)
-
     });
 }
 
@@ -439,7 +442,8 @@ ThrottleTstTab::ThrottleTstTab(TestCasePrimType type, QWidget *parent)
 {
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     // series settings
-    m_voltage = new QSpinBox();
+    m_voltage = new QDoubleSpinBox();
+    m_voltage->setDecimals(1);
     m_voltage->setMinimumWidth(70);
     m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_voltage->setRange(0, pCfgResHdl->max_vol());

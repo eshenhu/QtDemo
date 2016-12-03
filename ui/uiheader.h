@@ -24,7 +24,7 @@ struct VoltageTstData
 
 struct ThrottleTstData
 {
-   quint16 vol;
+   double vol;
    quint16 thro_beg;
    quint16 thro_end;
    quint16 thro_step;
@@ -33,7 +33,7 @@ struct ThrottleTstData
 
 struct DistanceTstData
 {
-    quint16 vol;
+    double vol;
     quint16 thro;
     quint16 dis_beg;
     quint16 dis_end;

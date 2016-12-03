@@ -17,7 +17,7 @@ class DistanceTstTab : public QWidget
 {
     Q_OBJECT
 public:
-    QSpinBox *m_voltage;
+    QDoubleSpinBox *m_voltage;
     QSpinBox *m_throttle;
     QSpinBox *m_disStart;
     QSpinBox *m_disEnd;
@@ -60,7 +60,7 @@ public slots:
 class ThrottleTstTab : public QWidget
 {
     Q_OBJECT
-    QSpinBox* m_voltage;
+    QDoubleSpinBox* m_voltage;
     QSpinBox* m_thro_start;
     QSpinBox* m_thro_end;
     QComboBox* m_thro_step;

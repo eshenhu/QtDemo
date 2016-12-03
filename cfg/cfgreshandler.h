@@ -81,12 +81,22 @@ public:
 
     quint32 HZ() const;
     void setHZ(const quint32 &HZ);
+    quint32 lowThroLimit() const;
+    void setLowThroLimit(const quint32 &lowThroLimit);
+
+    quint32 highThroLimit() const;
+    void setHighThroLimit(const quint32 &highThroLimit);
+
 private:
     void loadSetting();
 
 private:
     quint32 m_vane;
     quint32 m_HZ;
+
+    quint32 m_lowThroLimit;
+    quint32 m_highThroLimit;
+
     QSettings& m_set;
 };
 
@@ -170,6 +180,17 @@ public:
         Q_ASSERT(m_deviceCfg != nullptr);
         return m_deviceCfg->HZ();
     }
+    inline quint32 lowThroLimit() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->lowThroLimit();
+    }
+    inline quint32 highThroLimit() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->highThroLimit();
+    }
+
     MotorType motor_type() const
     {
         Q_ASSERT(m_prodCfg != nullptr);

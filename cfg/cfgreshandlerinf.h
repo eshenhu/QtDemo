@@ -22,6 +22,8 @@ public:
 
     virtual quint32 vane() const = 0;
     virtual quint32 HZ() const = 0;
+    virtual quint32 lowThroLimit() const = 0;
+    virtual quint32 highThroLimit() const = 0;
 
     virtual MotorType motor_type() const = 0;
     virtual quint32 num_of_motor() const = 0;
