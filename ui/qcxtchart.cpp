@@ -35,8 +35,12 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     foreach(JsonGUIElement ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
         //const QString str = QString("%2").arg(ele.str(), 0).arg(ele.unit(), 30);
 
-        const QString str = QString::asprintf("%-3d%-15s\t%8s",
-                        ele.idx().idxMotor(),
+        quint8 motor = ele.idx().idxMotor();
+        QString strMotor(' ');
+        if (motor == 0 || motor == 1)
+            strMotor = QString::number(motor);
+        QString str = QString::asprintf("%-3s%-15s\t%8s",
+                        strMotor.toLatin1().constData(),
                         ele.str().toLatin1().constData(),
                         ele.unit().toLatin1().constData());
         QAction* action = menu.addAction(str);

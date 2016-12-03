@@ -41,6 +41,7 @@ void CfgJsonRecElement::read(const QJsonObject &json)
     m_pv = static_cast<CfgResHandlerInf::ProductVersion>(json["pv"].toInt());
     m_manufacture = json["manufacture"].toString();
     m_vanes = json["vanes"].toInt();
+    m_motorType = static_cast<QModbus2DataUnit::MotorTypeEnum>(json["motor_type"].toInt());
 }
 
 void CfgJsonRecElement::write(QJsonObject &json) const
@@ -49,6 +50,7 @@ void CfgJsonRecElement::write(QJsonObject &json) const
     json["pv"] = static_cast<quint8>(m_pv);
     json["manufacture"] = m_manufacture;
     json["vanes"] = m_vanes;
+    json["motor_type"] = static_cast<quint8>(m_motorType);
 }
 
 CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder &builder)
@@ -57,5 +59,6 @@ CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementB
     m_pv = builder.m_pv;
     m_manufacture = builder.m_manufacture;
     m_vanes = builder.m_vanes;
+    m_motorType = builder.m_motorType;
 }
 

@@ -3,6 +3,7 @@
 
 #include "cfg/cfgreshandlerinf.h"
 #include "ui/uiheader.h"
+#include "comm/qmodbusdataunit.h"
 #include <QString>
 class QFile;
 
@@ -30,6 +31,7 @@ private:
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
     TestPlanEnum m_plan = TestPlanEnum::Invaild;
+    QModbus2DataUnit::MotorTypeEnum m_motorType;
 };
 
 class CfgJsonRecElement::CfgJsonRecElementBuilder
@@ -69,6 +71,12 @@ public:
         return *this;
     }
 
+    CfgJsonRecElementBuilder& motorType(const QModbus2DataUnit::MotorTypeEnum v)
+    {
+        m_motorType = v;
+        return *this;
+    }
+
 public:
     CfgJsonRecElement build(){
         return CfgJsonRecElement(*this);
@@ -79,5 +87,6 @@ public:
     CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
+    QModbus2DataUnit::MotorTypeEnum m_motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
 };
 #endif // CFGJSONRECELEMENT_H
