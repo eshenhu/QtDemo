@@ -94,7 +94,4 @@ struct UiCompMeasData{
     UiMeasData data;
 };
 
-
-
-
 #endif // UITESTBASEDSTRUCT_H

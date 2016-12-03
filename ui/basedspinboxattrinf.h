@@ -6,6 +6,8 @@
 #include <QtPlugin>
 #include "cfg/cfgjsonprimaryelement.h"
 #include "comm/qmodbusdataunit.h"
+#include "driver/modelpoctype.h"
+using namespace ModelPOC;
 
 class BasedSpinBoxAttrInf
 {
@@ -19,7 +21,7 @@ public:
     virtual qint16 upLimit() const = 0;
     virtual QString unit() const = 0;
 
-    virtual void update(const QModbus2DataUnit* data) = 0;
+    virtual void update(const QModbus2DataUnit* data, Phase phase) = 0;
 };
 
 Q_DECLARE_INTERFACE(BasedSpinBoxAttrInf, "BasedSpinBoxAttrInf/1.0")

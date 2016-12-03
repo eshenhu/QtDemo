@@ -6,6 +6,9 @@
 #include "comm/qmodbusdataunit.h"
 #include "unireslocation.h"
 
+#include "driver/modelpoctype.h"
+using namespace ModelPOC;
+
 /*
  *     struct ElecMotorCompStruct
     {
@@ -46,7 +49,8 @@
 namespace Functions {
 
 using functionT = std::function<qint32(const QModbus2DataUnit*, const JsonPVConfig&, const indexOnMotor)>;
-using formulaT = std::function<double(qint32)>;
+using formulaT = std::function<double(qint32, Phase)>;
+
 
 
 const static functionT functionDummy = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -55,13 +59,15 @@ const static functionT functionDummy = [](const QModbus2DataUnit* data, const Js
     Q_UNUSED(idx)
     return 0;
 };
-const static formulaT formulaDummy = [](const qint32 v){
+const static formulaT formulaDummy = [](const qint32 v, Phase phase){
     Q_UNUSED(v)
+    Q_UNUSED(phase)
     return 0;
 };
 
 const static functionT functionVol = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
+    Q_UNUSED(config)
     static quint32 lastNoneZeroVol;
     quint32 v;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
@@ -110,7 +116,8 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
 /*
  *  unit : 10mv
  */
-const static formulaT formulaVol = [](const qint32 v){
+const static formulaT formulaVol = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)(v)/100;
 };
 
@@ -149,7 +156,8 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
 /*
  *  unit:   10mA
  */
-const static formulaT formulaCurrent = [](const qint32 v){
+const static formulaT formulaCurrent = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)(v)/100;
 };
 
@@ -182,8 +190,19 @@ const static functionT functionThrust = [](const QModbus2DataUnit* data, const J
  * Zero value = 0x007FFFFF = 8388607
  * (v - 0x007FFFFF)/46.86
 */
-const static formulaT formulaThrust = [](const qint32 v){
-    return ((double)(v - 8388607)/4686)*100;
+const static formulaT formulaThrust = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
+    static quint32 zero = 0;
+
+    if (phase == Phase::Phase_SoftStart)
+        zero = v;
+    else if (phase == Phase::Phase_PRPDelay)
+        zero = (zero + v)/2;
+
+    if (phase == Phase::Phase_NomalRunning)
+        return ((double)(v - zero)/4686)*100;
+    else
+        return (double)0;
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -191,7 +210,8 @@ const static functionT functionThrottle = [](const QModbus2DataUnit* data, const
     return idx.idxOneMotor() == 0 ? static_cast<qint32>(data->uvalues().r.s.thro_1) : static_cast<qint32>(data->uvalues().r.s.thro_2);
 };
 
-const static formulaT formulaThrottle = [](const qint32 v){
+const static formulaT formulaThrottle = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)v;
 };
 
@@ -222,8 +242,20 @@ const static functionT functionTorque = [](const QModbus2DataUnit* data, const J
  * Zero value = 0x007FFFFF = 8388607
  *
 */
-const static formulaT formulaTorque = [](const qint32 v){
-    return ((double)(v - 8388607)/6133)*100;
+const static formulaT formulaTorque = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
+
+    static quint32 zero = 0;
+
+    if (phase == Phase::Phase_SoftStart)
+        zero = v;
+    else if (phase == Phase::Phase_PRPDelay)
+        zero = (zero + v)/2;
+
+    if (phase == Phase::Phase_NomalRunning)
+        return ((double)(v - zero)/6133)*100;
+    else
+        return (double)0;
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -250,7 +282,8 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
     return rtn;
 };
 
-const static formulaT formulaSpeed = [](const qint32 v){
+const static formulaT formulaSpeed = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     //y = 60 000 000 / (x * 6 * (pole / 2))
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     quint32 vanes = pCfgResHdl->vane();
@@ -287,7 +320,8 @@ const static functionT functionTemp = [](const QModbus2DataUnit* data, const Jso
 };
 
 //y = x / 4095.00 * 1023.75
-const static formulaT formulaTemp = [](const qint32 v){
+const static formulaT formulaTemp = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)(v)*1023.75/4095;
 };
 
@@ -313,16 +347,8 @@ const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, co
     return rtn;
 };
 
-const static formulaT formulaPowerEffect = [](const qint32 v){
-    return (double)v;
-};
-
-const static functionT functionVibrate = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
-    qint32 rtn = 0;
-    return rtn;
-};
-
-const static formulaT formulaVibrate = [](const qint32 v){
+const static formulaT formulaPowerEffect = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)v;
 };
 
@@ -348,7 +374,8 @@ const static functionT functionPower = [](const QModbus2DataUnit* data, const Js
     return rtn;
 };
 
-const static formulaT formulaPower = [](const qint32 v){
+const static formulaT formulaPower = [](const qint32 v, Phase phase){
+    Q_UNUSED(phase)
     return (double)v;
 };
 }

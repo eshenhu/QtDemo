@@ -30,7 +30,7 @@ QChartView *MultiChartWidget::makeNewChart()
     //chart->setMargins(QMargins(0,0,0,0));
     chart->legend()->hide();
 
-    QValueAxis *axisX = new QValueAxis;
+//    QValueAxis *axisX = new QValueAxis;
 //    //axisX->setFormat("dd-MM h:mm:s");
 //    axisX->setTickCount(QRTLineSeries::MAX_NUM_POINTS / 4);
 //    axisX->setRange(0, QRTLineSeries::MAX_NUM_POINTS);

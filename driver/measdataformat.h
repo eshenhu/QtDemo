@@ -3,6 +3,10 @@
 
 #include <qglobal.h>
 #include "ui/uiheader.h"
+#include "driver/modelpoctype.h"
+
+using namespace ModelPOC;
+
 class MeasDataFormat
 {
 public:
@@ -38,6 +42,7 @@ public:
     virtual ~MeasDataUpdateInf() {}
 
     virtual bool update() = 0;
+    virtual Phase phase() const = 0;
     virtual void setSeed(MeasDataFormat* data) = 0;
 };
 
@@ -61,11 +66,13 @@ protected:
 
 class AbstractPeriodicalMeasDataUpdate : public AbstractMeasDataUpdate
 {
-    enum struct Phase
-    {
-        Phase_SoftStart,
-        Phase_NomalRunning
-    };
+//    enum struct Phase
+//    {
+//        Phase_SoftStart,
+//        Phase_PRPDelay,
+//        Phase_HardDelay,
+//        Phase_NomalRunning
+//    };
 
 public:
     AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
@@ -94,6 +101,8 @@ public:
      *     false: ongoing test
      */
     bool update() override;
+
+    Phase phase() const override;
 
 private:
     bool updateData();

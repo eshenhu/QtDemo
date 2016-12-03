@@ -653,7 +653,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             if (processReceivedMeasDataUnit(signal.m_info.mp_dataUnit))
             {
-                emit updateData(signal.m_info.mp_dataUnit);
+                emit updateData(signal.m_info.mp_dataUnit, mp_refresh->phase());
             }
 
             QModbus2DataUnit::LimitStatusEnum limitStatus = processReceivedMeasDistanceDataUnit(signal.m_info.mp_dataUnit);
