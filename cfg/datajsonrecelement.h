@@ -103,7 +103,7 @@ public:
     bool newFile(const QString& path);
     bool closeFile();
     bool writeData(const DataJsonRecElementE2&);
-    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
+    //DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
 
     const QString getTitle();
 };
@@ -116,6 +116,7 @@ public:
     DataJsonRecElementE2FileReaderHandler() = default;
 
     const QVector<DataJsonRecElementE2>& data() const;
+    void loadData(const QString filename);
 
 private:
     QString m_filename;

@@ -44,7 +44,8 @@ SOURCES += main.cpp \
     ui/qcxtchart.cpp \
     chartsview/chartviewerwin.cpp \
     chartsview/multichartwidget.cpp \
-    chartsview/customtablemodel.cpp
+    chartsview/customtablemodel.cpp \
+    cfg/cfgwashingdatainf.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -96,7 +97,8 @@ HEADERS += \
     unireslocation.h \
     chartsview/chartviewerwin.h \
     chartsview/multichartwidget.h \
-    chartsview/customtablemodel.h
+    chartsview/customtablemodel.h \
+    cfg/cfgwashingdatainf.h
 
 FORMS += \
     ui/testinfoconfig.ui \

@@ -200,7 +200,7 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase){
         zero = (zero + v)/2;
 
     if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - zero)/4686)*100;
+        return ((double)(v - zero)*100/4686);
     else
         return (double)0;
 };
@@ -253,7 +253,7 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase){
         zero = (zero + v)/2;
 
     if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - zero)/6133)*100;
+        return ((double)(v - zero)*100/6133);
     else
         return (double)0;
 };
