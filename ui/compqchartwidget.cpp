@@ -44,12 +44,12 @@ CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent)
     setLayout(m_layout);
 }
 
-void CompQChartWidget::updateData(const QModbus2DataUnit *data)
+void CompQChartWidget::updateData(const QModbus2DataUnit *data, Phase phase)
 {
     const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
     foreach (QExtCheckBox* box, checkboxList)
     {
-        box->update(data);
+        box->update(data, phase);
     }
 
     foreach(const QChartView* chartView ,m_chartsViewVector){

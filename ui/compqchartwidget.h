@@ -4,6 +4,9 @@
 #include <QWidget>
 #include <QVector>
 #include <QtCharts/QChartGlobal>
+#include "driver/modelpoctype.h"
+
+using namespace ModelPOC;
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QLineSeries;
@@ -30,7 +33,7 @@ public:
 signals:
 
 public slots:
-    void updateData(const QModbus2DataUnit* data);
+    void updateData(const QModbus2DataUnit* data, Phase phase);
 
 private:
     QChartView* makeNewChart(QExtCheckBox*);

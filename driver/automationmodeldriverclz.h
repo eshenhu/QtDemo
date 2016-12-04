@@ -9,6 +9,9 @@
 #include "driver/signaloverline.h"
 #include "ui/uiheader.h"
 #include "qtcore/qloggingcategory.h"
+#include "driver/modelpoctype.h"
+using namespace ModelPOC;
+
 
 class QModbus2Client;
 class QModbus2Reply;
@@ -116,7 +119,7 @@ private:
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
-    void updateData(const QModbus2DataUnit* data);
+    void updateData(const QModbus2DataUnit* data, Phase phase);
 
 public slots:
     void readReady();

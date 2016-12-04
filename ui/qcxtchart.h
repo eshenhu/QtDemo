@@ -29,6 +29,10 @@ protected:
 private:
     //QList<QCxtAction*> m_actions;
     QExtCheckBox* m_dataSrc;
+
+    // further improvment --eshenhu
+//    qint32 m_dynUpLimit;
+//    qint32 m_dynLowLimit;
 };
 
 #endif // QCXTCHART_H

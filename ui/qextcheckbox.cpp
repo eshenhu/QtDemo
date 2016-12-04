@@ -15,9 +15,9 @@ QExtCheckBox::~QExtCheckBox()
 {
 }
 
-void QExtCheckBox::update(const QModbus2DataUnit *data)
+void QExtCheckBox::update(const QModbus2DataUnit *data,  Phase phase)
 {
-    AbstractSpinBoxAttr::update(data);
+    AbstractSpinBoxAttr::update(data, phase);
 //    if (QCheckBox::isChecked() && m_assoChartView != nullptr)
 //    {
 //        QChart* chart = m_assoChartView->chart();

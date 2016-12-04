@@ -6,6 +6,10 @@
 #include "ui/abstractspinboxattr.h"
 #include <QtCharts/QChartGlobal>
 
+#include "driver/modelpoctype.h"
+
+using namespace ModelPOC;
+
 class JsonPVConfig;
 class JsonGUIElement;
 
@@ -22,7 +26,7 @@ public:
     ~QExtCheckBox();
 
     // BasedSpinBoxAttrInf interface
-    void update(const QModbus2DataUnit *data);
+    void update(const QModbus2DataUnit *data, Phase phase);
 
     // factory
     static QExtCheckBox* makeExtCheckBox(const JsonPVConfig& config, const JsonGUIElement& element);

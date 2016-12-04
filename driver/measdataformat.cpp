@@ -86,6 +86,11 @@ AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32
     m_phase(Phase::Phase_SoftStart)
 {
 }
+
+Phase AbstractPeriodicalMeasDataUpdate::phase() const
+{
+    return m_phase;
+}
 bool AbstractPeriodicalMeasDataUpdate::update()
 {
     bool rtn = this->updateData();
@@ -113,7 +118,9 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
      * delay   soft
      */
 
-    if (m_phase == Phase::Phase_SoftStart)
+    if (m_phase == Phase::Phase_SoftStart
+            || m_phase == Phase::Phase_PRPDelay
+            || m_phase == Phase::Phase_HardDelay)
     {
         if (m_tick <= 1000 * m_delay_start/m_intervalInMSec)
         {
@@ -127,10 +134,12 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
         }
         else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec)
         {
+            m_phase == Phase::Phase_PRPDelay;
             // do nothing here, keep as previous.
         }
         else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay +m_soft_delay)/m_intervalInMSec)
         {
+            m_phase == Phase::Phase_HardDelay;
             static quint32 step = 1000 * m_soft_delay / m_intervalInMSec;
             quint32 thro = m_boot_thro * (m_tick - 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec) / step;
             //m_data->setVol(vol);

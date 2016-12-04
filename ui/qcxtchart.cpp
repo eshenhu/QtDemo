@@ -27,6 +27,7 @@ void QCxtChart::updateCharts()
 
 void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+    Q_UNUSED(event)
     //m_actions.clear();
 
     QMenu menu;
