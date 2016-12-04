@@ -199,10 +199,12 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase){
     else if (phase == Phase::Phase_PRPDelay)
         zero = (zero + v)/2;
 
+    qDebug() << "formulaThrust zero value is" << zero;
+
     if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - zero)/4686)*100;
+        return ((double)(v - zero)/46.86);
     else
-        return (double)0;
+        return (double)zero;
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -252,10 +254,11 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase){
     else if (phase == Phase::Phase_PRPDelay)
         zero = (zero + v)/2;
 
+    qDebug() << "zero value is " << zero;
     if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - zero)/6133)*100;
+        return ((double)(v - zero)/61.33);
     else
-        return (double)0;
+        return (double)zero;
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
