@@ -134,12 +134,12 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
         }
         else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec)
         {
-            m_phase == Phase::Phase_PRPDelay;
+            m_phase = Phase::Phase_PRPDelay;
             // do nothing here, keep as previous.
         }
         else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay +m_soft_delay)/m_intervalInMSec)
         {
-            m_phase == Phase::Phase_HardDelay;
+            m_phase = Phase::Phase_HardDelay;
             static quint32 step = 1000 * m_soft_delay / m_intervalInMSec;
             quint32 thro = m_boot_thro * (m_tick - 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec) / step;
             //m_data->setVol(vol);

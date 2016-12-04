@@ -5,7 +5,7 @@ class QMouseEvent;
 
 #include <QtCharts/QChartGlobal>
 #include <QtCharts/QChart>
-#include "actionwidget.h"
+//#include "actionwidget.h"
 #include "ui/qextcheckbox.h"
 
 QT_CHARTS_USE_NAMESPACE

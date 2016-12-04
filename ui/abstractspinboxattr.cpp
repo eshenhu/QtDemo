@@ -20,7 +20,7 @@ void AbstractSpinBoxAttr::update(const QModbus2DataUnit *data, Phase phase)
         m_data = pair.functionF(data, m_config, this->idx());
 
         // it should record the data to persistent storage, like file.  --eshenhu
-        m_pushData = pair.formulaF(m_data, phase);
+        m_pushData = pair.formulaF(m_data, phase, static_cast<quint32>(this->idx().idxMotor()));
     }
 }
 
