@@ -2,18 +2,11 @@
 #define ABSTRACTSPINBOXATTR_H
 
 #include "basedspinboxattrinf.h"
-#include "ui/functions.h"
-
-struct FunctionPair
-{
-    Functions::functionT functionF;
-    Functions::formulaT formulaF;
-};
 
 class AbstractSpinBoxAttr : public BasedSpinBoxAttrInf
 {
 public:
-    Q_INTERFACES(BasedSpinBoxAttrInf)
+    //Q_INTERFACES(BasedSpinBoxAttrInf)
 
     AbstractSpinBoxAttr() = default;
     AbstractSpinBoxAttr(const JsonPVConfig& config, const JsonGUIElement& ele);
@@ -57,20 +50,20 @@ private:
     double m_pushData;
 };
 
-static std::map<JsonGUIPrimType, FunctionPair> m_funMap =
-{
-    { JsonGUIPrimType::INVALID,    { Functions::functionDummy,   Functions::formulaDummy    }},
-    { JsonGUIPrimType::VOLTAGE,    { Functions::functionVol,     Functions::formulaVol      }},
-    { JsonGUIPrimType::CURRENT,    { Functions::functionCurrent, Functions::formulaCurrent  }},
-    { JsonGUIPrimType::THRUST,     { Functions::functionThrust,  Functions::formulaThrust  }},
-    { JsonGUIPrimType::THROTTLE,   { Functions::functionThrottle,Functions::formulaThrottle  }},
-    { JsonGUIPrimType::TORQUE,     { Functions::functionTorque,  Functions::formulaTorque  }},
-    { JsonGUIPrimType::SPEED,      { Functions::functionSpeed,   Functions::formulaSpeed  }},
-    { JsonGUIPrimType::TEMP,       { Functions::functionTemp,    Functions::formulaTemp  }},
-    { JsonGUIPrimType::EFFICIENCY, { Functions::functionPowerEffect, Functions::formulaPowerEffect  }},
-//    { JsonGUIPrimType::VIBRATE,    { Functions::functionVibrate, Functions::formulaVibrate  }},
-    { JsonGUIPrimType::POWER,      { Functions::functionPower,   Functions::formulaPower  }},
-    { JsonGUIPrimType::POWER,      { Functions::functionMechaPower,   Functions::formulaMechaPower  }},
-    { JsonGUIPrimType::POWER,      { Functions::functionMechaEffi,   Functions::formulaMechaEffi }}
-};
+//static std::map<JsonGUIPrimType, FunctionPair> m_funMap =
+//{
+//    { JsonGUIPrimType::INVALID,    { Functions::functionDummy,   Functions::formulaDummy    }},
+//    { JsonGUIPrimType::VOLTAGE,    { Functions::functionVol,     Functions::formulaVol      }},
+//    { JsonGUIPrimType::CURRENT,    { Functions::functionCurrent, Functions::formulaCurrent  }},
+//    { JsonGUIPrimType::THRUST,     { Functions::functionThrust,  Functions::formulaThrust  }},
+//    { JsonGUIPrimType::THROTTLE,   { Functions::functionThrottle,Functions::formulaThrottle  }},
+//    { JsonGUIPrimType::TORQUE,     { Functions::functionTorque,  Functions::formulaTorque  }},
+//    { JsonGUIPrimType::SPEED,      { Functions::functionSpeed,   Functions::formulaSpeed  }},
+//    { JsonGUIPrimType::TEMP,       { Functions::functionTemp,    Functions::formulaTemp  }},
+//    { JsonGUIPrimType::EFFICIENCY, { Functions::functionPowerEffect, Functions::formulaPowerEffect  }},
+////    { JsonGUIPrimType::VIBRATE,    { Functions::functionVibrate, Functions::formulaVibrate  }},
+//    { JsonGUIPrimType::POWER,      { Functions::functionPower,   Functions::formulaPower  }},
+//    { JsonGUIPrimType::MECHAPOWER,      { Functions::functionMechaPower,   Functions::formulaMechaPower  }},
+//    { JsonGUIPrimType::MECHAEFFI,      { Functions::functionMechaEffi,   Functions::formulaMechaEffi }}
+//};
 #endif // ABSTRACTSPINBOXATTR_H

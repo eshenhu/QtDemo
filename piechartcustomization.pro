@@ -98,7 +98,8 @@ HEADERS += \
     chartsview/chartviewerwin.h \
     chartsview/multichartwidget.h \
     chartsview/customtablemodel.h \
-    cfg/cfgzerocalibrateclz.h
+    cfg/cfgzerocalibrateclz.h \
+    ui/functionmap.h
 
 FORMS += \
     ui/testinfoconfig.ui \

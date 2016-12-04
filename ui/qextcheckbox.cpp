@@ -52,7 +52,11 @@ const QExtCheckBox *QExtCheckBox::searchExtCheckBox(const JsonGUIElement &elemen
 const QExtCheckBox *QExtCheckBox::searchExtCheckBox(const JsonGUIPrimType type, const quint32 idxMotor)
 {
     foreach(QExtCheckBox* box, m_qExtSpinBoxList){
-        if(box->type() == type && box->idx().idxMotor() == idxMotor)
+        if(box->type() == type &&
+                ( box->idx().idxMotor() == idxMotor
+                  || box->idx().idxMotor() == 0x0F
+                )
+           )
             return box;
     }
     return nullptr;

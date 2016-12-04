@@ -5,6 +5,8 @@
 #include <QString>
 #include "comm/qmodbusdataunit.h"
 #include "ui/uiheader.h"
+
+
 class indexOnMotor
 {
 public:
@@ -54,6 +56,8 @@ public:
     qint16 lowLimit() const;
     qint16 upLimit() const;
     QString unit() const;
+
+    static const char* format( const JsonGUIPrimType type);
 
 private:
     JsonGUIPrimType lookup(const QString) const;

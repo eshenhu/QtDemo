@@ -1,6 +1,7 @@
 #include "abstractspinboxattr.h"
 #include <QDebug>
-
+#include "ui/uiheader.h"
+#include "ui/functionmap.h"
 AbstractSpinBoxAttr::AbstractSpinBoxAttr(const JsonPVConfig &config, const JsonGUIElement &ele):
     m_config(config),
     m_elem(ele)

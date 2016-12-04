@@ -123,9 +123,9 @@ public:
     static quint32 zeroTorqueCalibrate[MAX_SUPPORT_MOTOR];
 
     // AD calibrate with 10KG.
-    static quint32 divisionOnThrust[MAX_SUPPORT_MOTOR];
+    static double divisionOnThrust[MAX_SUPPORT_MOTOR];
     // AD calibrate with
-    static quint32 divisionOnTorque[MAX_SUPPORT_MOTOR];
+    static double divisionOnTorque[MAX_SUPPORT_MOTOR];
 };
 
 #endif // CFGZEROCALIBRATECLZ_H
