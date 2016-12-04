@@ -69,6 +69,8 @@ static std::map<JsonGUIPrimType, FunctionPair> m_funMap =
     { JsonGUIPrimType::TEMP,       { Functions::functionTemp,    Functions::formulaTemp  }},
     { JsonGUIPrimType::EFFICIENCY, { Functions::functionPowerEffect, Functions::formulaPowerEffect  }},
 //    { JsonGUIPrimType::VIBRATE,    { Functions::functionVibrate, Functions::formulaVibrate  }},
-    { JsonGUIPrimType::POWER,      { Functions::functionPower,   Functions::formulaPower  }}
+    { JsonGUIPrimType::POWER,      { Functions::functionPower,   Functions::formulaPower  }},
+    { JsonGUIPrimType::POWER,      { Functions::functionMechaPower,   Functions::formulaMechaPower  }},
+    { JsonGUIPrimType::POWER,      { Functions::functionMechaEffi,   Functions::formulaMechaEffi }}
 };
 #endif // ABSTRACTSPINBOXATTR_H

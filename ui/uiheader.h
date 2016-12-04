@@ -65,7 +65,9 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                TEMP,
                                EFFICIENCY,
                                VIBRATE,
-                               POWER};
+                               POWER,
+                               MECHAPOWER,
+                               MECHAEFFI};
 
 enum TestCasePrimType : quint8 { TCINVALID,
                                  TCVOLTAGE,

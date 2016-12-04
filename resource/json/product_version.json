@@ -328,6 +328,22 @@
           "unit": "W"
         },
         {
+          "text": "MECHAPOWER",
+          "index": 0,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 5000,
+          "unit": "W"
+        },
+        {
+           "text": "MECHAEFFI",
+           "index": 0,
+           "isSelected": false,
+           "lowLimit": 0,
+           "upLimit": 100,
+           "unit": "%"
+        },
+        {
           "text": "CURRENT",
           "index": 1,
           "isSelected": true,
@@ -398,7 +414,23 @@
           "lowLimit": 0,
           "upLimit": 500,
           "unit": "W"
-        }
+        },
+        {
+          "text": "MECHAPOWER",
+          "index": 1,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 5000,
+          "unit": "W"
+         },
+         {
+           "text": "MECHAEFFI",
+           "index": 1,
+           "isSelected": false,
+           "lowLimit": 0,
+           "upLimit": 100,
+           "unit": "%"
+         }
       ]
     }
   }

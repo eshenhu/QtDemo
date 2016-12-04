@@ -36,7 +36,7 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         //const QString str = QString("%2").arg(ele.str(), 0).arg(ele.unit(), 30);
 
         const QString str = QString::asprintf("%-3d%-15s\t%8s",
-                        ele.idx().idxMotor(),
+                        ele.idx().idxMotor() + 1,
                         ele.str().toLatin1().constData(),
                         ele.unit().toLatin1().constData());
         QAction* action = menu.addAction(str);

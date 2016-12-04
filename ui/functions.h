@@ -9,6 +9,8 @@
 #include "driver/modelpoctype.h"
 #include "cfg/cfgzerocalibrateclz.h"
 
+#include "ui/qextcheckbox.h"
+
 using namespace ModelPOC;
 
 /*
@@ -52,7 +54,6 @@ namespace Functions {
 
 using functionT = std::function<qint32(const QModbus2DataUnit*, const JsonPVConfig&, const indexOnMotor)>;
 using formulaT = std::function<double(qint32, Phase, quint32)>;
-
 
 
 const static functionT functionDummy = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -207,12 +208,18 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
         CfgZeroCalibrateClz::addStaticThrustZeroCaliOnMotor(idxMotor, v);
     }
 
-    qDebug() << "formulaThrust zero value is" << CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
+    if (phase == Phase::Phase_NomalRunning){
+        double result = (double)(  (qint32)(v)
+                                   - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor)
+                                ) / CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor);
 
-    if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))/46.86);
+        return result;
+    }
+
     else
+    {
         return (double)0;
+    }
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -257,8 +264,6 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
 
-    static quint32 zero = 0x7FFFFF;
-
     if (phase == Phase::Phase_SoftStart)
     {
         CfgZeroCalibrateClz::setStaticTorqueZeroCaliOnMotor(idxMotor, v);
@@ -267,9 +272,9 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
         CfgZeroCalibrateClz::addStaticTorqueZeroCaliOnMotor(idxMotor, v);
     }
 
-    qDebug() << "zero value is " << CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
     if (phase == Phase::Phase_NomalRunning)
-        return ((double)(v - CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))/61.33);
+        //return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor)));
+        return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))/CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
     else
         return (double)0;
 };
@@ -398,6 +403,61 @@ const static formulaT formulaPower = [](const qint32 v, Phase phase, quint32 idx
     Q_UNUSED(idxMotor)
     return (double)v;
 };
+
+const static functionT functionMechaPower = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx)
+{
+    qint32 rtn = 0;
+    return rtn;
+};
+
+/*
+ * 功率(kw)=扭矩(Nm) ×转速(rpm)/9549
+ * MechaPower = 2* pi * Torque * RPM / 60 = Torque * RPM / 9549
+ */
+const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+
+    double torqueData = 0.00;
+    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TORQUE, idxMotor);
+    if (box)
+        torqueData = box->pushData();
+
+    double rpmData = 0.00;
+    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::SPEED, idxMotor);
+    if (box)
+        rpmData = box->pushData();
+
+    double result = torqueData * rpmData / 9549;
+
+    return result;
+};
+
+const static functionT functionMechaEffi = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx)
+{
+    qint32 rtn = 0;
+    return rtn;
+};
+/*
+ *  Mecha Power / Power * 100
+ */
+const static formulaT formulaMechaEffi = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+
+    double mechaPowerData = 0.00;
+    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::MECHAPOWER, idxMotor);
+    if (box)
+        mechaPowerData = box->pushData();
+
+    double powerData = 0.00;
+    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::POWER, idxMotor);
+    if (box)
+        powerData = box->pushData();
+
+    return mechaPowerData * 100 / powerData;
+};
+
 }
 
 #endif // FUNCTIONS_H

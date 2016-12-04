@@ -114,6 +114,12 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString str) const
         return JsonGUIPrimType::VIBRATE;
     else if (str.contains("POWER"))
         return JsonGUIPrimType::POWER;
+    else if (str.contains("MECHAPOWER"))
+        return JsonGUIPrimType::MECHAPOWER;
+    else if (str.contains("MECHAEFFI"))
+        return JsonGUIPrimType::MECHAEFFI;
+
+
     else
     {
         qWarning() << "com.cfg.json Undefined JsonGUIPrimType" << str;

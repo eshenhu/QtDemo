@@ -1,10 +1,10 @@
 #include "qextcheckbox.h"
 #include "ui/qrtlineseries.h"
-#include <QChartView>
+
 
 QVector<QExtCheckBox*> QExtCheckBox::m_qExtSpinBoxList = QVector<QExtCheckBox*>();
 
-QT_CHARTS_USE_NAMESPACE
+
 
 QExtCheckBox::QExtCheckBox(const JsonPVConfig &config, const JsonGUIElement &element):
     AbstractSpinBoxAttr(config, element)
@@ -44,6 +44,15 @@ const QExtCheckBox *QExtCheckBox::searchExtCheckBox(const JsonGUIElement &elemen
 {
     foreach(QExtCheckBox* box, m_qExtSpinBoxList){
         if(box->type() == element.type() && box->idx() == element.idx())
+            return box;
+    }
+    return nullptr;
+}
+
+const QExtCheckBox *QExtCheckBox::searchExtCheckBox(const JsonGUIPrimType type, const quint32 idxMotor)
+{
+    foreach(QExtCheckBox* box, m_qExtSpinBoxList){
+        if(box->type() == type && box->idx().idxMotor() == idxMotor)
             return box;
     }
     return nullptr;

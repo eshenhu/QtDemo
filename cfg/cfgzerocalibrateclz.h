@@ -4,7 +4,7 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#define MAX_SUPPORT_MOTOR 2
+//#define MAX_SUPPORT_MOTOR 2
 
 class CfgZeroCalibrateClz {
 
@@ -93,13 +93,39 @@ public:
             qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
         }
     }
+
+    static quint32 getDivisionThrustCaliOnMotor(const quint32 idxMotor){
+        if (idxMotor < MAX_SUPPORT_MOTOR){
+            return divisionOnThrust[idxMotor];
+        }
+        else
+        {
+            qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+            return 1;
+        }
+    }
+
+    static quint32 getDivisionTorqueCaliOnMotor(const quint32 idxMotor){
+        if (idxMotor < MAX_SUPPORT_MOTOR){
+            return divisionOnTorque[idxMotor];
+        }
+        else
+        {
+            qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+            return 1;
+        }
+    }
 public:
-    //static const quint32 MAX_SUPPORT_MOTOR = 2;
+    static const quint32 MAX_SUPPORT_MOTOR = 2;
     //default value. 0x7FFFFF indicate the 0;
     static quint32 zeroThrustCalibrate[MAX_SUPPORT_MOTOR];
     //default value. 0x7FFFFF indicate the 0;
     static quint32 zeroTorqueCalibrate[MAX_SUPPORT_MOTOR];
-    static quint32 value;
+
+    // AD calibrate with 10KG.
+    static quint32 divisionOnThrust[MAX_SUPPORT_MOTOR];
+    // AD calibrate with
+    static quint32 divisionOnTorque[MAX_SUPPORT_MOTOR];
 };
 
 #endif // CFGZEROCALIBRATECLZ_H
