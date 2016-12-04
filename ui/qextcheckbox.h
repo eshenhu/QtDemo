@@ -3,10 +3,10 @@
 
 #include <QVector>
 #include <QCheckBox>
-#include "ui/abstractspinboxattr.h"
 #include <QtCharts/QChartGlobal>
 
 #include "driver/modelpoctype.h"
+#include "ui/abstractspinboxattr.h"
 
 using namespace ModelPOC;
 

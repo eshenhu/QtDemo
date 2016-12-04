@@ -5,6 +5,8 @@
 #include <QString>
 #include "comm/qmodbusdataunit.h"
 #include "ui/uiheader.h"
+
+
 class indexOnMotor
 {
 public:

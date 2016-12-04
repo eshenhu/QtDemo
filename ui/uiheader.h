@@ -1,7 +1,6 @@
 #ifndef UITESTBASEDSTRUCT_H
 #define UITESTBASEDSTRUCT_H
 
-
 enum TestPlanEnum {
     Invaild,
     Voltage,

@@ -411,7 +411,6 @@ const static functionT functionMechaPower = [](const QModbus2DataUnit* data, con
 };
 
 /*
- * 功率(kw)=扭矩(Nm) ×转速(rpm)/9549
  * MechaPower = 2* pi * Torque * RPM / 60 = Torque * RPM / 9549
  */
 const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint32 idxMotor){
@@ -455,7 +454,10 @@ const static formulaT formulaMechaEffi = [](const qint32 v, Phase phase, quint32
     if (box)
         powerData = box->pushData();
 
-    return mechaPowerData * 100 / powerData;
+    if (powerData)
+        return mechaPowerData * 100 / powerData;
+    else
+        return 0;
 };
 
 }
