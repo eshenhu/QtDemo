@@ -57,6 +57,8 @@ public:
     qint16 upLimit() const;
     QString unit() const;
 
+    static const char* format( const JsonGUIPrimType type);
+
 private:
     JsonGUIPrimType lookup(const QString) const;
 

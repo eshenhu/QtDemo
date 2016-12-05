@@ -68,6 +68,24 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                MECHAPOWER,
                                MECHAEFFI};
 
+
+static const char* JsonGUIPrimFormat[] = {
+    "%10f",   //INVALID
+    "%10.1f",   //VOLTAGE
+    "%10.2f",   //CURRENT
+    "%10.2f",   //THRUST
+    "%10f",     //THROTTLE
+    "%10.3f",     //TORQUE
+    "%10f",     //SPEED
+    "%10.1f",     //TEMP
+    "%10.1f",     //EFFICIENCY
+    "%10f",     //VIBRATE
+    "%10.1f",     //POWER
+    "%10.1f",     //MECHAPOWER
+    "%10.1f"     //MECHAEFFI
+};
+
+
 enum TestCasePrimType : quint8 { TCINVALID,
                                  TCVOLTAGE,
                                  TCTHROTTLE,
@@ -75,7 +93,6 @@ enum TestCasePrimType : quint8 { TCINVALID,
                                  TCMULTIPULE,
                                  TCAGING,
                                  TCMANUAL};
-
 //enum UiMeasType
 //{
 //    INVALID = 0,

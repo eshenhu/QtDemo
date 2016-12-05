@@ -241,7 +241,7 @@
       "display": [
         {
           "text": "VOLTAGE",
-          "index": 0,
+          "index": 255,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 55,
@@ -249,7 +249,7 @@
         },
         {
           "text": "THROTTLE",
-          "index": 0,
+          "index": 255,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
@@ -328,7 +328,7 @@
           "unit": "W"
         },
         {
-          "text": "MECHAPOWER",
+          "text": "MECHAPWR",
           "index": 0,
           "isSelected": false,
           "lowLimit": 0,
@@ -416,7 +416,7 @@
           "unit": "W"
         },
         {
-          "text": "MECHAPOWER",
+          "text": "MECHAPWR",
           "index": 1,
           "isSelected": false,
           "lowLimit": 0,

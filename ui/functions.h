@@ -13,6 +13,7 @@
 
 using namespace ModelPOC;
 
+static const quint32 divideByPower = 1000;
 /*
  *     struct ElecMotorCompStruct
     {
@@ -164,7 +165,7 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
 const static formulaT formulaCurrent = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
-    return (double)(v)/100;
+    return (double)(v)/100 - 0.4;
 };
 
 
@@ -375,37 +376,47 @@ const static formulaT formulaPowerEffect = [](const qint32 v, Phase phase, quint
     Q_UNUSED(idxMotor)
     return (double)v;
 };
-
+/*
+ *  for better presious requirement, we multipule 100 for this raw data. and divide by 100 in the formula.
+ *  -- eshenhu
+*/
 const static functionT functionPower = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
-    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
+
+    // idx 0 ->1st one 1-> 2nd one
+    if ((idx.idxMotor()+1) <= config.numOfMotor())
     {
-        // idx 0 ->1st one 1-> 2nd one
-        if ((idx.idxMotor()+1) <= config.numOfMotor())
-        {
-            rtn =  static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].torque);
-        }
-        else
-        {
-            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
-        }
+        double volData = 0.00;
+        const QExtCheckBox* boxVol = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::VOLTAGE, idx.idxMotor());
+        if (boxVol)
+            volData = boxVol->pushData();
+
+        double currentData = 0.00;
+        const QExtCheckBox* boxCurrent = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::CURRENT, idx.idxMotor());
+        if (boxCurrent)
+            currentData = boxCurrent->pushData();
+
+        rtn = divideByPower * volData * currentData;
     }
     else
     {
-        rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.torque);
+        qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
     }
+
     return rtn;
 };
 
 const static formulaT formulaPower = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
-    return (double)v;
+    return (double)v/divideByPower;
 };
 
 const static functionT functionMechaPower = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx)
 {
+    Q_UNUSED(data)
+    Q_UNUSED(config)
     qint32 rtn = 0;
     return rtn;
 };
@@ -418,15 +429,16 @@ const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint3
     Q_UNUSED(idxMotor)
 
     double torqueData = 0.00;
-    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TORQUE, idxMotor);
-    if (box)
-        torqueData = box->pushData();
+    const QExtCheckBox* boxTorque = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TORQUE, idxMotor);
+    if (boxTorque)
+        torqueData = boxTorque->pushData();
 
     double rpmData = 0.00;
-    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::SPEED, idxMotor);
-    if (box)
-        rpmData = box->pushData();
+    const QExtCheckBox* boxSpeed = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::SPEED, idxMotor);
+    if (boxSpeed)
+        rpmData = boxSpeed->pushData();
 
+    qDebug() << "Mecha Power is: torqueData" << torqueData << "rpmData" << rpmData;
     double result = torqueData * rpmData / 9549;
 
     return result;
@@ -445,19 +457,28 @@ const static formulaT formulaMechaEffi = [](const qint32 v, Phase phase, quint32
     Q_UNUSED(idxMotor)
 
     double mechaPowerData = 0.00;
-    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::MECHAPOWER, idxMotor);
-    if (box)
-        mechaPowerData = box->pushData();
+    const QExtCheckBox* boxMechaPower = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::MECHAPOWER, idxMotor);
+    if (boxMechaPower)
+        mechaPowerData = boxMechaPower->pushData();
 
     double powerData = 0.00;
-    const QExtCheckBox* box = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::POWER, idxMotor);
-    if (box)
-        powerData = box->pushData();
+    const QExtCheckBox* boxPower = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::POWER, idxMotor);
+    if (boxPower)
+        powerData = boxPower->pushData();
 
+<<<<<<< HEAD
     if (powerData)
         return mechaPowerData * 100 / powerData;
     else
         return 0;
+=======
+    qDebug() << "Mecha Effi is: mechaPowerData" << mechaPowerData << "powerData" << powerData;
+
+    if (powerData)
+        return mechaPowerData * 100 / powerData;
+    else
+        return (double)0;
+>>>>>>> 3faaf907612e0427fa91b12a1f489103b1db6cf3
 };
 
 }
