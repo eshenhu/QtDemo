@@ -126,7 +126,18 @@ void CompQChartWidget::createChartsView()
 
         QChart* chart = chartView->chart();
         QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
-        chart->setTitle(box->str() + '(' + box->unit() + ')');
+
+        const char* titleFormat = "%-15s";
+        const char* unitFormat = "%-5s";
+
+        static char buffer[100];
+        sprintf(buffer, "%s( %s )", titleFormat, unitFormat);
+
+        QString titleComp = QString::asprintf(buffer,
+                          box->str().toLatin1().constData(),
+                          box->unit().toLatin1().constData());
+
+        chart->setTitle(titleComp);
         //yaxis->setTitleText(box->unit());
         yaxis->setLabelFormat(QStringLiteral("%d"));
         yaxis->setTickCount(5);

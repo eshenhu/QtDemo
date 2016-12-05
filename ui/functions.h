@@ -466,19 +466,12 @@ const static formulaT formulaMechaEffi = [](const qint32 v, Phase phase, quint32
     if (boxPower)
         powerData = boxPower->pushData();
 
-<<<<<<< HEAD
-    if (powerData)
-        return mechaPowerData * 100 / powerData;
-    else
-        return 0;
-=======
-    qDebug() << "Mecha Effi is: mechaPowerData" << mechaPowerData << "powerData" << powerData;
+//    qDebug() << "Mecha Effi is: mechaPowerData" << mechaPowerData << "powerData" << powerData;
 
     if (powerData)
         return mechaPowerData * 100 / powerData;
     else
         return (double)0;
->>>>>>> 3faaf907612e0427fa91b12a1f489103b1db6cf3
 };
 
 }

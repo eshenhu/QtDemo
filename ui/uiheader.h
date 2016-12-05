@@ -73,13 +73,13 @@ static const char* JsonGUIPrimFormat[] = {
     "%10f",   //INVALID
     "%10.1f",   //VOLTAGE
     "%10.2f",   //CURRENT
-    "%10.2f",   //THRUST
-    "%10f",     //THROTTLE
+    "%10.1f",   //THRUST
+    "%10.0f",     //THROTTLE
     "%10.3f",     //TORQUE
-    "%10f",     //SPEED
+    "%10.0f",     //SPEED
     "%10.1f",     //TEMP
     "%10.1f",     //EFFICIENCY
-    "%10f",     //VIBRATE
+    "%10.0f",     //VIBRATE
     "%10.1f",     //POWER
     "%10.1f",     //MECHAPOWER
     "%10.1f"     //MECHAEFFI

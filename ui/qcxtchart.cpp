@@ -14,20 +14,22 @@ QCxtChart::QCxtChart(QExtCheckBox* box):
 
 void QCxtChart::updateCharts()
 {
-    QStringList title = this->title().split(':');
+//    QStringList title = this->title().split(':');
 //    QStringList newTitle;
 //    newTitle << title[0] << QString::number(m_dataSrc->pushData());
 
     const char* titleFormat = "%-15s";
+    const char* unitFormat = "%-5s";
     const char* numberFormat = JsonGUIElement::format(m_dataSrc->type());
 
-    char buffer[50];
-    sprintf(buffer, "%s : %s", titleFormat, numberFormat);
+    static char buffer[100];
+    sprintf(buffer, "%s( %s ): %s", titleFormat, unitFormat, numberFormat);
 
 
     QString titleComp = QString::asprintf(buffer,
-                      title[0].toLatin1().constData(),
-                      m_dataSrc->unit().toLatin1().constData());
+                      m_dataSrc->str().toLatin1().constData(),
+                      m_dataSrc->unit().toLatin1().constData(),
+                      m_dataSrc->pushData());
 
 
     //this->setTitle(newTitle.join(':'));
@@ -90,7 +92,18 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
         /* change the title and other outlooking */
         QValueAxis* yaxis = static_cast<QValueAxis*>(this->axisY());
-        this->setTitle(m_dataSrc->str() + '(' + m_dataSrc->unit() + ')');
+
+        const char* titleFormat = "%-25s";
+        const char* unitFormat = "%-5s";
+
+        char buffer[100];
+        sprintf(buffer, "%s( %s )", titleFormat, unitFormat);
+
+        QString titleComp = QString::asprintf(buffer,
+                          m_dataSrc->str().toLatin1().constData(),
+                          m_dataSrc->unit().toLatin1().constData());
+
+        this->setTitle(titleComp);
 //        //yaxis->setTitleText(box->unit());
 //        yaxis->setLabelFormat(QStringLiteral("%d"));
 //        yaxis->setTickCount(5);
