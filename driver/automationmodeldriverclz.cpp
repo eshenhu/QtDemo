@@ -13,7 +13,9 @@
 #include "cfg/datajsonrecelement.h"
 #include "util/utildatarecordingclz.h"
 #include "cfg/cfgjsonrecelement.h"
+#include "cfg/cfgzerocalibrateclz.h"
 #include "unireslocation.h"
+
 
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
@@ -105,6 +107,11 @@ void AutomationModelDriverClz::resetMeasDataUnit()
 
 void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const CfgResHandlerInf* res, const QSerialPortSetting::Settings setting)
 {
+    /*
+     *  Reset the Cfg
+     */
+
+    CfgZeroCalibrateClz::reset();
     /*
      * Data recording
     */

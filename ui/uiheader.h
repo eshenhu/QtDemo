@@ -1,7 +1,6 @@
 #ifndef UITESTBASEDSTRUCT_H
 #define UITESTBASEDSTRUCT_H
 
-
 enum TestPlanEnum {
     Invaild,
     Voltage,
@@ -65,7 +64,27 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                TEMP,
                                EFFICIENCY,
                                VIBRATE,
-                               POWER};
+                               POWER,
+                               MECHAPOWER,
+                               MECHAEFFI};
+
+
+static const char* JsonGUIPrimFormat[] = {
+    "%10f",   //INVALID
+    "%10.1f",   //VOLTAGE
+    "%10.2f",   //CURRENT
+    "%10.1f",   //THRUST
+    "%10.0f",     //THROTTLE
+    "%10.3f",     //TORQUE
+    "%10.0f",     //SPEED
+    "%10.1f",     //TEMP
+    "%10.1f",     //EFFICIENCY
+    "%10.0f",     //VIBRATE
+    "%10.1f",     //POWER
+    "%10.1f",     //MECHAPOWER
+    "%10.1f"     //MECHAEFFI
+};
+
 
 enum TestCasePrimType : quint8 { TCINVALID,
                                  TCVOLTAGE,
@@ -74,7 +93,6 @@ enum TestCasePrimType : quint8 { TCINVALID,
                                  TCMULTIPULE,
                                  TCAGING,
                                  TCMANUAL};
-
 //enum UiMeasType
 //{
 //    INVALID = 0,

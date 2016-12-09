@@ -1,6 +1,11 @@
 #include "cfgwashingdatainf.h"
 
-cfgWashingDataInf::cfgWashingDataInf()
+cfgVolWashingDataE2Clz::cfgVolWashingDataE2Clz()
+{
+
+}
+
+void cfgVolWashingDataE2Clz::wash(QVector<DataJsonRecElementE2> &)
 {
 
 }

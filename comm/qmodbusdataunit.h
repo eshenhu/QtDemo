@@ -124,23 +124,7 @@ public:
 
     enum class MeasStartRecStatusEnum : quint8 { DISTANCE = 0, VOL = 1, THRO = 2, MULTI = 3, AGING = 4};
     enum class MotorTypeEnum  : quint8 { OILE = 0, ELECE = 1} ;
-    /*
-    限位状态（bit7~bit0）：
-    bit7：1 = 没有获得绝对零位；0 = 已经获得绝对零位
-    bit3：1 = 到达指定位置；0 = 没有到达指定位置
-    bit2：1 = 运动中；0 = 不在运动中
-    bit1：1 = 上限位状态；0 = 不在上限位状态
-    bit0：1 = 下限位状态；0 = 不在下限位状态
-    Example：
-    0b 0000 0000：无效值
-    0b 1000 0000：没有获得绝对零位
-    0b 0000 1000：到达指定位置
-    0b 0000 1001：到达指定位置，又在下限位状态
-    0b 0000 1010：到达指定位置，又在上限位状态
-    0b 0000 0100：运动中
-    0b 0000 0010：在上限位状态
-    0b 0000 0001：在下限位状态（PC的步进位置指令如果是0xFF FF FF EE，不会提示 到达指定位置，而是仅提示 到达下限位）
-    */
+
     enum class LimitStatusEnum : quint8 {
         INVALID,
         ZEROPOS,

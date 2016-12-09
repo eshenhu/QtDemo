@@ -14,10 +14,26 @@ QCxtChart::QCxtChart(QExtCheckBox* box):
 
 void QCxtChart::updateCharts()
 {
-    QStringList title = this->title().split(':');
-    QStringList newTitle;
-    newTitle << title[0] << QString::number(m_dataSrc->pushData());
-    this->setTitle(newTitle.join(':'));
+//    QStringList title = this->title().split(':');
+//    QStringList newTitle;
+//    newTitle << title[0] << QString::number(m_dataSrc->pushData());
+
+    const char* titleFormat = "%-15s";
+    const char* unitFormat = "%-5s";
+    const char* numberFormat = JsonGUIElement::format(m_dataSrc->type());
+
+    static char buffer[100];
+    sprintf(buffer, "%s( %s ): %s", titleFormat, unitFormat, numberFormat);
+
+
+    QString titleComp = QString::asprintf(buffer,
+                      m_dataSrc->str().toLatin1().constData(),
+                      m_dataSrc->unit().toLatin1().constData(),
+                      m_dataSrc->pushData());
+
+
+    //this->setTitle(newTitle.join(':'));
+    this->setTitle(titleComp);
 
     foreach (QAbstractSeries* series, this->series())
     {
@@ -35,12 +51,13 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     foreach(JsonGUIElement ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
         //const QString str = QString("%2").arg(ele.str(), 0).arg(ele.unit(), 30);
 
-        quint8 motor = ele.idx().idxMotor();
-        QString strMotor(' ');
-        if (motor == 0 || motor == 1)
-            strMotor = QString::number(motor);
-        QString str = QString::asprintf("%-3s%-15s\t%8s",
-                        strMotor.toLatin1().constData(),
+        int idxMotor = ele.idx().idxMotor();
+        QString motorString(" ");
+        if (idxMotor == 0 || idxMotor == 1)
+            motorString = QString::number(idxMotor + 1);
+
+        const QString str = QString::asprintf("%-3s%-15s\t%8s",
+                        motorString.toLatin1().constData(),
                         ele.str().toLatin1().constData(),
                         ele.unit().toLatin1().constData());
         QAction* action = menu.addAction(str);
@@ -75,7 +92,18 @@ void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
         /* change the title and other outlooking */
         QValueAxis* yaxis = static_cast<QValueAxis*>(this->axisY());
-        this->setTitle(m_dataSrc->str() + '(' + m_dataSrc->unit() + ')');
+
+        const char* titleFormat = "%-25s";
+        const char* unitFormat = "%-5s";
+
+        char buffer[100];
+        sprintf(buffer, "%s( %s )", titleFormat, unitFormat);
+
+        QString titleComp = QString::asprintf(buffer,
+                          m_dataSrc->str().toLatin1().constData(),
+                          m_dataSrc->unit().toLatin1().constData());
+
+        this->setTitle(titleComp);
 //        //yaxis->setTitleText(box->unit());
 //        yaxis->setLabelFormat(QStringLiteral("%d"));
 //        yaxis->setTickCount(5);

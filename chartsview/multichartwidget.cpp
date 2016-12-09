@@ -5,7 +5,7 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
-
+#include <QDebug>
 MultiChartWidget::MultiChartWidget(QWidget *parent) : QWidget(parent)
 {
     m_layout = new QVBoxLayout;

@@ -7,7 +7,7 @@
 class cfgWashingDataInf
 {
 public:
-    virtual ~CfgResHandlerInf() {}
+    virtual ~cfgWashingDataInf() {}
     virtual void wash(QVector<DataJsonRecElementE2>&) = 0;
 };
 
@@ -25,13 +25,11 @@ struct cfgMeasBasedVolE2DataEle
 class cfgVolWashingDataE2Clz : public cfgWashingDataInf
 {
 public:
-    cfgVolWashingDataClz();
-
-
-
+    cfgVolWashingDataE2Clz();
+    ~cfgVolWashingDataE2Clz() {}
     // cfgWashingDataInf interface
 public:
-    void wash(QVector<DataJsonRecElementE2>&);
+    void wash(QVector<DataJsonRecElementE2>&) override;
 };
 
 #endif // CFGWASHINGDATAINF_H

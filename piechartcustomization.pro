@@ -46,6 +46,7 @@ SOURCES += main.cpp \
     chartsview/multichartwidget.cpp \
     chartsview/customtablemodel.cpp \
     cfg/cfgwashingdatainf.cpp
+    cfg/cfgzerocalibrateclz.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -98,7 +99,9 @@ HEADERS += \
     chartsview/chartviewerwin.h \
     chartsview/multichartwidget.h \
     chartsview/customtablemodel.h \
-    cfg/cfgwashingdatainf.h
+    cfg/cfgwashingdatainf.h \
+    cfg/cfgzerocalibrateclz.h \
+    ui/functionmap.h
 
 FORMS += \
     ui/testinfoconfig.ui \
