@@ -3,6 +3,8 @@
 #include <QTextStream>
 #include <QDebug>
 
+#include "qtcore/qloggingcategory.h"
+
 #include "ui/qextcheckbox.h"
 #include "cfg/datajsonrecelement.h"
 #include "actionwidget.h"
@@ -141,7 +143,65 @@ DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getEl
     return g_ele;
 }
 
+DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::DataJsonRecElementE2FileReaderHandler():
+    m_data(0)
+{
+
+}
+
 const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::data() const
 {
     return m_data;
 }
+
+/*
+ * load data from the file named with filename to the m_data;
+*/
+void DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::loadData(const QString filename)
+{
+    //m_filename
+    QFile loadFile(filename);
+    if (!loadFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&loadFile);
+
+    // the 1st line is the comment line;
+    out.readLine();
+
+    QStringList list;
+    while (!out.atEnd()){
+        list = out.readLine().split(',');
+
+        /* the 1st str must be the cursor indication*/
+        bool isNumber = false;
+        list[0].toInt(&isNumber);
+        if (!isNumber){
+            qCWarning(TEXT_LOGGING) << "Text the first line is not number, = " << list[0];
+            continue;
+        }
+        /* we are the right way to split number*/
+
+        if (list.size() != (int)ELEMCURSOR::ELEMCURSOR_END){
+            qCWarning(TEXT_LOGGING) << "Text not match with the lenght with predefined structure. Expected = "
+                                    << (int)ELEMCURSOR::ELEMCURSOR_END << "received = " << list.size();
+        }
+
+        /* I miss the python's method here */
+        DataJsonRecElementE2 element;
+        int idx = 0;
+        for (const QString& str : list){
+            idx++;
+            bool isNumber = false;
+            double data = str.toDouble(&isNumber);
+            if (!isNumber){
+                qCWarning(TEXT_LOGGING) << "Text is not number, = " << data;
+                continue;
+            }
+            element.setData(idx-1, data);
+        }
+        m_data.append(element);
+    }
+}
+
+Q_LOGGING_CATEGORY(TEXT_LOGGING, "datajson.text", QtDebugMsg)

@@ -3,6 +3,12 @@
 
 #include <QVector>
 #include <QFile>
+#include <QtCore/qloggingcategory.h>
+
+
+
+Q_DECLARE_LOGGING_CATEGORY(TEXT_LOGGING)
+
 /*
  *  It was perferred use C++ template. --eshenhu
 */
@@ -53,6 +59,10 @@ public:
     DataJsonRecElementE2();
 
     const QString toString() const;
+
+    double getData(quint32 idx) const {
+        return (idx < static_cast<quint32>(m_data.size())) ? m_data[idx] : 0;
+    }
 
     bool hardReset();
     bool reset();
@@ -113,7 +123,7 @@ public:
 class DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler
 {
 public:
-    DataJsonRecElementE2FileReaderHandler() = default;
+    DataJsonRecElementE2FileReaderHandler();
 
     const QVector<DataJsonRecElementE2>& data() const;
     void loadData(const QString filename);
