@@ -45,7 +45,7 @@ SOURCES += main.cpp \
     chartsview/chartviewerwin.cpp \
     chartsview/multichartwidget.cpp \
     chartsview/customtablemodel.cpp \
-    cfg/cfgwashingdatainf.cpp
+    cfg/cfgwashingdatainf.cpp    \
     cfg/cfgzerocalibrateclz.cpp
 
 HEADERS += \

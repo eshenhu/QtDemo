@@ -1,4 +1,4 @@
-#include "ui/abstractspinboxattr.h"
+#include "abstractspinboxattr.h"
 #include <QDebug>
 #include "ui/uiheader.h"
 #include "ui/functionmap.h"
