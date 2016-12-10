@@ -42,6 +42,7 @@ void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & raw
             accuData = ele;
         }
     }
+    m_data.append(accuData);
 }
 
 QVector<CfgMeasBasedThrottleE2DataEle> &CfgThrottleWashingDataE2Clz::data()

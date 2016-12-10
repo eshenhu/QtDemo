@@ -2,7 +2,7 @@ QT += core gui
 QT += charts
 QT += serialport widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = piechartcustomization
 TEMPLATE = app
@@ -47,7 +47,8 @@ SOURCES += main.cpp \
     chartsview/customtablemodel.cpp \
     cfg/cfgwashingdatainf.cpp    \
     cfg/cfgzerocalibrateclz.cpp \
-    cfg/datajsoncfgreader.cpp
+    cfg/datajsoncfgreader.cpp \
+    chartsview/qcustomplot.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -103,7 +104,8 @@ HEADERS += \
     cfg/cfgwashingdatainf.h \
     cfg/cfgzerocalibrateclz.h \
     ui/functionmap.h \
-    cfg/datajsoncfgreader.h
+    cfg/datajsoncfgreader.h \
+    chartsview/qcustomplot.h
 
 FORMS += \
     ui/testinfoconfig.ui \

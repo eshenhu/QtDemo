@@ -45,7 +45,7 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                 case (quint32)TestPlanEnum::Throttle:
                 {
                     DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
-                    handler.loadData(jsonFileName);
+                    handler.loadData(csvFullFileName);
                     m_csvDataHandler = new CfgThrottleWashingDataE2Clz();
                     m_csvDataHandler->wash(handler.data());
                 }

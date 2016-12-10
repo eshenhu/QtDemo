@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QtCharts/QChartGlobal>
 #include <QtCharts/QChart>
-
+class QCustomPlot;
 namespace Ui {
 class ChartViewerWin;
 }
@@ -28,7 +28,7 @@ public:
 //    void createProxyWidgets();
 
     //void makeNewChartWidget();
-
+    void setupAdvancedAxesDemo(QCustomPlot* customPlot);
 private:
     Ui::ChartViewerWin *ui;
 //    QGraphicsScene* m_scene;
