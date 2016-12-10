@@ -149,7 +149,7 @@ DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::DataJsonRecElementE
 
 }
 
-const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::data() const
+const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::data()
 {
     return m_data;
 }

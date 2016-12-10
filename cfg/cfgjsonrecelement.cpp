@@ -42,6 +42,7 @@ void CfgJsonRecElement::read(const QJsonObject &json)
     m_manufacture = json["manufacture"].toString();
     m_vanes = json["vanes"].toInt();
     m_motorType = static_cast<QModbus2DataUnit::MotorTypeEnum>(json["motor_type"].toInt());
+    m_numOfMotor = json["numOfMotor"].toInt();
 }
 
 void CfgJsonRecElement::write(QJsonObject &json) const
@@ -51,6 +52,7 @@ void CfgJsonRecElement::write(QJsonObject &json) const
     json["manufacture"] = m_manufacture;
     json["vanes"] = m_vanes;
     json["motor_type"] = static_cast<quint8>(m_motorType);
+    json["numOfMotor"] = m_numOfMotor;
 }
 
 CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder &builder)
@@ -59,6 +61,21 @@ CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementB
     m_pv = builder.m_pv;
     m_manufacture = builder.m_manufacture;
     m_vanes = builder.m_vanes;
+    m_numOfMotor = builder.m_numOfMotor;
     m_motorType = builder.m_motorType;
 }
 
+TestPlanEnum CfgJsonRecElement::plan() const
+{
+    return m_plan;
+}
+
+quint8 CfgJsonRecElement::numOfMotor() const
+{
+    return m_numOfMotor;
+}
+
+QModbus2DataUnit::MotorTypeEnum CfgJsonRecElement::motorType() const
+{
+    return m_motorType;
+}

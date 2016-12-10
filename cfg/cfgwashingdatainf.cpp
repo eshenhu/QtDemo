@@ -1,11 +1,12 @@
 #include "cfgwashingdatainf.h"
 
-cfgVolWashingDataE2Clz::cfgVolWashingDataE2Clz()
+CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
+    CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E2)
 {
 
 }
 
-void cfgVolWashingDataE2Clz::wash(QVector<DataJsonRecElementE2> &)
+void CfgVolWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> &)
 {
 
 }
@@ -14,21 +15,22 @@ void cfgVolWashingDataE2Clz::wash(QVector<DataJsonRecElementE2> &)
 /*
  *  Wash the raw data to the formateed data needed by the Throttle test
  */
-cfgThrottleWashingDataE2Clz::cfgThrottleWashingDataE2Clz():
+CfgThrottleWashingDataE2Clz::CfgThrottleWashingDataE2Clz():
+    CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2),
     m_data(0)
 {
 }
 
-void cfgThrottleWashingDataE2Clz::wash(QVector<DataJsonRecElementE2> & rawdata)
+void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdata)
 {
     quint32 cursor = 0;
 
     quint32 dataInLine = 0;
-    cfgMeasBasedThrottleE2DataEle accuData;
+    CfgMeasBasedThrottleE2DataEle accuData;
 
     for (const DataJsonRecElementE2& data : rawdata)
     {
-        cfgMeasBasedThrottleE2DataEle ele = deserialize(data);
+        CfgMeasBasedThrottleE2DataEle ele = deserialize(data);
         dataInLine = ele.thro;
 
         if (cursor == dataInLine){
@@ -42,14 +44,14 @@ void cfgThrottleWashingDataE2Clz::wash(QVector<DataJsonRecElementE2> & rawdata)
     }
 }
 
-QVector<cfgMeasBasedThrottleE2DataEle> &cfgThrottleWashingDataE2Clz::data() const
+QVector<CfgMeasBasedThrottleE2DataEle> &CfgThrottleWashingDataE2Clz::data()
 {
-
+    return m_data;
 }
 
-cfgMeasBasedThrottleE2DataEle cfgThrottleWashingDataE2Clz::deserialize(const DataJsonRecElementE2 &in)
+CfgMeasBasedThrottleE2DataEle CfgThrottleWashingDataE2Clz::deserialize(const DataJsonRecElementE2 &in)
 {
-    cfgMeasBasedThrottleE2DataEle ele;
+    CfgMeasBasedThrottleE2DataEle ele;
     ele.vol = in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::VOL_POS);
     ele.thro = in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::THRO1_POS);
 
@@ -76,7 +78,7 @@ cfgMeasBasedThrottleE2DataEle cfgThrottleWashingDataE2Clz::deserialize(const Dat
     return ele;
 }
 
-void cfgThrottleWashingDataE2Clz::accumulate(const cfgMeasBasedThrottleE2DataEle &data, cfgMeasBasedThrottleE2DataEle& accu)
+void CfgThrottleWashingDataE2Clz::accumulate(const CfgMeasBasedThrottleE2DataEle &data, CfgMeasBasedThrottleE2DataEle& accu)
 {
     accu.vol = (accu.vol + data.vol)/2;
     accu.thro = (accu.thro + data.thro)/2;
@@ -91,4 +93,15 @@ void cfgThrottleWashingDataE2Clz::accumulate(const cfgMeasBasedThrottleE2DataEle
         accu.data[idx].effi_ele = (accu.data[idx].effi_ele + data.data[idx].effi_ele)/2;
         accu.data[idx].power = (accu.data[idx].power + data.data[idx].power)/2;
     }
+}
+
+CfgWashingDataInf::CfgWashingDataInf(const CfgWashingTypeEnum type):
+    m_type(type)
+{
+
+}
+
+CfgWashingTypeEnum CfgWashingDataInf::type() const
+{
+    return m_type;
 }

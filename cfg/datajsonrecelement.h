@@ -125,7 +125,7 @@ class DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler
 public:
     DataJsonRecElementE2FileReaderHandler();
 
-    const QVector<DataJsonRecElementE2>& data() const;
+    const QVector<DataJsonRecElementE2>& data();
     void loadData(const QString filename);
 
 private:

@@ -124,7 +124,8 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
 
     CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder()
             .manufacture(QStringLiteral("TongYi"))
-            .vanes(4)
+            .vanes(res->vane())
+            .numOfMotor(res->num_of_motor())
             .build();
 
     ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());

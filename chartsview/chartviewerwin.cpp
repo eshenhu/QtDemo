@@ -4,6 +4,7 @@
 #include <QGraphicsLinearLayout>
 #include <QLineSeries>
 #include <QValueAxis>
+#include "cfg/datajsoncfgreader.h"
 
 ChartViewerWin::ChartViewerWin(QWidget *parent) :
     QMainWindow(parent),
@@ -11,7 +12,7 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //createSceneAndView();
+    createSceneAndView();
     //createWidgets();
 }
 
@@ -22,6 +23,8 @@ ChartViewerWin::~ChartViewerWin()
 
 void ChartViewerWin::createSceneAndView()
 {
+    DataJsonCfgReader reader;
+    reader.loadData("/Users/andrewhoo/Work/Qt/Pilot/20161205-210133097/data.json");
 //    m_scene = new QGraphicsScene(this);
 //    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
 //    ui->graphicsView->setScene(m_scene);

@@ -9,7 +9,7 @@ class QFile;
 
 class CfgJsonRecElement
 {
-private:
+public:
     CfgJsonRecElement() = default;
     //CfgJsonRecElement(const QFile&);
 public:
@@ -23,6 +23,12 @@ private:
 public:
     class CfgJsonRecElementBuilder;
 
+    QModbus2DataUnit::MotorTypeEnum motorType() const;
+
+    quint8 numOfMotor() const;
+
+    TestPlanEnum plan() const;
+
 private:
     CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder& builder);
 
@@ -31,6 +37,7 @@ private:
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
     TestPlanEnum m_plan = TestPlanEnum::Invaild;
+    quint8  m_numOfMotor = 0;
     QModbus2DataUnit::MotorTypeEnum m_motorType;
 };
 
@@ -71,6 +78,12 @@ public:
         return *this;
     }
 
+    CfgJsonRecElementBuilder& numOfMotor(const quint8 v)
+    {
+        m_numOfMotor = v;
+        return *this;
+    }
+
     CfgJsonRecElementBuilder& motorType(const QModbus2DataUnit::MotorTypeEnum v)
     {
         m_motorType = v;
@@ -87,6 +100,7 @@ public:
     CfgResHandlerInf::ProductVersion m_pv;
     QString m_manufacture = QStringLiteral("tongyi");
     quint8  m_vanes = 2;
+    quint8  m_numOfMotor = 0;
     QModbus2DataUnit::MotorTypeEnum m_motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
 };
 #endif // CFGJSONRECELEMENT_H

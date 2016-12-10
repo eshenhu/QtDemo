@@ -4,34 +4,50 @@
 #include <QVector>
 #include "cfg/datajsonrecelement.h"
 
-class cfgWashingDataInf
-{
-public:
-    virtual ~cfgWashingDataInf() {}
-    virtual void wash(QVector<DataJsonRecElementE2>&) = 0;
+
+enum class CfgWashingTypeEnum {
+    CFGWASHINGVOL_E1,
+    CFGWASHINGVOL_E2,
+    CFGWASHINGTHROTTLE_E1,
+    CFGWASHINGTHROTTLE_E2,
+    CFGWASHINGMULTI_E1,
+    CFGWASHINGMULTI_E2
 };
 
-Q_DECLARE_INTERFACE(cfgWashingDataInf, "cfgWashingDataInf/1.0")
+class CfgWashingDataInf
+{
+public:
+    explicit CfgWashingDataInf(const CfgWashingTypeEnum type);
+    virtual ~CfgWashingDataInf() {}
+    virtual void wash(const QVector<DataJsonRecElementE2>&) = 0;
+
+    CfgWashingTypeEnum type() const;
+
+private:
+    CfgWashingTypeEnum m_type;
+};
+
+//Q_DECLARE_INTERFACE(cfgWashingDataInf, "cfgWashingDataInf/1.0")
 
 
 //---------------------------------------------
 /*
  * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
 */
-struct cfgMeasBasedVolE2DataEle
+struct CfgMeasBasedVolE2DataEle
 {
     double vol;
     double thro;
 };
 
-class cfgVolWashingDataE2Clz : public cfgWashingDataInf
+class CfgVolWashingDataE2Clz : public CfgWashingDataInf
 {
 public:
-    cfgVolWashingDataE2Clz();
-    ~cfgVolWashingDataE2Clz() {}
+    CfgVolWashingDataE2Clz();
+    ~CfgVolWashingDataE2Clz() {}
     // cfgWashingDataInf interface
 public:
-    void wash(QVector<DataJsonRecElementE2>&) override;
+    void wash(const QVector<DataJsonRecElementE2>&) override;
 };
 
 
@@ -40,7 +56,7 @@ public:
  * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
 */
 
-struct cfgMeasBasedThrottlePerMotorE2DataEle
+struct CfgMeasBasedThrottlePerMotorE2DataEle
 {
     double current;
     double thrust;
@@ -53,28 +69,28 @@ struct cfgMeasBasedThrottlePerMotorE2DataEle
     quint32 power;
 };
 
-struct cfgMeasBasedThrottleE2DataEle
+struct CfgMeasBasedThrottleE2DataEle
 {
     double thro;
     double vol;
-    cfgMeasBasedThrottlePerMotorE2DataEle data[2];
+    CfgMeasBasedThrottlePerMotorE2DataEle data[2];
 };
 
-class cfgThrottleWashingDataE2Clz : public cfgWashingDataInf
+class CfgThrottleWashingDataE2Clz : public CfgWashingDataInf
 {
 public:
-    cfgThrottleWashingDataE2Clz();
-    ~cfgThrottleWashingDataE2Clz() {}
+    CfgThrottleWashingDataE2Clz();
+    ~CfgThrottleWashingDataE2Clz() {}
     // cfgWashingDataInf interface
 public:
-    void wash(QVector<DataJsonRecElementE2>&) override;
-    QVector<cfgMeasBasedThrottleE2DataEle>& data() const;
+    void wash(const QVector<DataJsonRecElementE2>&) override;
+    QVector<CfgMeasBasedThrottleE2DataEle>& data();
 
 private:
-    cfgMeasBasedThrottleE2DataEle deserialize(const DataJsonRecElementE2& in);
-    void accumulate(const cfgMeasBasedThrottleE2DataEle& data, cfgMeasBasedThrottleE2DataEle&);
+    CfgMeasBasedThrottleE2DataEle deserialize(const DataJsonRecElementE2& in);
+    void accumulate(const CfgMeasBasedThrottleE2DataEle& data, CfgMeasBasedThrottleE2DataEle&);
 private:
-    QVector<cfgMeasBasedThrottleE2DataEle> m_data;
+    QVector<CfgMeasBasedThrottleE2DataEle> m_data;
 };
 
 #endif // CFGWASHINGDATAINF_H
