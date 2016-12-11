@@ -4,6 +4,25 @@
 #include <QVector>
 #include "cfg/datajsonrecelement.h"
 
+class CfgMetaElement{
+public:
+    CfgMetaElement() = default;
+    CfgMetaElement(QString lfh_name, quint32 lfh_motorIdx);
+    ~CfgMetaElement(){}
+
+public:
+    QString getName() const;
+
+    quint8 getMotorIdx() const;
+
+    double getData() const;
+    void setData(double value);
+
+private:
+    QString name;
+    quint8 motorIdx;
+    double data;
+};
 
 enum class CfgWashingTypeEnum {
     CFGWASHINGVOL_E1,
@@ -56,23 +75,31 @@ public:
  * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
 */
 
-struct CfgMeasBasedThrottlePerMotorE2DataEle
+class CfgMeasBasedThrottlePerMotorE2DataEle
 {
-    double current;
-    double thrust;
-    double torque;
-    quint32 speed;
-    quint32 temp1;
-    quint32 temp2;
-    double  effi_power;
-    double  effi_ele;
-    quint32 power;
+public:
+    ~CfgMeasBasedThrottlePerMotorE2DataEle(){}
+
+public:
+    CfgMetaElement current;
+    CfgMetaElement thrust;
+    CfgMetaElement torque;
+    CfgMetaElement speed;
+    CfgMetaElement temp1;
+    CfgMetaElement temp2;
+    CfgMetaElement effi_power;
+    CfgMetaElement effi_ele;
+    CfgMetaElement power;
 };
 
-struct CfgMeasBasedThrottleE2DataEle
+class CfgMeasBasedThrottleE2DataEle
 {
-    double thro;
-    double vol;
+public:
+    explicit CfgMeasBasedThrottleE2DataEle();
+    ~CfgMeasBasedThrottleE2DataEle(){}
+public:
+    CfgMetaElement vol;
+    CfgMetaElement thro;
     CfgMeasBasedThrottlePerMotorE2DataEle data[2];
 };
 

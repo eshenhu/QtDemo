@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QtCharts/QChartGlobal>
 #include <QtCharts/QChart>
+
+#include "cfg/datajsoncfgreader.h"
+
 class QCustomPlot;
 namespace Ui {
 class ChartViewerWin;
@@ -24,13 +27,16 @@ public:
 //    void createMenusAndToolBars();
 //    void createConnections();
 
-    void createWidgets();
+    //void createWidgets();
 //    void createProxyWidgets();
-
+    void openJsonFile(const QString& jsonFileName);
     //void makeNewChartWidget();
     void setupAdvancedAxesDemo(QCustomPlot* customPlot);
 private:
     Ui::ChartViewerWin *ui;
+
+    CfgJsonRecElement cfgMetaData;
+    QSharedPointer<CfgWashingDataInf> cfgRawData;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
 };

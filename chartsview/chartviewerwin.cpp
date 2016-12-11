@@ -1,6 +1,7 @@
 #include "chartviewerwin.h"
 #include "ui_chartviewerwin.h"
 
+#include "ui/uiheader.h"
 #include <QGraphicsLinearLayout>
 #include <QLineSeries>
 #include <QValueAxis>
@@ -14,12 +15,8 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 
     setGeometry(400, 250, 542, 390);
 
-    setupAdvancedAxesDemo(ui->customPlot);
+    openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/20161205-210133097/data.json");
 
-    setWindowTitle("QCustomPlot: ");
-    statusBar()->clearMessage();
-    //currentDemoIndex = demoIndex;
-    ui->customPlot->replot();
     //createSceneAndView();
     //createWidgets();
 }
@@ -29,44 +26,31 @@ ChartViewerWin::~ChartViewerWin()
     delete ui;
 }
 
-void ChartViewerWin::createSceneAndView()
+void ChartViewerWin::openJsonFile(const QString& jsonFileName)
 {
     DataJsonCfgReader reader;
-    reader.loadData("/Users/andrewhoo/Work/Qt/Pilot/20161205-210133097/data.json");
+    reader.loadData(jsonFileName);
+
+    cfgMetaData = reader.getCfgParser();
+    cfgRawData = reader.csvDataHandler();
+
+    setupAdvancedAxesDemo(ui->customPlot);
+
+    QString title = TestPlanStringMap[(int)cfgMetaData.plan()];
+    setWindowTitle(title);
+    statusBar()->clearMessage();
+    ui->customPlot->replot();
+}
+
+void ChartViewerWin::createSceneAndView()
+{
+//    DataJsonCfgReader reader;
+//    reader.loadData("/Users/andrewhoo/Work/Qt/Pilot/20161205-210133097/data.json");
 //    m_scene = new QGraphicsScene(this);
 //    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
 //    ui->graphicsView->setScene(m_scene);
 }
 
-void ChartViewerWin::createWidgets()
-{
-    QLineSeries *series = new QLineSeries();
-    *series << QPointF(1, 1) << QPointF(2, 2) << QPointF(3, 3) << QPointF(4, 4) << QPointF(5, 5) << QPointF(6, 6);
-
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    //chart->setTheme(QChart::ChartThemeBrownSand);
-    //chart->setMargins(QMargins(0,0,0,0));
-    chart->legend()->hide();
-
-    QValueAxis *axisX = new QValueAxis;
-//    //axisX->setFormat("dd-MM h:mm:s");
-//    axisX->hide();
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
-
-    QValueAxis *axisY = new QValueAxis;
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-
-//    QVBoxLayout layout
-
-//    layout->addItem(chart);
-
-//    QGraphicsWidget *widget = new QGraphicsWidget;
-//    widget->setLayout(layout);
-    //    m_scene->addItem(widget);
-}
 
 void ChartViewerWin::setupAdvancedAxesDemo(QCustomPlot *customPlot)
 {
@@ -75,32 +59,26 @@ void ChartViewerWin::setupAdvancedAxesDemo(QCustomPlot *customPlot)
   // configure axis rect:
   customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
   QCPAxisRect *wideAxisRect = new QCPAxisRect(customPlot);
-  wideAxisRect->setupFullAxesBox(true);
-  wideAxisRect->axis(QCPAxis::atRight, 0)->setTickLabels(true);
-  wideAxisRect->addAxis(QCPAxis::atLeft)->setTickLabelColor(QColor("#6050F8")); // add an extra axis on the left and color its numbers
-  QCPLayoutGrid *subLayout = new QCPLayoutGrid;
-  customPlot->plotLayout()->addElement(0, 0, wideAxisRect); // insert axis rect in first row
-  customPlot->plotLayout()->addElement(1, 0, subLayout); // sub layout in second row (grid layout will grow accordingly)
+//  wideAxisRect->setupFullAxesBox(true);
+  //wideAxisRect->axis(QCPAxis::atRight, 0)->setTickLabels(true);
+  //wideAxisRect->addAxis(QCPAxis::atLeft)->setTickLabelColor(QColor("#6050F8")); // add an extra axis on the left and color its numbers
+
+
   //customPlot->plotLayout()->setRowStretchFactor(1, 2);
   // prepare axis rects that will be placed in the sublayout:
-  QCPAxisRect *subRectLeft = new QCPAxisRect(customPlot, false); // false means to not setup default axes
-  QCPAxisRect *subRectRight = new QCPAxisRect(customPlot, false);
-  subLayout->addElement(0, 0, subRectLeft);
-  subLayout->addElement(0, 1, subRectRight);
-  subRectRight->setMaximumSize(150, 150); // make bottom right axis rect size fixed 150x150
-  subRectRight->setMinimumSize(150, 150); // make bottom right axis rect size fixed 150x150
-  // setup axes in sub layout axis rects:
-  subRectLeft->addAxes(QCPAxis::atBottom | QCPAxis::atLeft);
-  subRectRight->addAxes(QCPAxis::atBottom | QCPAxis::atRight);
-  subRectLeft->axis(QCPAxis::atLeft)->ticker()->setTickCount(2);
-  subRectRight->axis(QCPAxis::atRight)->ticker()->setTickCount(2);
-  subRectRight->axis(QCPAxis::atBottom)->ticker()->setTickCount(2);
+  QCPAxisRect *subRectLeft = new QCPAxisRect(customPlot, true); // false means to not setup default axes
+//  subRectLeft->axis(QCPAxis::atLeft)->ticker()->setTickCount(2);
+//  subRectRight->axis(QCPAxis::atBottom)->ticker()->setTickCount(2);
   subRectLeft->axis(QCPAxis::atBottom)->grid()->setVisible(true);
   // synchronize the left and right margins of the top and bottom axis rects:
   QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
-  subRectLeft->setMarginGroup(QCP::msLeft, marginGroup);
-  subRectRight->setMarginGroup(QCP::msRight, marginGroup);
+  subRectLeft->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
   wideAxisRect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
+
+  //  QCPLayoutGrid *subLayout = new QCPLayoutGrid;
+    customPlot->plotLayout()->addElement(0, 0, wideAxisRect); // insert axis rect in first row
+    customPlot->plotLayout()->addElement(1, 0, subRectLeft); // sub layout in second row (grid layout will grow accordingly)
+
   // move newly created axes on "axes" layer and grids on "grid" layer:
   foreach (QCPAxisRect *rect, customPlot->axisRects())
   {
@@ -136,37 +114,39 @@ void ChartViewerWin::setupAdvancedAxesDemo(QCustomPlot *customPlot)
   // create and configure plottables:
   QCPGraph *mainGraphCos = customPlot->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft));
   mainGraphCos->data()->set(dataCos);
-  mainGraphCos->valueAxis()->setRange(-1, 1);
-  mainGraphCos->rescaleKeyAxis();
-  mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black), QBrush(Qt::white), 6));
+  mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
   mainGraphCos->setPen(QPen(QColor(120, 120, 120), 2));
-  QCPGraph *mainGraphGauss = customPlot->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft, 1));
-  mainGraphGauss->data()->set(dataGauss);
-  mainGraphGauss->setPen(QPen(QColor("#8070B8"), 2));
-  mainGraphGauss->setBrush(QColor(110, 170, 110, 30));
-  mainGraphCos->setChannelFillGraph(mainGraphGauss);
-  mainGraphCos->setBrush(QColor(255, 161, 0, 50));
-  mainGraphGauss->valueAxis()->setRange(0, 1000);
-  mainGraphGauss->rescaleKeyAxis();
+  mainGraphCos->valueAxis()->setRange(-1, 1);
+  mainGraphCos->rescaleAxes();
+
+//  QCPGraph *mainGraphGauss = customPlot->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft, 1));
+//  mainGraphGauss->data()->set(dataGauss);
+//  mainGraphGauss->setPen(QPen(QColor("#8070B8"), 2));
+//  mainGraphGauss->setBrush(QColor(110, 170, 110, 30));
+//  mainGraphCos->setChannelFillGraph(mainGraphGauss);
+//  mainGraphCos->setBrush(QColor(255, 161, 0, 50));
+//  mainGraphGauss->valueAxis()->setRange(0, 1000);
+//  mainGraphGauss->rescaleKeyAxis();
 
   QCPGraph *subGraphRandom = customPlot->addGraph(subRectLeft->axis(QCPAxis::atBottom), subRectLeft->axis(QCPAxis::atLeft));
   subGraphRandom->data()->set(dataRandom);
-  subGraphRandom->setLineStyle(QCPGraph::lsImpulse);
+  //subGraphRandom->setLineStyle(QCPGraph::lsLine);
+  subGraphRandom->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
   subGraphRandom->setPen(QPen(QColor("#FFA100"), 1.5));
   subGraphRandom->rescaleAxes();
 
-  QCPBars *subBars = new QCPBars(subRectRight->axis(QCPAxis::atBottom), subRectRight->axis(QCPAxis::atRight));
-  subBars->setWidth(3/(double)x3.size());
-  subBars->setData(x3, y3);
-  subBars->setPen(QPen(Qt::black));
-  subBars->setAntialiased(false);
-  subBars->setAntialiasedFill(false);
-  subBars->setBrush(QColor("#705BE8"));
-  subBars->keyAxis()->setSubTicks(false);
-  subBars->rescaleAxes();
-  // setup a ticker for subBars key axis that only gives integer ticks:
-  QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
-  intTicker->setTickStep(1.0);
-  intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-  subBars->keyAxis()->setTicker(intTicker);
+//  QCPBars *subBars = new QCPBars(subRectRight->axis(QCPAxis::atBottom), subRectRight->axis(QCPAxis::atRight));
+//  subBars->setWidth(3/(double)x3.size());
+//  subBars->setData(x3, y3);
+//  subBars->setPen(QPen(Qt::black));
+//  subBars->setAntialiased(false);
+//  subBars->setAntialiasedFill(false);
+//  subBars->setBrush(QColor("#705BE8"));
+//  subBars->keyAxis()->setSubTicks(false);
+//  subBars->rescaleAxes();
+//  // setup a ticker for subBars key axis that only gives integer ticks:
+//  QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
+//  intTicker->setTickStep(1.0);
+//  intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
+//  subBars->keyAxis()->setTicker(intTicker);
 }

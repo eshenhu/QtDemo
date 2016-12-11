@@ -48,7 +48,8 @@ SOURCES += main.cpp \
     cfg/cfgwashingdatainf.cpp    \
     cfg/cfgzerocalibrateclz.cpp \
     cfg/datajsoncfgreader.cpp \
-    chartsview/qcustomplot.cpp
+    chartsview/qcustomplot.cpp \
+    ui/uiheader.cpp
 
 HEADERS += \
     actionwidget.h \

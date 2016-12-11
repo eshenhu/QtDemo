@@ -1,8 +1,9 @@
 #include "datajsoncfgreader.h"
-#include "cfg/cfgjsonrecelement.h"
+
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
+#include <QSharedPointer>
 DataJsonCfgReader::DataJsonCfgReader()
 {
 
@@ -10,8 +11,6 @@ DataJsonCfgReader::DataJsonCfgReader()
 
 DataJsonCfgReader::~DataJsonCfgReader()
 {
-    if (m_csvDataHandler)
-        delete m_csvDataHandler;
 }
 
 bool DataJsonCfgReader::loadData(const QString &jsonFileName)
@@ -32,8 +31,6 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
         return false;
     }
 
-    CfgJsonRecElement cfgParser;
-
     if (cfgParser.loadCfg(jsonFileName))
     {
         if (cfgParser.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
@@ -46,8 +43,14 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                 {
                     DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
                     handler.loadData(csvFullFileName);
-                    m_csvDataHandler = new CfgThrottleWashingDataE2Clz();
-                    m_csvDataHandler->wash(handler.data());
+                    //m_csvDataHandler = new CfgThrottleWashingDataE2Clz();
+                    m_csvDataHandler = QSharedPointer<CfgThrottleWashingDataE2Clz>::create();
+                    QSharedPointer<CfgThrottleWashingDataE2Clz> dynCast =
+                            qSharedPointerDynamicCast<CfgThrottleWashingDataE2Clz>(m_csvDataHandler);
+                    if (dynCast != nullptr)
+                    {
+                         dynCast->wash(handler.data());
+                    }
                 }
                     break;
                 default:
@@ -74,13 +77,10 @@ bool DataJsonCfgReader::washData()
 
 bool DataJsonCfgReader::close()
 {
-    if (m_csvDataHandler)
-        delete m_csvDataHandler;
-
     return true;
 }
 
-CfgWashingDataInf *DataJsonCfgReader::csvDataHandler() const
+CfgJsonRecElement DataJsonCfgReader::getCfgParser() const
 {
-    return m_csvDataHandler;
+    return cfgParser;
 }

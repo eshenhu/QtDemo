@@ -1,6 +1,9 @@
 #ifndef UITESTBASEDSTRUCT_H
 #define UITESTBASEDSTRUCT_H
 
+#include <QString>
+#include <map>
+
 enum TestPlanEnum {
     Invaild,
     Voltage,
@@ -10,6 +13,26 @@ enum TestPlanEnum {
     Aging,
     Calibrate,
     Manual
+};
+
+extern std::map<int, QString> TestPlanStringMap;
+
+
+class TestUnitName{
+public:
+    TestUnitName() = delete;
+public:
+    static QString VOL()       { return QStringLiteral("Voltage"); }
+    static QString THROTTLE()  { return QStringLiteral("Throttle"); }
+    static QString CURRENT()  { return QStringLiteral("Current"); }
+    static QString THRUST()   { return QStringLiteral("Thrust"); }
+    static QString TORQUE()  { return QStringLiteral("Torque"); }
+    static QString SPEED()  { return QStringLiteral("Speed"); }
+    static QString TEMP1()  { return QStringLiteral("Temp1"); }
+    static QString TEMP2()  { return QStringLiteral("Temp2"); }
+    static QString EFFI_POWER()  { return QStringLiteral("EFFI POWER"); }
+    static QString EFFI_ELE()  { return QStringLiteral("EFFI ELE"); }
+    static QString POWER()  { return QStringLiteral("POWER"); }
 };
 
 struct VoltageTstData

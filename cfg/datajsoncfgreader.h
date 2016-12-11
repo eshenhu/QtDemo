@@ -14,6 +14,7 @@
 #include <QtCore/qloggingcategory.h>
 
 #include "cfg/cfgwashingdatainf.h"
+#include "cfg/cfgjsonrecelement.h"
 
 Q_DECLARE_LOGGING_CATEGORY(TEXT_LOGGING)
 
@@ -27,10 +28,16 @@ public:
 
     bool washData();
     bool close();
-    CfgWashingDataInf *csvDataHandler() const;
+    QSharedPointer<CfgWashingDataInf> csvDataHandler() const {
+        return m_csvDataHandler;
+    }
+
+    CfgJsonRecElement getCfgParser() const;
 
 private:
-    CfgWashingDataInf* m_csvDataHandler = nullptr;
+    //CfgWashingDataInf* m_csvDataHandler = nullptr;
+    CfgJsonRecElement cfgParser;
+    QSharedPointer<CfgWashingDataInf> m_csvDataHandler;
 };
 
 #endif // DATAJSONCFGREADER_H
