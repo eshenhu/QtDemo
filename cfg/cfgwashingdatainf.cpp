@@ -31,7 +31,7 @@ void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & raw
     for (const DataJsonRecElementE2& data : rawdata)
     {
         CfgMeasBasedThrottleE2DataEle ele = deserialize(data);
-        dataInLine = (quint32)ele.thro.getData();
+        dataInLine = (quint32)ele.getData((quint32)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_THRO_POS);
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);
@@ -53,46 +53,37 @@ QVector<CfgMeasBasedThrottleE2DataEle> &CfgThrottleWashingDataE2Clz::data()
 CfgMeasBasedThrottleE2DataEle CfgThrottleWashingDataE2Clz::deserialize(const DataJsonRecElementE2 &in)
 {
     CfgMeasBasedThrottleE2DataEle ele;
-    ele.vol.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::VOL_POS));
-    ele.thro.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::THRO1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_VOL_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::VOL_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_THRO_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::THRO1_POS));
 
-    ele.data[0].current.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS));
-    ele.data[0].thrust.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS));
-    ele.data[0].torque.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS));
-    ele.data[0].speed.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS));
-    ele.data[0].temp1.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR1TMP1_POS));
-    ele.data[0].temp2.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR1TMP2_POS));
-    ele.data[0].effi_power.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS));
-    ele.data[0].effi_ele.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS));
-    ele.data[0].power.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_CUR1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_THU1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_TORQUE1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_SPEED1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_MOTOR1TMP1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR1TMP1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_MOTOR1TMP2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR1TMP2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M1EFFICI1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M1EFFICI2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M1POWER, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER));
 
-    ele.data[1].current.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS));
-    ele.data[1].thrust.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS));
-    ele.data[1].torque.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS));
-    ele.data[1].speed.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS));
-    ele.data[1].temp1.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR2TMP1_POS));
-    ele.data[1].temp2.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR2TMP2_POS));
-    ele.data[1].effi_power.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS));
-    ele.data[1].effi_ele.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS));
-    ele.data[1].power.setData( in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_CUR2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_THU2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_TORQUE2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_SPEED2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_MOTOR2TMP1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR2TMP1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_MOTOR2TMP2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_MOTOR2TMP2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M2EFFICI1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M2EFFICI2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS));
+    ele.setData( (quint8)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_M2POWER, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER));
 
     return ele;
 }
 
 void CfgThrottleWashingDataE2Clz::accumulate(const CfgMeasBasedThrottleE2DataEle &data, CfgMeasBasedThrottleE2DataEle& accu)
 {
-    accu.vol.setData((accu.vol.getData() + data.vol.getData())/2);
-    accu.thro.setData((accu.thro.getData() + data.thro.getData())/2);
-    for (int idx = 0; idx < 2; idx++){
-        accu.data[idx].current.setData( (accu.data[idx].current.getData() + data.data[idx].current.getData())/2);
-        accu.data[idx].thrust.setData( (accu.data[idx].thrust.getData() + data.data[idx].thrust.getData())/2);
-        accu.data[idx].torque.setData( (accu.data[idx].torque.getData() + data.data[idx].torque.getData())/2);
-        accu.data[idx].speed.setData( (accu.data[idx].speed.getData() + data.data[idx].speed.getData())/2);
-        accu.data[idx].temp1.setData( (accu.data[idx].temp1.getData() + data.data[idx].temp1.getData())/2);
-        accu.data[idx].temp2.setData( (accu.data[idx].temp2.getData() + data.data[idx].temp2.getData())/2);
-        accu.data[idx].effi_power.setData( (accu.data[idx].effi_power.getData() + data.data[idx].effi_power.getData())/2);
-        accu.data[idx].effi_ele.setData( (accu.data[idx].effi_ele.getData() + data.data[idx].effi_ele.getData())/2);
-        accu.data[idx].power.setData( (accu.data[idx].power.getData() + data.data[idx].power.getData())/2);
+    for (int i = 0; i < accu.m_metaEle.size(); i++)
+    {
+        accu.setData(i,(accu.getData(i) + data.getData(i))/2);
     }
 }
 
@@ -108,21 +99,43 @@ CfgWashingTypeEnum CfgWashingDataInf::type() const
 }
 
 CfgMeasBasedThrottleE2DataEle::CfgMeasBasedThrottleE2DataEle():
-    vol(TestUnitName::VOL(), 0xFF),
-    thro(TestUnitName::THROTTLE(), 0xFF)
+    m_metaEle((quint32)ELEMEASCURSOR::ELEMCURSOR_END)
 {
-    for (quint8 i = 0; i < 2; i++)
+    m_metaEle[0] = CfgMetaElement(TestUnitName::VOL(), 0xFF);
+    m_metaEle[1] = CfgMetaElement(TestUnitName::THROTTLE(), 0xFF);
+
+    m_metaEle[2] = CfgMetaElement(TestUnitName::CURRENT(), 0);
+    m_metaEle[3] = CfgMetaElement(TestUnitName::THRUST(), 0);
+    m_metaEle[4] = CfgMetaElement(TestUnitName::TORQUE(), 0);
+    m_metaEle[5] = CfgMetaElement(TestUnitName::SPEED(), 0);
+    m_metaEle[6] = CfgMetaElement(TestUnitName::TEMP1(), 0);
+    m_metaEle[7] = CfgMetaElement(TestUnitName::TEMP2(), 0);
+    m_metaEle[8] = CfgMetaElement(TestUnitName::EFFI_POWER(), 0);
+    m_metaEle[9] = CfgMetaElement(TestUnitName::EFFI_ELE(), 0);
+    m_metaEle[10] = CfgMetaElement(TestUnitName::POWER(), 0);
+
+    m_metaEle[11] = CfgMetaElement(TestUnitName::CURRENT(), 1);
+    m_metaEle[12] = CfgMetaElement(TestUnitName::THRUST(), 1);
+    m_metaEle[13] = CfgMetaElement(TestUnitName::TORQUE(), 1);
+    m_metaEle[14] = CfgMetaElement(TestUnitName::SPEED(), 1);
+    m_metaEle[15] = CfgMetaElement(TestUnitName::TEMP1(), 1);
+    m_metaEle[16] = CfgMetaElement(TestUnitName::TEMP2(), 1);
+    m_metaEle[17] = CfgMetaElement(TestUnitName::EFFI_POWER(), 1);
+    m_metaEle[18] = CfgMetaElement(TestUnitName::EFFI_ELE(), 1);
+    m_metaEle[19] = CfgMetaElement(TestUnitName::POWER(), 1);
+}
+
+void CfgMeasBasedThrottleE2DataEle::setData(quint32 idx, double value)
+{
+    if (idx < (quint32)ELEMEASCURSOR::ELEMCURSOR_END)
     {
-        data[i].current = CfgMetaElement(TestUnitName::CURRENT(), i);
-        data[i].thrust = CfgMetaElement(TestUnitName::THRUST(), i);
-        data[i].torque = CfgMetaElement(TestUnitName::TORQUE(), i);
-        data[i].speed = CfgMetaElement(TestUnitName::SPEED(), i);
-        data[i].temp1 = CfgMetaElement(TestUnitName::TEMP1(), i);
-        data[i].temp2 = CfgMetaElement(TestUnitName::TEMP2(), i);
-        data[i].effi_power = CfgMetaElement(TestUnitName::EFFI_POWER(), i);
-        data[i].effi_ele = CfgMetaElement(TestUnitName::EFFI_ELE(), i);
-        data[i].power = CfgMetaElement(TestUnitName::POWER(), i);
+        m_metaEle[idx].setData(value);
     }
+}
+
+double CfgMeasBasedThrottleE2DataEle::getData(quint32 idx) const
+{
+    return (idx < (quint32)ELEMEASCURSOR::ELEMCURSOR_END) ? m_metaEle[idx].getData() : 0;
 }
 
 CfgMetaElement::CfgMetaElement(QString lfh_name, quint32 lfh_motorIdx):

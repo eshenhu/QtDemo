@@ -6,7 +6,7 @@
 #include <QtCharts/QChart>
 
 #include "cfg/datajsoncfgreader.h"
-
+#include "chartsview/qcustomplot.h"
 class QCustomPlot;
 namespace Ui {
 class ChartViewerWin;
@@ -32,6 +32,7 @@ public:
     void openJsonFile(const QString& jsonFileName);
     //void makeNewChartWidget();
     void setupAdvancedAxesDemo(QCustomPlot* customPlot);
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs);
 private:
     Ui::ChartViewerWin *ui;
 

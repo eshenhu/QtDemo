@@ -95,12 +95,43 @@ public:
 class CfgMeasBasedThrottleE2DataEle
 {
 public:
+    enum class ELEMEASCURSOR : quint8
+    {
+        REC_VOL_POS = 0,
+        REC_THRO_POS,
+
+        REC_CUR1_POS,
+        REC_THU1_POS,
+        REC_TORQUE1_POS,
+        REC_SPEED1_POS,
+        REC_MOTOR1TMP1_POS,
+        REC_MOTOR1TMP2_POS,
+        REC_M1EFFICI1_POS,
+        REC_M1EFFICI2_POS,
+        REC_M1POWER,
+
+        REC_CUR2_POS,
+        REC_THU2_POS,
+        REC_TORQUE2_POS,
+        REC_SPEED2_POS,
+        REC_MOTOR2TMP1_POS,
+        REC_MOTOR2TMP2_POS,
+        REC_M2EFFICI1_POS,
+        REC_M2EFFICI2_POS,
+        REC_M2POWER,
+
+        ELEMCURSOR_END
+    };
+
+public:
     explicit CfgMeasBasedThrottleE2DataEle();
     ~CfgMeasBasedThrottleE2DataEle(){}
+
+    void setData(quint32 idx, double value);
+    double getData(quint32 idx) const;
+
 public:
-    CfgMetaElement vol;
-    CfgMetaElement thro;
-    CfgMeasBasedThrottlePerMotorE2DataEle data[2];
+    QVector<CfgMetaElement> m_metaEle;
 };
 
 class CfgThrottleWashingDataE2Clz : public CfgWashingDataInf
