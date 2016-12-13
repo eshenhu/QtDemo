@@ -29,16 +29,17 @@ public:
 
     //void createWidgets();
 //    void createProxyWidgets();
-    void openJsonFile(const QString& jsonFileName);
+    bool openJsonFile(const QString& jsonFileName);
     //void makeNewChartWidget();
     void initAxesAndView(QCustomPlot* customPlot);
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
 
-    void addGraph(QCustomPlot *customPlot, QVector<QCPGraphData>& pairs, QString& name);
+    void addGraph(QCustomPlot *customPlot, QVector<QCPGraphData>& pairs, QString& name, quint8 motorIdx = 0);
     void contextMenuRequest(QPoint pos);
 
     void setupSignalAndSlot();
     void createActions();
+    void fillDataInTableWidget(QTableWidget *);
     //void delGraph();
     //void updateGraph();
 

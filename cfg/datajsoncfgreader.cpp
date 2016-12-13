@@ -59,14 +59,23 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
             }
             else
             {
+                isExisted = false;
                 qCWarning(TEXT_LOGGING) << "This type of file was not supported now" << jsonFileName;
             }
+        }
+        else
+        {
+            isExisted = false;
+            qCWarning(TEXT_LOGGING) << "This type of file was not supported now" << jsonFileName;
         }
     }
     else
     {
+        isExisted = false;
         qCWarning(TEXT_LOGGING) << "Json file failed to open with filename" << jsonFileName;
     }
+
+    return isExisted;
 }
 
 bool DataJsonCfgReader::washData()

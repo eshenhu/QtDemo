@@ -6,5 +6,6 @@
         <file>ui/pause.png</file>
         <file>ui/play.png</file>
         <file>ui/fileopen.png</file>
+        <file>ui/open.png</file>
     </qresource>
 </RCC>

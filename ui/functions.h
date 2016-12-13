@@ -306,12 +306,12 @@ const static functionT functionSpeed = [](const QModbus2DataUnit* data, const Js
 const static formulaT formulaSpeed = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
-    //y = 60 000 000 / (x * 6 * (pole / 2))
+    //y = 60 000 000 / (x * (pole / 2))
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     quint32 vanes = pCfgResHdl->vane();
 
     if (v > 0)
-        return (double)(20000000L/(v*vanes));
+        return (double)(60000000L/(v*(vanes/2)));
     else
         return (double)0;
 };

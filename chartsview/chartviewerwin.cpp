@@ -21,7 +21,7 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 
     setGeometry(400, 250, 542, 390);
 
-    openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/201602_Throttle/data.json");
+    //openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/201602_Throttle/data.json");
 
     //createSceneAndView();
     //createWidgets();
@@ -32,11 +32,21 @@ ChartViewerWin::~ChartViewerWin()
     delete ui;
 }
 
-void ChartViewerWin::openJsonFile(const QString& jsonFileName)
+bool ChartViewerWin::openJsonFile(const QString& jsonFileName)
 {
+    bool isFailed = false;
     DataJsonCfgReader reader;
-    reader.loadData(jsonFileName);
 
+    if (!reader.loadData(jsonFileName))
+    {
+        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                             tr("This file can't be read with reason of either \n"
+                                " - json file format was corrupted. \n"
+                                " - data file was corrupted"),
+                             QMessageBox::Close);
+        warningBox.exec();
+        return false;
+    }
     cfgMetaData = reader.getCfgParser();
     cfgRawData = reader.csvDataHandler();
 
@@ -79,6 +89,20 @@ void ChartViewerWin::createActions()
     fileToolBar->addAction(openAct);
 }
 
+void ChartViewerWin::fillDataInTableWidget(QTableWidget * widget)
+{
+//    widget->clear();
+
+//    QTableWidgetItem *sizeItem = new QTableWidgetItem(tr("%1 KB")
+//                                         .arg(int((size + 1023) / 1024)));
+//    sizeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+//    int row = filesTable->rowCount();
+//    filesTable->insertRow(row);
+//    filesTable->setItem(row, 0, fileNameItem);
+//    filesTable->setItem(row, 1, sizeItem);
+}
+
 void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
 {
     if (cfgRawData)
@@ -110,13 +134,13 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
     }
 }
 
-void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pairs, QString &name)
+void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx)
 {
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
     rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 13));
-    rect->axis(QCPAxis::atLeft)->setLabel(name);
+    rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont(QFont().family(), 8));
     rect->axis(QCPAxis::atLeft)->setPadding(0);
     rect->axis(QCPAxis::atLeft)->setLabelPadding(20);
@@ -168,7 +192,15 @@ void ChartViewerWin::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart
 
 void ChartViewerWin::open()
 {
-
+    QString path = QCoreApplication::applicationDirPath();
+    const QString fileName = QFileDialog::getOpenFileName(this,
+                                                          tr("Open Json File"),
+                                                          path,
+                                                          tr("Json Files (*.json)"));
+    if (!fileName.isEmpty())
+    {
+        openJsonFile(fileName);
+    }
 }
 
 void ChartViewerWin::createSceneAndView()
@@ -221,7 +253,7 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
 
 void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 {
-    customPlot->legend->setVisible(true);
+    //customPlot->legend->setVisible(true);
     //demoName = "Advanced Axes Demo";
     marginGroup = new QCPMarginGroup(customPlot);
 
