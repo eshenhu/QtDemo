@@ -80,8 +80,7 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
 
 bool DataJsonCfgReader::washData()
 {
-
-    //if (m_csvDataHandler)
+    return false;
 }
 
 bool DataJsonCfgReader::close()

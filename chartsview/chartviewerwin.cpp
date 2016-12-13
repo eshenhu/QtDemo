@@ -139,11 +139,11 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
     rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
-    rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 13));
+    rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 10));
     rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont(QFont().family(), 8));
-    rect->axis(QCPAxis::atLeft)->setPadding(0);
-    rect->axis(QCPAxis::atLeft)->setLabelPadding(20);
+    //rect->axis(QCPAxis::atLeft)->setPadding(3);
+    //rect->axis(QCPAxis::atLeft)->setLabelPadding(15);
 
     foreach (QCPAxis *axis, rect->axes())
     {

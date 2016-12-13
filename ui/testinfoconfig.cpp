@@ -56,9 +56,9 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
     });
 
     connect(ui->propVanes_combox,
-            static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged),
-            [this](int index){
-        m_model->setVane(static_cast<DeviceInfoConfig::Vanes>(index));
+            static_cast<void (QComboBox::*) (int)>(&QComboBox::currentTextChanged),
+            [this](QString& str){
+        m_model->setVane(static_cast<DeviceInfoConfig::Vanes>(str.toInt()));
     });
 }
 
