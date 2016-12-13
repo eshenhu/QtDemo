@@ -175,7 +175,7 @@ void DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::loadData(const
 
         /* the 1st str must be the cursor indication*/
         bool isNumber = false;
-        list[0].toInt(&isNumber);
+        list[0].toDouble(&isNumber);
         if (!isNumber){
             qCWarning(TEXT_LOGGING) << "Text the first line is not number, = " << list[0];
             continue;

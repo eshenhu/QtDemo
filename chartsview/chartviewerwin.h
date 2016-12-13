@@ -31,15 +31,28 @@ public:
 //    void createProxyWidgets();
     void openJsonFile(const QString& jsonFileName);
     //void makeNewChartWidget();
-    void setupAdvancedAxesDemo(QCustomPlot* customPlot);
-    void generateData(quint32 idx, QVector<QCPGraphData>& pairs);
+    void initAxesAndView(QCustomPlot* customPlot);
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
+
+    void addGraph(QCustomPlot *customPlot, QVector<QCPGraphData>& pairs, QString& name);
+    void contextMenuRequest(QPoint pos);
+
+    void setupSignalAndSlot();
+    //void delGraph();
+    //void updateGraph();
+
 private:
     Ui::ChartViewerWin *ui;
 
     CfgJsonRecElement cfgMetaData;
     QSharedPointer<CfgWashingDataInf> cfgRawData;
+
+    QCPMarginGroup *marginGroup;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
+
+private slots:
+    void removeAllGraphs();
 };
 
 #endif // CHARTVIEWERWIN_H

@@ -130,6 +130,9 @@ public:
     void setData(quint32 idx, double value);
     double getData(quint32 idx) const;
 
+    QString getName(quint32 idx) const;
+    quint8 getMotorIdx(quint32 idx) const;
+
 public:
     QVector<CfgMetaElement> m_metaEle;
 };

@@ -12,10 +12,13 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
     ui(new Ui::ChartViewerWin)
 {
     ui->setupUi(this);
+    ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+                                    QCP::iSelectLegend | QCP::iSelectPlottables);
+    setupSignalAndSlot();
 
     setGeometry(400, 250, 542, 390);
 
-    openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/20161205-210133097/data.json");
+    openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/201602_Throttle/data.json");
 
     //createSceneAndView();
     //createWidgets();
@@ -34,7 +37,26 @@ void ChartViewerWin::openJsonFile(const QString& jsonFileName)
     cfgMetaData = reader.getCfgParser();
     cfgRawData = reader.csvDataHandler();
 
-    setupAdvancedAxesDemo(ui->customPlot);
+    initAxesAndView(ui->customPlot);
+
+    QVector<QCPGraphData> sample_4;
+    QString sample_name_4;
+    quint8 motorIdx_4;
+    generateData(9, sample_4, sample_name_4, motorIdx_4);
+    addGraph(ui->customPlot, sample_4, sample_name_4);
+
+    // prepare data:
+    QVector<QCPGraphData> sample;
+    QString sample_name;
+    quint8 motorIdx;
+    generateData(3, sample, sample_name, motorIdx);
+    addGraph(ui->customPlot, sample, sample_name);
+
+    QVector<QCPGraphData> sample_3;
+    QString sample_name_3;
+    quint8 motorIdx_3;
+    generateData(4, sample_3, sample_name_3, motorIdx_3);
+    addGraph(ui->customPlot, sample_3, sample_name_3);
 
     QString title = TestPlanStringMap[(int)cfgMetaData.plan()];
     setWindowTitle(title);
@@ -42,7 +64,7 @@ void ChartViewerWin::openJsonFile(const QString& jsonFileName)
     ui->customPlot->replot();
 }
 
-void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs)
+void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
 {
     if (cfgRawData)
     {
@@ -55,6 +77,9 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs)
 
             if (idx < rawData.size())
             {
+                name = rawData[0].getName(idx),
+                motorIdx = rawData[0].getMotorIdx(idx);
+
                 pairs.resize(rawData.size());
                 for (int i = 0; i < rawData.size(); i++)
                 {
@@ -70,6 +95,50 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs)
     }
 }
 
+void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pairs, QString &name)
+{
+    QCPAxisRect *rect = new QCPAxisRect(customPlot);
+    rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
+    rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
+    rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 13));
+    rect->axis(QCPAxis::atLeft)->setLabel(name);
+    rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont(QFont().family(), 8));
+    rect->axis(QCPAxis::atLeft)->setPadding(0);
+    rect->axis(QCPAxis::atLeft)->setLabelPadding(20);
+
+    foreach (QCPAxis *axis, rect->axes())
+    {
+        axis->setLayer("axes");
+        axis->grid()->setLayer("grid");
+    }
+
+    customPlot->plotLayout()->addElement(rect);
+
+    // create and configure plottables:
+    QCPGraph *mainGraphCos = customPlot->addGraph(rect->axis(QCPAxis::atBottom), rect->axis(QCPAxis::atLeft));
+    mainGraphCos->data()->set(pairs);
+    //mainGraphCos->setName(sample_name);
+    mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
+    mainGraphCos->setPen(QPen(QColor("#FFA100"), 2));
+    //mainGraphCos->valueAxis()->setRange(-1, 1);
+    mainGraphCos->rescaleAxes();
+
+    ui->customPlot->replot();
+}
+
+void ChartViewerWin::setupSignalAndSlot()
+{
+    // setup policy and connect slot for context menu popup:
+    ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+}
+
+void ChartViewerWin::removeAllGraphs()
+{
+    ui->customPlot->clearGraphs();
+    ui->customPlot->replot();
+}
+
 void ChartViewerWin::createSceneAndView()
 {
 //    DataJsonCfgReader reader;
@@ -79,89 +148,50 @@ void ChartViewerWin::createSceneAndView()
 //    ui->graphicsView->setScene(m_scene);
 }
 
+void ChartViewerWin::contextMenuRequest(QPoint pos)
+{
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
 
-void ChartViewerWin::setupAdvancedAxesDemo(QCustomPlot *customPlot)
+    menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
+
+    if (cfgRawData)
+    {
+        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2)
+        {
+            quint32 idx = 0;
+            CfgMeasBasedThrottleE2DataEle actionlist;
+            for (CfgMetaElement& ele : actionlist.m_metaEle)
+            {
+                QAction* action = menu->addAction("add "
+                                                  + ele.getName()
+                                                  + '-'
+                                                  + QString::number(ele.getMotorIdx()));
+                action->setCheckable(true);
+                action->setData(QVariant(idx++));
+            }
+
+            QAction *selectedAction = menu->exec(QCursor::pos());
+            if (selectedAction)
+            {
+                int selectIdx = selectedAction->data().toInt();
+
+                // prepare data:
+                QVector<QCPGraphData> sample;
+                QString sample_name;
+                quint8 motorIdx;
+                generateData(selectIdx, sample, sample_name, motorIdx);
+                addGraph(ui->customPlot, sample, sample_name);
+            }
+        }
+    }
+}
+
+void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 {
     //demoName = "Advanced Axes Demo";
-    QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
+    marginGroup = new QCPMarginGroup(customPlot);
 
     // configure axis rect:
     customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
-
-    QCPAxisRect *wideAxisI = new QCPAxisRect(customPlot);
-    wideAxisI->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-
-    //customPlot->plotLayout()->setRowStretchFactor(1, 2);
-    // prepare axis rects that will be placed in the sublayout:
-    QCPAxisRect *wideAxisII = new QCPAxisRect(customPlot, true); // false means to not setup default axes
-    //  wideAxisII->axis(QCPAxis::atLeft)->ticker()->setTickCount(2);
-    //  subRectRight->axis(QCPAxis::atBottom)->ticker()->setTickCount(2);
-    wideAxisII->axis(QCPAxis::atBottom)->grid()->setVisible(true);
-    // synchronize the left and right margins of the top and bottom axis rects:
-    wideAxisII->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-
-    QCPAxisRect *wideAxisIII = new QCPAxisRect(customPlot);
-    wideAxisIII->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-
-    QCPAxisRect *wideAxisIV = new QCPAxisRect(customPlot);
-    wideAxisIV->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-
-    customPlot->plotLayout()->addElement(0, 0, wideAxisI); // insert axis rect in first row
-    customPlot->plotLayout()->addElement(1, 0, wideAxisII); // sub layout in second row (grid layout will grow accordingly)
-    customPlot->plotLayout()->addElement(2, 0, wideAxisIII);
-    customPlot->plotLayout()->addElement(3, 0, wideAxisIV);
-
-    // move newly created axes on "axes" layer and grids on "grid" layer:
-    foreach (QCPAxisRect *rect, customPlot->axisRects())
-    {
-        foreach (QCPAxis *axis, rect->axes())
-        {
-            axis->setLayer("axes");
-            axis->grid()->setLayer("grid");
-        }
-    }
-
-    // prepare data:
-    QVector<QCPGraphData> sample;
-    generateData(3, sample);
-
-
-    // create and configure plottables:
-    QCPGraph *mainGraphCos = customPlot->addGraph(wideAxisI->axis(QCPAxis::atBottom), wideAxisI->axis(QCPAxis::atLeft));
-    mainGraphCos->data()->set(sample);
-    mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
-    mainGraphCos->setPen(QPen(QColor(120, 120, 120), 2));
-    //mainGraphCos->valueAxis()->setRange(-1, 1);
-    mainGraphCos->rescaleAxes();
-
-    //  QCPGraph *mainGraphGauss = customPlot->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft, 1));
-    //  mainGraphGauss->data()->set(dataGauss);
-    //  mainGraphGauss->setPen(QPen(QColor("#8070B8"), 2));
-    //  mainGraphGauss->setBrush(QColor(110, 170, 110, 30));
-    //  mainGraphCos->setChannelFillGraph(mainGraphGauss);
-    //  mainGraphCos->setBrush(QColor(255, 161, 0, 50));
-    //  mainGraphGauss->valueAxis()->setRange(0, 1000);
-    //  mainGraphGauss->rescaleKeyAxis();
-
-    QCPGraph *subGraphRandom = customPlot->addGraph(wideAxisII->axis(QCPAxis::atBottom), wideAxisII->axis(QCPAxis::atLeft));
-    subGraphRandom->data()->set(dataRandom);
-    //subGraphRandom->setLineStyle(QCPGraph::lsLine);
-    subGraphRandom->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
-    subGraphRandom->setPen(QPen(QColor("#FFA100"), 1.5));
-    subGraphRandom->rescaleAxes();
-
-    //  QCPBars *subBars = new QCPBars(subRectRight->axis(QCPAxis::atBottom), subRectRight->axis(QCPAxis::atRight));
-    //  subBars->setWidth(3/(double)x3.size());
-    //  subBars->setData(x3, y3);
-    //  subBars->setPen(QPen(Qt::black));
-    //  subBars->setAntialiased(false);
-    //  subBars->setAntialiasedFill(false);
-    //  subBars->setBrush(QColor("#705BE8"));
-    //  subBars->keyAxis()->setSubTicks(false);
-    //  subBars->rescaleAxes();
-    //  // setup a ticker for subBars key axis that only gives integer ticks:
-    //  QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
-    //  intTicker->setTickStep(1.0);
-    //  intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-    //  subBars->keyAxis()->setTicker(intTicker);
 }

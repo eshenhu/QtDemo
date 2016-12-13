@@ -138,6 +138,24 @@ double CfgMeasBasedThrottleE2DataEle::getData(quint32 idx) const
     return (idx < (quint32)ELEMEASCURSOR::ELEMCURSOR_END) ? m_metaEle[idx].getData() : 0;
 }
 
+QString CfgMeasBasedThrottleE2DataEle::getName(quint32 idx) const
+{
+    if (idx < (quint32)ELEMEASCURSOR::ELEMCURSOR_END)
+    {
+        return m_metaEle[idx].getName();
+    }
+    return QStringLiteral("");
+}
+
+quint8 CfgMeasBasedThrottleE2DataEle::getMotorIdx(quint32 idx) const
+{
+    if (idx < (quint32)ELEMEASCURSOR::ELEMCURSOR_END)
+    {
+        return m_metaEle[idx].getMotorIdx();
+    }
+    return 0;
+}
+
 CfgMetaElement::CfgMetaElement(QString lfh_name, quint32 lfh_motorIdx):
     name(lfh_name),
     motorIdx(lfh_motorIdx)
