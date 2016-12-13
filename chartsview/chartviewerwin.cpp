@@ -12,8 +12,11 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
     ui(new Ui::ChartViewerWin)
 {
     ui->setupUi(this);
-    ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                                    QCP::iSelectLegend | QCP::iSelectPlottables);
+
+    createActions();
+    ui->customPlot->setInteractions(QCP::iSelectAxes |
+                                    QCP::iSelectLegend |
+                                    QCP::iSelectPlottables);
     setupSignalAndSlot();
 
     setGeometry(400, 250, 542, 390);
@@ -62,6 +65,18 @@ void ChartViewerWin::openJsonFile(const QString& jsonFileName)
     setWindowTitle(title);
     statusBar()->clearMessage();
     ui->customPlot->replot();
+}
+
+void ChartViewerWin::createActions()
+{
+    QToolBar *fileToolBar = addToolBar(tr("File"));
+
+    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+    QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
+    //openAct->setShortcuts(QKeySequence::Open);
+    openAct->setStatusTip(tr("Open an existing file"));
+    connect(openAct, &QAction::triggered, this, &ChartViewerWin::open);
+    fileToolBar->addAction(openAct);
 }
 
 void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
@@ -128,15 +143,32 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
 
 void ChartViewerWin::setupSignalAndSlot()
 {
+    // connect some interaction slots:
+    connect(ui->customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)),
+            this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+
     // setup policy and connect slot for context menu popup:
     ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+    connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextMenuRequest(QPoint)));
 }
 
 void ChartViewerWin::removeAllGraphs()
 {
     ui->customPlot->clearGraphs();
+    ui->customPlot->plotLayout()->clear();
     ui->customPlot->replot();
+}
+
+void ChartViewerWin::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
+{
+    QPoint pos;
+    contextMenuRequest(pos);
+}
+
+void ChartViewerWin::open()
+{
+
 }
 
 void ChartViewerWin::createSceneAndView()
@@ -189,6 +221,7 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
 
 void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 {
+    customPlot->legend->setVisible(true);
     //demoName = "Advanced Axes Demo";
     marginGroup = new QCPMarginGroup(customPlot);
 

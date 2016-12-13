@@ -38,6 +38,7 @@ public:
     void contextMenuRequest(QPoint pos);
 
     void setupSignalAndSlot();
+    void createActions();
     //void delGraph();
     //void updateGraph();
 
@@ -53,6 +54,8 @@ private:
 
 private slots:
     void removeAllGraphs();
+    void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
+    void open();
 };
 
 #endif // CHARTVIEWERWIN_H
