@@ -68,7 +68,7 @@ class ThrottleTstTab : public QWidget
     QPushButton *m_apply_btn;
 
 public:
-    explicit ThrottleTstTab(TestCasePrimType type, QWidget *parent = 0);
+    explicit ThrottleTstTab(TestPlanEnum type, QWidget *parent = 0);
 
 Q_SIGNALS:
     void updateUserSelection(UiCompMeasData data);
@@ -77,7 +77,7 @@ public slots:
     void validateUserInput(bool checked = false);
 
 private:
-    TestCasePrimType m_type;
+    TestPlanEnum m_type;
 };
 
 class AgingTstTab : public QWidget

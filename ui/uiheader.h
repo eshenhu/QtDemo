@@ -108,14 +108,6 @@ static const char* JsonGUIPrimFormat[] = {
     "%10.1f"     //MECHAEFFI
 };
 
-
-enum TestCasePrimType : quint8 { TCINVALID,
-                                 TCVOLTAGE,
-                                 TCTHROTTLE,
-                                 TCDISTANCE,
-                                 TCMULTIPULE,
-                                 TCAGING,
-                                 TCMANUAL};
 //enum UiMeasType
 //{
 //    INVALID = 0,
@@ -131,7 +123,7 @@ union UiMeasData{
 };
 
 struct UiCompMeasData{
-    TestCasePrimType type;
+    TestPlanEnum type;
     UiMeasData data;
 };
 

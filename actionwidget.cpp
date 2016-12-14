@@ -64,7 +64,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     : QWidget(parent),
       m_msgBox(nullptr)
 {
-    m_measData.type = TestCasePrimType::TCINVALID;
+    m_measData.type = TestPlanEnum::Invaild;
     //m_cfgHandler = new CfgResHandler();
     //m_reader = new CfgJsonReader();
     //m_reader->load("PV11");
@@ -127,7 +127,7 @@ ActionWidget::ActionWidget(QWidget *parent)
         {
             bool isStatusOK = false;
             do{
-                if (m_measData.type == TestCasePrimType::TCINVALID){
+                if (m_measData.type == TestPlanEnum::Invaild){
                     QMessageBox::warning(this, tr("Warning"), tr("No available selection\n"
                                                                  "Please make your selection"),
                                          QMessageBox::Ok);
@@ -153,7 +153,7 @@ ActionWidget::ActionWidget(QWidget *parent)
 
                 m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
                 //reset.
-                m_measData.type = TestCasePrimType::TCINVALID;
+                m_measData.type = TestPlanEnum::Invaild;
             }
             else{
                 m_subTestTabWidget->start_btn()->setChecked(false);

@@ -10,7 +10,7 @@ public:
     enum class ProductVersion : quint8 {INVALID = 0, PV1, PV2, PV3, PV4, PV5, PV6,
                                          PV7, PV8, PV9, PV10, PV11, PV12, MAX};
 
-    enum class MotorType: quint8 { INVALID, PELEC, POIL };
+    enum class MotorType: quint8 { POIL = 0, PELEC = 1, INVALID = 2 };
 
 public:
     virtual ~CfgResHandlerInf() {}

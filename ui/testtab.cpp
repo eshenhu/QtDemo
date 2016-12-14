@@ -116,12 +116,12 @@ TestTab::TestTab(QWidget *parent)
     m_volTstTab = new VoltageTstTab();
     tabList[TestPlanEnum::Voltage] = m_volTstTab;
 
-    m_throTstTab = new ThrottleTstTab(TestCasePrimType::TCTHROTTLE);
+    m_throTstTab = new ThrottleTstTab(TestPlanEnum::Throttle);
     tabList[TestPlanEnum::Throttle] = m_throTstTab;
 
     //Multipule test can be regarded as Throttle Test.
     //tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
-    m_multiTstTab = new ThrottleTstTab(TestCasePrimType::TCMULTIPULE);
+    m_multiTstTab = new ThrottleTstTab(TestPlanEnum::Multiplue);
     tabList[TestPlanEnum::Multiplue] = m_multiTstTab;
 
     tabList[TestPlanEnum::Aging] = new AgingTstTab();
@@ -319,7 +319,7 @@ void DistanceTstTab::validateUserInput(bool checked)
 
     //DistanceTstData
     UiCompMeasData val;
-    val.type = TestCasePrimType::TCDISTANCE;
+    val.type = TestPlanEnum::Distance;
 
     DistanceTstData& data = val.data.w;
     data.vol = m_voltage->value();
@@ -425,7 +425,7 @@ void VoltageTstTab::validateUserInput(bool checked)
     }
 
     UiCompMeasData val;
-    val.type = TestCasePrimType::TCVOLTAGE;
+    val.type = TestPlanEnum::Voltage;
     VoltageTstData& data = val.data.u;
 
     data.thro = m_throttle->value();
@@ -436,7 +436,7 @@ void VoltageTstTab::validateUserInput(bool checked)
     emit updateUserSelection(val);
 }
 
-ThrottleTstTab::ThrottleTstTab(TestCasePrimType type, QWidget *parent)
+ThrottleTstTab::ThrottleTstTab(TestPlanEnum type, QWidget *parent)
     :m_type(type),
      QWidget(parent)
 {

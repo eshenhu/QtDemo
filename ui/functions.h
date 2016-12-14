@@ -165,7 +165,7 @@ const static functionT functionCurrent = [](const QModbus2DataUnit* data, const 
 const static formulaT formulaCurrent = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
-    return (double)(v)/100 - 0.4;
+    return (double)(v)/100;
 };
 
 
