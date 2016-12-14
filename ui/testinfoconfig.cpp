@@ -55,8 +55,7 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
             m_model->setHZ(DeviceInfoConfig::Freq::B400HZ);
     });
 
-    connect(ui->propVanes_combox,
-            static_cast<void (QComboBox::*) (const QString&)>(&QComboBox::currentTextChanged),
+    connect(ui->propVanes_combox, static_cast<void (QComboBox::*) (const QString&)>(&QComboBox::currentTextChanged),
             [this](const QString& text){
         QString vanes = text;
         m_model->setVane(static_cast<DeviceInfoConfig::Vanes>(vanes.toInt()));
