@@ -122,10 +122,23 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
     qInfo() << "com.automationModeDriver -> UtilDataRecordingClz.getInstance().getRecName"
                << UtilDataRecordingClz::getInstance().getRecFileName();
 
+    QModbus2DataUnit::MotorTypeEnum motorType;
+    if (res->motor_type() == CfgResHandlerInf::MotorType::PELEC)
+    {
+        motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
+    }
+    else if (res->motor_type() == CfgResHandlerInf::MotorType::POIL)
+    {
+         motorType = QModbus2DataUnit::MotorTypeEnum::OILE;
+    }
+
     CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder()
             .manufacture(QStringLiteral("TongYi"))
+            .PV(res->prod_version())
             .vanes(res->vane())
+            .motorType(motorType)
             .numOfMotor(res->num_of_motor())
+            .plans(data.type)
             .build();
 
     ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
@@ -145,19 +158,19 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
     m_uiCfgData = data;
     mp_data->reset();
 
-    if (data.type == TestCasePrimType::TCVOLTAGE){
+    if (data.type == TestPlanEnum::Voltage){
         mp_refresh = new PeriodicalVolMeasDataUpdate(data.data.u.vol_beg, data.data.u.vol_end, data.data.u.vol_step, data.data.u.thro,
                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.u.vol_beg,
                                                      data.data.u.duration);
         mp_refresh->setSeed(mp_data);
     }
-    else if (data.type == TestCasePrimType::TCTHROTTLE || data.type == TestCasePrimType::TCMULTIPULE){
+    else if (data.type == TestPlanEnum::Throttle || data.type == TestPlanEnum::Multiplue){
         mp_refresh = new PeriodicalThroMeasDataUpdate(data.data.v.thro_beg, data.data.v.thro_end, data.data.v.thro_step, data.data.v.vol,
                                                       res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.v.vol,
                                                       data.data.v.duration);
         mp_refresh->setSeed(mp_data);
     }
-    else if (data.type == TestCasePrimType::TCDISTANCE){
+    else if (data.type == TestPlanEnum::Distance){
         mp_refresh = new PeriodicalDisMeasDataUpdate(data.data.w.dis_beg, data.data.w.dis_end, data.data.w.dis_step, data.data.w.vol, data.data.w.thro,
                                                      res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.w.vol,
                                                      data.data.w.duration);
@@ -534,7 +547,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             {
                 // What's a fuck implemention on this 'DISTANCE' type! fuck me!
                 // A better way of this implemention here is introducing FSM.
-                if (m_uiCfgData.type == TestCasePrimType::TCDISTANCE)
+                if (m_uiCfgData.type == TestPlanEnum::Distance)
                 {
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                                           << "to State" << (qint32)State::DistanceStepIntoLowState;
@@ -668,7 +681,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
 
             QTimer::singleShot(msecTimeInterval, [this, limitStatus](){
                 if (mp_refresh->update()
-                        || (m_uiCfgData.type == TestCasePrimType::TCDISTANCE
+                        || (m_uiCfgData.type == TestPlanEnum::Distance
                             && QModbus2DataUnit::LimitStatusEnum::UPLIMIT == limitStatus)
                    )
                 {

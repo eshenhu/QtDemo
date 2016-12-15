@@ -112,7 +112,7 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
             QSharedPointer<CfgThrottleWashingDataE2Clz> dynCast =
                     qSharedPointerDynamicCast<CfgThrottleWashingDataE2Clz>(cfgRawData);
 
-            QVector<CfgMeasBasedThrottleE2DataEle>& rawData = dynCast->data();
+            QVector<CfgItemMeasBasedE2DataEle>& rawData = dynCast->data();
 
             if (idx < rawData.size())
             {
@@ -122,7 +122,7 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
                 pairs.resize(rawData.size());
                 for (int i = 0; i < rawData.size(); i++)
                 {
-                    pairs[i].key   = (quint32)rawData[i].getData((quint32)CfgMeasBasedThrottleE2DataEle::ELEMEASCURSOR::REC_THRO_POS);
+                    pairs[i].key   = (quint32)rawData[i].getData((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_THRO_POS);
                     pairs[i].value = rawData[i].getData(idx);
                 }
             }
@@ -131,6 +131,31 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
                 qWarning() << "index exceed the maximum number of vector. index = " << idx;
             }
         }
+        else if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2)
+        {
+            QSharedPointer<CfgVolWashingDataE2Clz> dynCast =
+                    qSharedPointerDynamicCast<CfgVolWashingDataE2Clz>(cfgRawData);
+
+            QVector<CfgItemMeasBasedE2DataEle>& rawData = dynCast->data();
+
+            if (idx < rawData.size())
+            {
+                name = rawData[0].getName(idx),
+                motorIdx = rawData[0].getMotorIdx(idx);
+
+                pairs.resize(rawData.size());
+                for (int i = 0; i < rawData.size(); i++)
+                {
+                    pairs[i].key   = (quint32)rawData[i].getData((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_VOL_POS);
+                    pairs[i].value = rawData[i].getData(idx);
+                }
+            }
+            else
+            {
+                qWarning() << "index exceed the maximum number of vector. index = " << idx;
+            }
+        }
+
     }
 }
 
@@ -224,10 +249,10 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
         if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2)
         {
             quint32 idx = 0;
-            CfgMeasBasedThrottleE2DataEle actionlist;
+            CfgItemMeasBasedE2DataEle actionlist;
             for (CfgMetaElement& ele : actionlist.m_metaEle)
             {
-                QAction* action = menu->addAction("add "
+                QAction* action = menu->addAction("Add "
                                                   + ele.getName()
                                                   + '-'
                                                   + QString::number(ele.getMotorIdx()));

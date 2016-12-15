@@ -53,22 +53,6 @@ private:
 /*
  * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
 */
-struct CfgMeasBasedVolE2DataEle
-{
-    double vol;
-    double thro;
-};
-
-class CfgVolWashingDataE2Clz : public CfgWashingDataInf
-{
-public:
-    CfgVolWashingDataE2Clz();
-    ~CfgVolWashingDataE2Clz() {}
-    // cfgWashingDataInf interface
-public:
-    void wash(const QVector<DataJsonRecElementE2>&) override;
-};
-
 
 //---------------------------------------------
 /*
@@ -92,7 +76,7 @@ public:
     CfgMetaElement power;
 };
 
-class CfgMeasBasedThrottleE2DataEle
+class CfgItemMeasBasedE2DataEle
 {
 public:
     enum class ELEMEASCURSOR : quint8
@@ -124,8 +108,8 @@ public:
     };
 
 public:
-    explicit CfgMeasBasedThrottleE2DataEle();
-    ~CfgMeasBasedThrottleE2DataEle(){}
+    explicit CfgItemMeasBasedE2DataEle();
+    ~CfgItemMeasBasedE2DataEle(){}
 
     void setData(quint32 idx, double value);
     double getData(quint32 idx) const;
@@ -145,13 +129,36 @@ public:
     // cfgWashingDataInf interface
 public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
-    QVector<CfgMeasBasedThrottleE2DataEle>& data();
+    QVector<CfgItemMeasBasedE2DataEle>& data();
 
 private:
-    CfgMeasBasedThrottleE2DataEle deserialize(const DataJsonRecElementE2& in);
-    void accumulate(const CfgMeasBasedThrottleE2DataEle& data, CfgMeasBasedThrottleE2DataEle&);
+    CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
+    void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
 private:
-    QVector<CfgMeasBasedThrottleE2DataEle> m_data;
+    QVector<CfgItemMeasBasedE2DataEle> m_data;
+};
+
+
+//---------------------------------------------
+/*
+ * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
+*/
+
+class CfgVolWashingDataE2Clz : public CfgWashingDataInf
+{
+public:
+    CfgVolWashingDataE2Clz();
+    ~CfgVolWashingDataE2Clz() {}
+    // cfgWashingDataInf interface
+public:
+    void wash(const QVector<DataJsonRecElementE2>&) override;
+    QVector<CfgItemMeasBasedE2DataEle>& data();
+
+private:
+    CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
+    void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
+private:
+    QVector<CfgItemMeasBasedE2DataEle> m_data;
 };
 
 #endif // CFGWASHINGDATAINF_H

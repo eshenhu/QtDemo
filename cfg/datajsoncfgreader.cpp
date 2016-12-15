@@ -53,6 +53,20 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                     }
                 }
                     break;
+                case (quint32)TestPlanEnum::Voltage:
+                {
+                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgVolWashingDataE2Clz>::create();
+                    QSharedPointer<CfgVolWashingDataE2Clz> dynCast =
+                            qSharedPointerDynamicCast<CfgVolWashingDataE2Clz>(m_csvDataHandler);
+                    if (dynCast != nullptr)
+                    {
+                         dynCast->wash(handler.data());
+                    }
+                }
+                break;
+
                 default:
                     break;
                 }
