@@ -14,16 +14,21 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
     ui->setupUi(this);
 
     createActions();
-    ui->customPlot->setInteractions(QCP::iSelectAxes |
-                                    QCP::iSelectLegend |
-                                    QCP::iSelectPlottables);
+//    initTrackFinance(ui->customPlot);
+//    trackFinance(ui->customPlot);
+//    ui->customPlot->setInteractions(
+//                QCP::iSelectAxes
+//                                    | QCP::iSelectLegend
+//                                    | QCP::iSelectPlottables
+//                                    );
+    createSceneAndView();
     setupSignalAndSlot();
 
     setGeometry(400, 250, 542, 390);
 
     //openJsonFile("/Users/andrewhoo/Work/Qt/Pilot/201602_Throttle/data.json");
 
-    //createSceneAndView();
+
     //createWidgets();
 }
 
@@ -74,6 +79,7 @@ bool ChartViewerWin::openJsonFile(const QString& jsonFileName)
     QString title = TestPlanStringMap[(int)cfgMetaData.plan()];
     setWindowTitle(title);
     statusBar()->clearMessage();
+
     ui->customPlot->replot();
 }
 
@@ -100,7 +106,21 @@ void ChartViewerWin::fillDataInTableWidget(QTableWidget * widget)
 //    int row = filesTable->rowCount();
 //    filesTable->insertRow(row);
 //    filesTable->setItem(row, 0, fileNameItem);
-//    filesTable->setItem(row, 1, sizeItem);
+    //    filesTable->setItem(row, 1, sizeItem);
+}
+void ChartViewerWin::initTrackFinance(QCustomPlot *customPlot, int mouseX)
+{
+//    vCursor = new QCPItemLine(customPlot);
+//    vCursor->setPen(QPen(Qt::black));
+//    vCursor->setSelectedPen(QPen(Qt::red));
+}
+
+void ChartViewerWin::trackFinance(QCustomPlot *customPlot, int mouseX)
+{
+//    vCursor->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
+//    vCursor->start->setCoords(0, 0);
+//    vCursor->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
+//    vCursor->end->setCoords(0, 1);
 }
 
 void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
@@ -155,6 +175,11 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
                 qWarning() << "index exceed the maximum number of vector. index = " << idx;
             }
         }
+        else
+        {
+            qWarning() << "not support json type!";
+        }
+
 
     }
 }
@@ -163,13 +188,16 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
 {
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
     rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-    rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
+
+    rect->axis(QCPAxis::atBottom)->grid()->setVisible(false);
+    rect->axis(QCPAxis::atBottom)->setVisible(false);
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 10));
     rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont(QFont().family(), 8));
     //rect->axis(QCPAxis::atLeft)->setPadding(3);
     //rect->axis(QCPAxis::atLeft)->setLabelPadding(15);
-
+    rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
+    rect->setMargins(QMargins(0, 0, 0, 0));
     foreach (QCPAxis *axis, rect->axes())
     {
         axis->setLayer("axes");
@@ -185,6 +213,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
     mainGraphCos->setPen(QPen(QColor("#FFA100"), 2));
     //mainGraphCos->valueAxis()->setRange(-1, 1);
+
     mainGraphCos->rescaleAxes();
 
     ui->customPlot->replot();
@@ -195,6 +224,8 @@ void ChartViewerWin::setupSignalAndSlot()
     // connect some interaction slots:
     connect(ui->customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)),
             this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
+
+    connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showVLineItem(QMouseEvent*)));
 
     // setup policy and connect slot for context menu popup:
     ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -228,6 +259,45 @@ void ChartViewerWin::open()
     }
 }
 
+void ChartViewerWin::showVLineItem(QMouseEvent *event)
+{
+
+//    vCursor->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
+//    vCursor->start->setCoords(0, 0);
+//    vCursor->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
+//    vCursor->end->setCoords(0, 1);
+
+    int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+    int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
+    statusBar()->showMessage(QString("%1 , %2").arg(x).arg(y), 10000);
+
+    if(vCursor) ui->customPlot->removeItem(vCursor);
+    vCursor = new QCPItemStraightLine(ui->customPlot);
+    vCursor->setClipToAxisRect(false);
+    vCursor->point1->setCoords(x,0);
+    vCursor->point2->setCoords(x,20);
+
+//    QCPItemPosition pos1(ui->customPlot, vCursor, "pos1");
+//    pos1.setType(QCPItemPosition::PositionType::ptAxisRectRatio);
+//    pos1.setCoords(x, 0);
+
+//    QCPItemPosition pos2(ui->customPlot, vCursor, "pos2");
+//    pos2.setType(QCPItemPosition::PositionType::ptAxisRectRatio);
+//    pos2.setCoords(x, 10);
+
+
+
+    vCursor->setPen(QPen(Qt::black));
+    vCursor->setSelectedPen(QPen(Qt::red));
+
+//    vCursor->start->setTypeY(QCPItemPosition::ptAbsolute);
+//    vCursor->start->setCoords(x, 0);
+//    vCursor->end->setTypeY(QCPItemPosition::ptAbsolute);
+//    vCursor->end->setCoords(x, 100);
+
+    ui->customPlot->replot();
+}
+
 void ChartViewerWin::createSceneAndView()
 {
 //    DataJsonCfgReader reader;
@@ -235,6 +305,9 @@ void ChartViewerWin::createSceneAndView()
 //    m_scene = new QGraphicsScene(this);
 //    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
 //    ui->graphicsView->setScene(m_scene);
+
+    // bring bottom and main axis rect closer together:
+    ui->customPlot->plotLayout()->setRowSpacing(0);
 }
 
 void ChartViewerWin::contextMenuRequest(QPoint pos)
@@ -279,9 +352,14 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
 void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 {
     //customPlot->legend->setVisible(true);
+
     //demoName = "Advanced Axes Demo";
     marginGroup = new QCPMarginGroup(customPlot);
-
+    customPlot->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, marginGroup);
+    customPlot->xAxis2->setLabel("Top axis label");
+    customPlot->xAxis2->setVisible(true);
+    // create two bar plottables, for positive (green) and negative (red) volume bars:
+    customPlot->setAutoAddPlottableToLegend(false);
     // configure axis rect:
     customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
 }

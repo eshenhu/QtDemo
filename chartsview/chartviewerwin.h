@@ -42,10 +42,12 @@ public:
     void fillDataInTableWidget(QTableWidget *);
     //void delGraph();
     //void updateGraph();
+    void initTrackFinance(QCustomPlot *customPlot, int mouseX = 0);
+    void trackFinance(QCustomPlot *customPlot, int mouseX = 0);    // Draw the track line
 
 private:
     Ui::ChartViewerWin *ui;
-
+    QCPItemStraightLine* vCursor;
     CfgJsonRecElement cfgMetaData;
     QSharedPointer<CfgWashingDataInf> cfgRawData;
 
@@ -57,6 +59,7 @@ private slots:
     void removeAllGraphs();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
     void open();
+    void showVLineItem(QMouseEvent *event);
 };
 
 #endif // CHARTVIEWERWIN_H
