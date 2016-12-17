@@ -194,8 +194,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont(QFont().family(), 10));
     rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont(QFont().family(), 8));
-    //rect->axis(QCPAxis::atLeft)->setPadding(3);
-    //rect->axis(QCPAxis::atLeft)->setLabelPadding(15);
+    //
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
     rect->setMargins(QMargins(0, 0, 0, 0));
     foreach (QCPAxis *axis, rect->axes())
@@ -261,21 +260,32 @@ void ChartViewerWin::open()
 
 void ChartViewerWin::showVLineItem(QMouseEvent *event)
 {
-
-//    vCursor->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
-//    vCursor->start->setCoords(0, 0);
-//    vCursor->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
-//    vCursor->end->setCoords(0, 1);
-
     int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
     int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
+    double closeX = (double)x;
     statusBar()->showMessage(QString("%1 , %2").arg(x).arg(y), 10000);
+
+    // synchronize selection of graphs with selection of corresponding legend items:
+    for (int i=0; i<ui->customPlot->graphCount(); ++i)
+    {
+      QCPGraph *graph = ui->customPlot->graph(i);
+//      for (QCPGraphDataContainer::const_iterator it = graph->data()->constBegin();
+//           it != graph->data()->constEnd();
+//           it++){
+//          QCPGraphData data = *it;
+//          qDebug() << "ui.customPlot -> " << data.mainKey() << data.mainValue();
+//      }
+      QCPGraphDataContainer::const_iterator it = graph->data()->findBegin((double)x);
+      closeX = (*it).mainKey();
+      qDebug() << "ui.customPlot -> x " << x << (*it).mainKey() << (*it).mainValue();
+    }
+
 
     if(vCursor) ui->customPlot->removeItem(vCursor);
     vCursor = new QCPItemStraightLine(ui->customPlot);
     vCursor->setClipToAxisRect(false);
-    vCursor->point1->setCoords(x,0);
-    vCursor->point2->setCoords(x,20);
+    vCursor->point1->setCoords(closeX,0);
+    vCursor->point2->setCoords(closeX,1);
 
 //    QCPItemPosition pos1(ui->customPlot, vCursor, "pos1");
 //    pos1.setType(QCPItemPosition::PositionType::ptAxisRectRatio);
@@ -285,15 +295,8 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
 //    pos2.setType(QCPItemPosition::PositionType::ptAxisRectRatio);
 //    pos2.setCoords(x, 10);
 
-
-
-    vCursor->setPen(QPen(Qt::black));
+    vCursor->setPen(QPen(Qt::red));
     vCursor->setSelectedPen(QPen(Qt::red));
-
-//    vCursor->start->setTypeY(QCPItemPosition::ptAbsolute);
-//    vCursor->start->setCoords(x, 0);
-//    vCursor->end->setTypeY(QCPItemPosition::ptAbsolute);
-//    vCursor->end->setCoords(x, 100);
 
     ui->customPlot->replot();
 }
