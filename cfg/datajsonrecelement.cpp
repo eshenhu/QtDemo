@@ -195,7 +195,7 @@ void DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::loadData(const
             bool isNumber = false;
             double data = str.toDouble(&isNumber);
             if (!isNumber){
-                qCWarning(TEXT_LOGGING) << "Text is not number, = " << data;
+                qCWarning(TEXT_LOGGING) << "Text is not number, = " << str;
                 continue;
             }
             element.setData(idx-1, data);

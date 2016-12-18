@@ -23,7 +23,7 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 //                                    );
 
     createSceneAndView(ui->customPlot);
-    setupSignalAndSlot();
+    //setupSignalAndSlot();
 
     setGeometry(400, 250, 542, 390);
 
@@ -213,7 +213,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
     mainGraphCos->setPen(QPen(QColor("#FFA100"), 2));
     //mainGraphCos->valueAxis()->setRange(-1, 1);
-
+    mainGraphCos->setName(name + " - " + QString::number(motorIdx));
     mainGraphCos->rescaleAxes();
 
     ui->customPlot->replot();
@@ -233,12 +233,37 @@ void ChartViewerWin::setupSignalAndSlot()
             this, SLOT(contextMenuRequest(QPoint)));
 }
 
+void ChartViewerWin::releaseSignalAndSlot()
+{
+    ui->customPlot->disconnect();
+}
+
+
 void ChartViewerWin::removeAllGraphs()
 {
+    ui->customPlot->disconnect();
     ui->customPlot->clearGraphs();
-    //ui->customPlot->plotLayout()->clear();
-    clearGraphsExceptTitle();
-    ui->customPlot->replot();
+    ui->customPlot->plotLayout()->clear();
+    //clearGraphsExceptTitle();
+    //ui->customPlot->replot();
+}
+
+/*
+ * remove the assoicated graphs and items related to this rect.
+*/
+void ChartViewerWin::removeGraph(QCPAxisRect *rect)
+{
+//    for(QCPGraph* graph : rect->graphs())
+//    {
+//       ui->customPlot->removeGraph(graph);
+//    }
+
+//    for(QCPAbstractItem* item : rect->items())
+//    {
+//       ui->customPlot->removeItem(item);
+//    }
+
+//    ui->customPlot->replot();
 }
 
 void ChartViewerWin::clearGraphsExceptTitle()
@@ -255,8 +280,8 @@ void ChartViewerWin::clearGraphsExceptTitle()
 
 void ChartViewerWin::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
 {
-    QPoint pos;
-    contextMenuRequest(pos);
+    //QPoint pos;
+    contextMenuRequest(axis);
 }
 
 void ChartViewerWin::open()
@@ -268,7 +293,10 @@ void ChartViewerWin::open()
                                                           tr("Json Files (*.json)"));
     if (!fileName.isEmpty())
     {
+        releaseSignalAndSlot();
         openJsonFile(fileName);
+        setupSignalAndSlot();
+        ui->customPlot->replot();
     }
 }
 
@@ -290,11 +318,17 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
         closeX = (*it).mainKey();
         double yData = (*it).mainValue();
 
+        qDebug() << "ui->customePlot i ->" << i <<  "string ->" << graph->name() << "ydata is "<< yData;
         QString formatGraph = QString::asprintf("%-15s : %-10f \t",
-                        graph->valueAxis()->label().toLatin1().constData(),
+                        graph->name().toLatin1().constData(),
                         yData);
 
-        textTitle += formatGraph;
+//        textTitle += formatGraph;
+//                qDebug() << "ui->customePlot string ->" << "ydata is "<< yData;
+//                QString formatGraph = QString::asprintf(" : %-10f \t",
+//                                yData);
+
+                textTitle += formatGraph;
     }
     //qDebug() << "ui.customPlot -> x " << title;
 
@@ -327,9 +361,7 @@ void ChartViewerWin::createSceneAndView(QCustomPlot *customPlot)
     //demoName = "Advanced Axes Demo";
     marginGroup = new QCPMarginGroup(customPlot);
     customPlot->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, marginGroup);
-    customPlot->xAxis2->setLabel("Top axis label");
-    customPlot->xAxis2->setVisible(true);
-    // create two bar plottables, for positive (green) and negative (red) volume bars:
+
     customPlot->setAutoAddPlottableToLegend(false);
 
     // bring bottom and main axis rect closer together:
@@ -343,6 +375,8 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
 
     menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
     menu->addSeparator();
+//    menu->addAction("Remove this graph", this, SLOT(removeGraph()));
+//    menu->addSeparator();
 
     if (cfgRawData)
     {
@@ -377,21 +411,78 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
     }
 }
 
+void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
+{
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    QCPAxisRect* assoRect = axis->axisRect();
+
+    QAction* actionRemoveAll = menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
+    actionRemoveAll->setCheckable(true);
+    actionRemoveAll->setData(QVariant(0xFFFF));
+
+    menu->addSeparator();
+
+    QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph(assoRect)));
+    actionRemoveOne->setCheckable(true);
+    actionRemoveOne->setData(QVariant(0xFFFF));
+
+    menu->addSeparator();
+
+    if (cfgRawData)
+    {
+        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
+                cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2)
+        {
+            quint32 idx = 0;
+            CfgItemMeasBasedE2DataEle actionlist;
+            const quint32 sizeOfActionList = actionlist.m_metaEle.size();
+            for (CfgMetaElement& ele : actionlist.m_metaEle)
+            {
+                QAction* action = menu->addAction("Add "
+                                                  + ele.getName()
+                                                  + '-'
+                                                  + QString::number(ele.getMotorIdx()));
+                action->setCheckable(true);
+                action->setData(QVariant(idx++));
+            }
+
+            QAction *selectedAction = menu->exec(QCursor::pos());
+            if (selectedAction)
+            {
+                quint32 selectIdx = selectedAction->data().toUInt();
+
+                if (selectIdx < sizeOfActionList)
+                {
+                    // prepare data:
+                    QVector<QCPGraphData> sample;
+                    QString sample_name;
+                    quint8 motorIdx;
+                    generateData(selectIdx, sample, sample_name, motorIdx);
+                    addGraph(ui->customPlot, sample, sample_name);
+                }
+            }
+        }
+    }
+}
+
 void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 {
     //customPlot->legend->setVisible(true);
     // configure axis rect:
-    customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
+//    customPlot->clearGraphs();
+//    customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
 
+    removeAllGraphs();
     // first we create and prepare a text layout element:
     QString text = TestPlanStringMap[(int)cfgMetaData.plan()];
 
-    if (m_title) delete m_title;
     m_title = new QCPTextElement(ui->customPlot);
     m_title->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
     m_title->setText(text);
-    m_title->setTextFlags(Qt::AlignLeading | Qt::TextWordWrap);
-    m_title->setFont(QFont("sans", 12, QFont::Medium));
+    m_title->setTextFlags(Qt::AlignLeft | Qt::TextWordWrap);
+    m_title->setFont(QFont("sans", 11, QFont::Medium));
     // then we add it to the main plot layout:
     customPlot->plotLayout()->insertRow(0); // insert an empty row above the axis rect
     customPlot->plotLayout()->addElement(0, 0, m_title); // place the title in the empty cell we've just created

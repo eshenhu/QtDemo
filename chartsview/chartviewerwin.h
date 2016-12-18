@@ -35,7 +35,7 @@ public:
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
 
     void addGraph(QCustomPlot *customPlot, QVector<QCPGraphData>& pairs, QString& name, quint8 motorIdx = 0);
-    void contextMenuRequest(QPoint pos);
+
 
     void setupSignalAndSlot();
     void createActions();
@@ -47,7 +47,10 @@ public:
 
 private:
     Ui::ChartViewerWin *ui = nullptr;
-    QCPTextElement *m_title = nullptr;
+
+    //QSharedPointer<QCPTextElement> m_title;
+    QCPTextElement* m_title;
+
     QCPItemStraightLine* vCursor = nullptr;
     CfgJsonRecElement cfgMetaData;
     QSharedPointer<CfgWashingDataInf> cfgRawData;
@@ -58,10 +61,14 @@ private:
 
 private slots:
     void removeAllGraphs();
+    void removeGraph(QCPAxisRect* rect);
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
     void open();
     void showVLineItem(QMouseEvent *event);
+    void contextMenuRequest(QPoint pos);
+    void contextMenuRequest(QCPAxis *axis);
+    void releaseSignalAndSlot();
 };
 
 #endif // CHARTVIEWERWIN_H
