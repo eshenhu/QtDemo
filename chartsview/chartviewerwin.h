@@ -22,7 +22,7 @@ public:
     explicit ChartViewerWin(QWidget *parent = 0);
     ~ChartViewerWin();
 
-    void createSceneAndView();
+    void createSceneAndView(QCustomPlot *customPlot);
 //    void createActions();
 //    void createMenusAndToolBars();
 //    void createConnections();
@@ -46,17 +46,19 @@ public:
     void trackFinance(QCustomPlot *customPlot, int mouseX = 0);    // Draw the track line
 
 private:
-    Ui::ChartViewerWin *ui;
-    QCPItemStraightLine* vCursor;
+    Ui::ChartViewerWin *ui = nullptr;
+    QCPTextElement *m_title = nullptr;
+    QCPItemStraightLine* vCursor = nullptr;
     CfgJsonRecElement cfgMetaData;
     QSharedPointer<CfgWashingDataInf> cfgRawData;
 
-    QCPMarginGroup *marginGroup;
+    QCPMarginGroup *marginGroup = nullptr;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
 
 private slots:
     void removeAllGraphs();
+    void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
     void open();
     void showVLineItem(QMouseEvent *event);
