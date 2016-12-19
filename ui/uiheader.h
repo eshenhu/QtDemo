@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <map>
+#include <QColor>
 
 enum TestPlanEnum {
     Invaild,
@@ -16,7 +17,7 @@ enum TestPlanEnum {
 };
 
 extern std::map<int, QString> TestPlanStringMap;
-
+extern std::map<QString, QColor> colorPerTestElement;
 
 class TestUnitName{
 public:

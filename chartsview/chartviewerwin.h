@@ -56,12 +56,14 @@ private:
     QSharedPointer<CfgWashingDataInf> cfgRawData;
 
     QCPMarginGroup *marginGroup = nullptr;
+    QCPAxisRect* m_assoRect = nullptr;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
 
 private slots:
     void removeAllGraphs();
-    void removeGraph(QCPAxisRect* rect);
+    void removeGraph();
+//    void removeGraph(QCPAxisRect* rect);
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
     void open();

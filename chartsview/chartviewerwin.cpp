@@ -211,7 +211,8 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     mainGraphCos->data()->set(pairs);
     //mainGraphCos->setName(sample_name);
     mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
-    mainGraphCos->setPen(QPen(QColor("#FFA100"), 2));
+    QColor color = colorPerTestElement[name];
+    mainGraphCos->setPen(QPen(color, 2));
     //mainGraphCos->valueAxis()->setRange(-1, 1);
     mainGraphCos->setName(name + " - " + QString::number(motorIdx));
     mainGraphCos->rescaleAxes();
@@ -245,25 +246,39 @@ void ChartViewerWin::removeAllGraphs()
     ui->customPlot->clearGraphs();
     ui->customPlot->plotLayout()->clear();
     //clearGraphsExceptTitle();
-    //ui->customPlot->replot();
+    ui->customPlot->replot();
 }
+
+//void ChartViewerWin::removeGraph()
+//{
+//   qDebug() << "ui->customPlot remove ";
+//}
 
 /*
  * remove the assoicated graphs and items related to this rect.
 */
-void ChartViewerWin::removeGraph(QCPAxisRect *rect)
+void ChartViewerWin::removeGraph()
 {
-//    for(QCPGraph* graph : rect->graphs())
+    qDebug() << "ui->customPlot remove " << m_assoRect->axis(QCPAxis::atLeft)->label();
+//    for(QCPGraph* graph : m_assoRect->graphs())
 //    {
 //       ui->customPlot->removeGraph(graph);
+//       qDebug() << "ui->customPlot select the rect " << graph->name();
 //    }
+
+//    ui->customPlot->removeLayer()
+    ui->customPlot->plotLayout()->remove(m_assoRect);
+    ui->customPlot->plotLayout()->simplify();
+
 
 //    for(QCPAbstractItem* item : rect->items())
 //    {
 //       ui->customPlot->removeItem(item);
 //    }
 
-//    ui->customPlot->replot();
+    ui->customPlot->replot();
+
+    m_assoRect = nullptr;
 }
 
 void ChartViewerWin::clearGraphsExceptTitle()
@@ -416,7 +431,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
     QMenu *menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    QCPAxisRect* assoRect = axis->axisRect();
+    m_assoRect = axis->axisRect();
 
     QAction* actionRemoveAll = menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
     actionRemoveAll->setCheckable(true);
@@ -424,7 +439,9 @@ void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
 
     menu->addSeparator();
 
-    QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph(assoRect)));
+
+    //QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph(assoRect)));
+    QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph()));
     actionRemoveOne->setCheckable(true);
     actionRemoveOne->setData(QVariant(0xFFFF));
 
