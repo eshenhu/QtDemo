@@ -34,6 +34,8 @@ public:
     static QString EFFI_POWER()  { return QStringLiteral("EFFI POWER"); }
     static QString EFFI_ELE()  { return QStringLiteral("EFFI ELE"); }
     static QString POWER()  { return QStringLiteral("POWER"); }
+    static QString MECHAPWR()  { return QStringLiteral("MECHAPWR"); }
+    static QString MECHAEFFI()  { return QStringLiteral("MECHAEFFI"); }
 };
 
 struct VoltageTstData

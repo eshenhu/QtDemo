@@ -17,15 +17,17 @@ std::map<int, QString> TestPlanStringMap =
 
 std::map<QString, QColor> colorPerTestElement =
 {
-    { TestUnitName::VOL(), QColor("#FFA100") },
-    { TestUnitName::THROTTLE(), QColor("#1EA100") },
-    { TestUnitName::CURRENT(), QColor("#2FA100") },
-    { TestUnitName::THRUST(), QColor("#3FA100") },
-    { TestUnitName::TORQUE(), QColor("#4FA100") },
-    { TestUnitName::SPEED(), QColor("#5FA100") },
-    { TestUnitName::TEMP1(), QColor("#6FA100") },
-    { TestUnitName::TEMP2(), QColor("#7FA100") },
-    { TestUnitName::EFFI_POWER(), QColor("#8FA100") },
-    { TestUnitName::EFFI_ELE(), QColor("#9FA100") },
-    { TestUnitName::POWER(), QColor("#AFA100") }
+    { TestUnitName::VOL(), QColor("#0000FF") },
+    { TestUnitName::THROTTLE(), QColor("#2E8B57") },
+    { TestUnitName::CURRENT(), QColor("#FF0000") },
+    { TestUnitName::THRUST(), QColor("#FF00FF") },
+    { TestUnitName::TORQUE(), QColor("#A020F0") },
+    { TestUnitName::SPEED(), QColor("#C1FFC1") },
+    { TestUnitName::TEMP1(), QColor("#00FF00") },
+    { TestUnitName::TEMP2(), QColor("#7FFFD4") },
+    { TestUnitName::EFFI_POWER(), QColor("#FFB5C5") },
+    { TestUnitName::EFFI_ELE(), QColor("#FFD700") },
+    { TestUnitName::POWER(), QColor("#AFA100") },
+    { TestUnitName::MECHAPWR(), QColor("#8B0000") },
+    { TestUnitName::MECHAEFFI(), QColor("#B8860B") },
 };
