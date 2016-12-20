@@ -44,6 +44,7 @@ public:
     //void updateGraph();
     void initTrackFinance(QCustomPlot *customPlot, int mouseX = 0);
     void trackFinance(QCustomPlot *customPlot, int mouseX = 0);    // Draw the track line
+    void updateAxisAtBottomRect(QCustomPlot *customPlot);
 
 private:
     Ui::ChartViewerWin *ui = nullptr;

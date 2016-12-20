@@ -121,7 +121,24 @@ void ChartViewerWin::trackFinance(QCustomPlot *customPlot, int mouseX)
 //    vCursor->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
 //    vCursor->start->setCoords(0, 0);
 //    vCursor->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
-//    vCursor->end->setCoords(0, 1);
+    //    vCursor->end->setCoords(0, 1);
+}
+
+void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
+{
+    QCPAxisRect* rect = nullptr;
+    for (quint32 idx = 0; idx < customPlot->axisRectCount(); idx++){
+        rect = customPlot->axisRect(idx);
+        rect->axis(QCPAxis::atBottom)->grid()->setVisible(false);
+        rect->axis(QCPAxis::atBottom)->setVisible(false);
+    }
+
+    QCPAxisRect* lastRect = customPlot->axisRect(customPlot->axisRectCount() - 1);
+    if (lastRect){
+        lastRect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
+        lastRect->axis(QCPAxis::atBottom)->setVisible(true);
+        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10));
+    }
 }
 
 void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
@@ -180,8 +197,6 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
         {
             qWarning() << "not support json type!";
         }
-
-
     }
 }
 
@@ -217,6 +232,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     mainGraphCos->setName(name + " - " + QString::number(motorIdx));
     mainGraphCos->rescaleAxes();
 
+    updateAxisAtBottomRect(ui->customPlot);
     ui->customPlot->replot();
 }
 
@@ -278,7 +294,7 @@ void ChartViewerWin::removeGraph()
 //    {
 //       ui->customPlot->removeItem(item);
 //    }
-
+    updateAxisAtBottomRect(ui->customPlot);
     ui->customPlot->replot();
 
     m_assoRect = nullptr;
