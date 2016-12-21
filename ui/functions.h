@@ -218,7 +218,7 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
     }
     else
     {
-        return (double)0;
+        return (double)v;
     }
 };
 
@@ -276,7 +276,7 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
         //return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor)));
         return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))/CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
     else
-        return (double)0;
+        return (double)v;
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
