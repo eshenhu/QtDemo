@@ -200,26 +200,35 @@ const static functionT functionThrust = [](const QModbus2DataUnit* data, const J
 const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
 
+    double result = (double)v;
+
+    qDebug() << "functions.h formulaThrust Motor " << idxMotor <<" Phase = " << (int)phase;
+
     if (phase == Phase::Phase_SoftStart)
     {
         CfgZeroCalibrateClz::setStaticThrustZeroCaliOnMotor(idxMotor, v);
+        result = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
     }
     else if (phase == Phase::Phase_PRPDelay)
     {
         CfgZeroCalibrateClz::addStaticThrustZeroCaliOnMotor(idxMotor, v);
+        result = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
     }
 
     if (phase == Phase::Phase_NomalRunning){
-        double result = (double)(  (qint32)(v)
-                                   - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor)
-                                ) / CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor);
+        QString str = QString("functions.h formulaThrust idxMotor = %1 formula = (%2 - %3)/ %4")
+                    .arg(idxMotor)
+                    .arg(v)
+                    .arg(CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
+                    .arg(CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor));
+        qDebug() << str;
 
-        return result;
+        result = (double)((qint32)(v) - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
+                                 / CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor);
     }
-    else
-    {
-        return (double)v;
-    }
+
+    qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result;
+    return result;
 };
 
 const static functionT functionThrottle = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -264,19 +273,35 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
 
+    qDebug() << "functions.h formulaTorque Motor " << idxMotor << " Phase = " << (int)phase;
+
+    double result = (double)v;
     if (phase == Phase::Phase_SoftStart)
     {
         CfgZeroCalibrateClz::setStaticTorqueZeroCaliOnMotor(idxMotor, v);
+        result = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
     }
     else if (phase == Phase::Phase_PRPDelay){
         CfgZeroCalibrateClz::addStaticTorqueZeroCaliOnMotor(idxMotor, v);
+        result = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
     }
 
     if (phase == Phase::Phase_NomalRunning)
-        //return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor)));
-        return ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))/CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
-    else
-        return (double)v;
+    {
+        QString str = QString("functions.h formulaTorque idxMotor = %1 formula = (%2 - %3)/ %4")
+                    .arg(idxMotor)
+                    .arg(v)
+                    .arg(CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
+                    .arg(CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
+        qDebug() << str;
+
+        result = ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
+                  /CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
+    }
+
+    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result;
+
+    return result;
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
@@ -380,6 +405,7 @@ const static formulaT formulaPowerEffect = [](const qint32 v, Phase phase, quint
  *  -- eshenhu
 */
 const static functionT functionPower = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(data)
     qint32 rtn = 0;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
 
@@ -416,6 +442,7 @@ const static functionT functionMechaPower = [](const QModbus2DataUnit* data, con
 {
     Q_UNUSED(data)
     Q_UNUSED(config)
+    Q_UNUSED(idx)
     qint32 rtn = 0;
     return rtn;
 };
