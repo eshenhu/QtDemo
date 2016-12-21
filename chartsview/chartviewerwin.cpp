@@ -121,7 +121,24 @@ void ChartViewerWin::trackFinance(QCustomPlot *customPlot, int mouseX)
 //    vCursor->start->setTypeY(QCPItemPosition::ptAxisRectRatio);
 //    vCursor->start->setCoords(0, 0);
 //    vCursor->end->setTypeY(QCPItemPosition::ptAxisRectRatio);
-//    vCursor->end->setCoords(0, 1);
+    //    vCursor->end->setCoords(0, 1);
+}
+
+void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
+{
+    QCPAxisRect* rect = nullptr;
+    for (quint32 idx = 0; idx < customPlot->axisRectCount(); idx++){
+        rect = customPlot->axisRect(idx);
+        rect->axis(QCPAxis::atBottom)->grid()->setVisible(false);
+        rect->axis(QCPAxis::atBottom)->setVisible(false);
+    }
+
+    QCPAxisRect* lastRect = customPlot->axisRect(customPlot->axisRectCount() - 1);
+    if (lastRect){
+        lastRect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
+        lastRect->axis(QCPAxis::atBottom)->setVisible(true);
+        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10));
+    }
 }
 
 void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
@@ -180,8 +197,6 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
         {
             qWarning() << "not support json type!";
         }
-
-
     }
 }
 
@@ -190,7 +205,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
     rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
 
-    rect->axis(QCPAxis::atBottom)->grid()->setVisible(false);
+    rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atBottom)->setVisible(false);
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("sans", 10));
     rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
@@ -217,6 +232,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     mainGraphCos->setName(name + " - " + QString::number(motorIdx));
     mainGraphCos->rescaleAxes();
 
+    updateAxisAtBottomRect(ui->customPlot);
     ui->customPlot->replot();
 }
 
@@ -266,7 +282,10 @@ void ChartViewerWin::removeGraph()
 //       qDebug() << "ui->customPlot select the rect " << graph->name();
 //    }
 
-//    ui->customPlot->removeLayer()
+//    ui->customPlot->removeLayer();
+
+    if (m_assoRect == ui->customPlot->axisRect(0))
+        return;
     ui->customPlot->plotLayout()->remove(m_assoRect);
     ui->customPlot->plotLayout()->simplify();
 
@@ -275,7 +294,7 @@ void ChartViewerWin::removeGraph()
 //    {
 //       ui->customPlot->removeItem(item);
 //    }
-
+    updateAxisAtBottomRect(ui->customPlot);
     ui->customPlot->replot();
 
     m_assoRect = nullptr;
@@ -317,6 +336,8 @@ void ChartViewerWin::open()
 
 void ChartViewerWin::showVLineItem(QMouseEvent *event)
 {
+    if (!ui->customPlot->xAxis || !ui->customPlot->yAxis)
+        return;
     int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
     int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
     double closeX = (double)x;
@@ -333,7 +354,7 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
         closeX = (*it).mainKey();
         double yData = (*it).mainValue();
 
-        qDebug() << "ui->customePlot i ->" << i <<  "string ->" << graph->name() << "ydata is "<< yData;
+//        qDebug() << "ui->customePlot i ->" << i <<  "string ->" << graph->name() << "ydata is "<< yData;
         QString formatGraph = QString::asprintf("%-15s : %-10f \t",
                         graph->name().toLatin1().constData(),
                         yData);
@@ -374,6 +395,7 @@ void ChartViewerWin::createSceneAndView(QCustomPlot *customPlot)
 //    m_scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
 //    ui->graphicsView->setScene(m_scene);
     //demoName = "Advanced Axes Demo";
+    customPlot->legend->setVisible(false);
     marginGroup = new QCPMarginGroup(customPlot);
     customPlot->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, marginGroup);
 
@@ -402,10 +424,16 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
             CfgItemMeasBasedE2DataEle actionlist;
             for (CfgMetaElement& ele : actionlist.m_metaEle)
             {
-                QAction* action = menu->addAction("Add "
-                                                  + ele.getName()
-                                                  + '-'
-                                                  + QString::number(ele.getMotorIdx()));
+                quint8 idxMotor = ele.getMotorIdx();
+                QString motorString(" ");
+                if (idxMotor == 0 || idxMotor == 1)
+                    motorString = QString::number(idxMotor + 1);
+
+                const QString str = QString::asprintf("Add %-15s\t%5s",
+                                ele.getName().toLatin1().constData(),
+                                motorString.toLatin1().constData());
+
+                QAction* action = menu->addAction(str);
                 action->setCheckable(true);
                 action->setData(QVariant(idx++));
             }
@@ -457,10 +485,16 @@ void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
             const quint32 sizeOfActionList = actionlist.m_metaEle.size();
             for (CfgMetaElement& ele : actionlist.m_metaEle)
             {
-                QAction* action = menu->addAction("Add "
-                                                  + ele.getName()
-                                                  + '-'
-                                                  + QString::number(ele.getMotorIdx()));
+                quint8 idxMotor = ele.getMotorIdx();
+                QString motorString(" ");
+                if (idxMotor == 0 || idxMotor == 1)
+                    motorString = QString::number(idxMotor + 1);
+
+                const QString str = QString::asprintf("Add %-15s\t%5s",
+                                ele.getName().toLatin1().constData(),
+                                motorString.toLatin1().constData());
+
+                QAction* action = menu->addAction(str);
                 action->setCheckable(true);
                 action->setData(QVariant(idx++));
             }
