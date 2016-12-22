@@ -71,11 +71,11 @@ bool ChartViewerWin::openJsonFile(const QString& jsonFileName)
     generateData(3, sample, sample_name, motorIdx);
     addGraph(ui->customPlot, sample, sample_name);
 
-    QVector<QCPGraphData> sample_3;
-    QString sample_name_3;
-    quint8 motorIdx_3;
-    generateData(4, sample_3, sample_name_3, motorIdx_3);
-    addGraph(ui->customPlot, sample_3, sample_name_3);
+//    QVector<QCPGraphData> sample_3;
+//    QString sample_name_3;
+//    quint8 motorIdx_3;
+//    generateData(4, sample_3, sample_name_3, motorIdx_3);
+//    addGraph(ui->customPlot, sample_3, sample_name_3);
 
     QString title = TestPlanStringMap[(int)cfgMetaData.plan()];
     setWindowTitle(title);
@@ -212,7 +212,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont("sans", 8));
     //
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
-    rect->setMargins(QMargins(0, 0, 0, 0));
+    //rect->setMargins(QMargins(0, 0, 0, 0));
     foreach (QCPAxis *axis, rect->axes())
     {
         axis->setLayer("axes");
@@ -225,15 +225,29 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     QCPGraph *mainGraphCos = customPlot->addGraph(rect->axis(QCPAxis::atBottom), rect->axis(QCPAxis::atLeft));
     mainGraphCos->data()->set(pairs);
     //mainGraphCos->setName(sample_name);
-    mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 6));
+    mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 10));
     QColor color = colorPerTestElement[name];
-    mainGraphCos->setPen(QPen(color, 2));
+    mainGraphCos->setPen(QPen(color, 3));
     //mainGraphCos->valueAxis()->setRange(-1, 1);
     mainGraphCos->setName(name + " - " + QString::number(motorIdx));
     mainGraphCos->rescaleAxes();
 
     updateAxisAtBottomRect(ui->customPlot);
     ui->customPlot->replot();
+}
+
+void ChartViewerWin::updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx)
+{
+    if (graph)
+    {
+        graph->data()->set(pairs);
+        QColor color = colorPerTestElement[name];
+        graph->setPen(QPen(color, 4));
+        //mainGraphCos->valueAxis()->setRange(-1, 1);
+        graph->setName(name + " - " + QString::number(motorIdx));
+        graph->rescaleAxes();
+        ui->customPlot->replot();
+    }
 }
 
 void ChartViewerWin::setupSignalAndSlot()
@@ -276,28 +290,44 @@ void ChartViewerWin::removeAllGraphs()
 void ChartViewerWin::removeGraph()
 {
     qDebug() << "ui->customPlot remove " << m_assoRect->axis(QCPAxis::atLeft)->label();
-//    for(QCPGraph* graph : m_assoRect->graphs())
-//    {
-//       ui->customPlot->removeGraph(graph);
-//       qDebug() << "ui->customPlot select the rect " << graph->name();
-//    }
+
 
 //    ui->customPlot->removeLayer();
 
-    if (m_assoRect == ui->customPlot->axisRect(0))
-        return;
-    ui->customPlot->plotLayout()->remove(m_assoRect);
-    ui->customPlot->plotLayout()->simplify();
+    if (m_assoRect)
+    {
+        if (m_assoRect == ui->customPlot->axisRect(0)
+                || 1 == ui->customPlot->axisRectCount())
+            return;
+
+        for(QCPGraph* graph : m_assoRect->graphs())
+        {
+            qDebug() << "ui->customPlot select the rect " << graph->name();
+            ui->customPlot->removeGraph(graph);
+        }
+
+        ui->customPlot->plotLayout()->remove(m_assoRect);
+        ui->customPlot->plotLayout()->simplify();
 
 
-//    for(QCPAbstractItem* item : rect->items())
-//    {
-//       ui->customPlot->removeItem(item);
-//    }
-    updateAxisAtBottomRect(ui->customPlot);
-    ui->customPlot->replot();
+        //    for(QCPAbstractItem* item : rect->items())
+        //    {
+        //       ui->customPlot->removeItem(item);
+        //    }
+        updateAxisAtBottomRect(ui->customPlot);
+        ui->customPlot->replot();
 
-    m_assoRect = nullptr;
+        m_assoRect = nullptr;
+    }
+}
+
+void ChartViewerWin::addGraph()
+{
+    QVector<QCPGraphData> sample;
+    QString sample_name;
+    quint8 motorIdx;
+    generateData(4, sample, sample_name, motorIdx);
+    addGraph(ui->customPlot, sample, sample_name, motorIdx);
 }
 
 void ChartViewerWin::clearGraphsExceptTitle()
@@ -405,16 +435,30 @@ void ChartViewerWin::createSceneAndView(QCustomPlot *customPlot)
     ui->customPlot->plotLayout()->setRowSpacing(0);
 }
 
-void ChartViewerWin::contextMenuRequest(QPoint pos)
+void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
 {
+    m_assoRect = rect;
+
+    QAction* action = nullptr;
     QMenu *menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
+    action = menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
+    action->setCheckable(true);
+    action->setData(UINT32_MAX);
     menu->addSeparator();
-//    menu->addAction("Remove this graph", this, SLOT(removeGraph()));
-//    menu->addSeparator();
 
+    action = menu->addAction("Remove this graph", this, SLOT(removeGraph()));
+    action->setCheckable(true);
+    action->setData(UINT32_MAX);
+
+    menu->addSeparator();
+
+    action = menu->addAction("Add one graph", this, SLOT(addGraph()));
+    action->setCheckable(true);
+    action->setData(UINT32_MAX);
+
+    menu->addSeparator();
     if (cfgRawData)
     {
         if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
@@ -429,72 +473,11 @@ void ChartViewerWin::contextMenuRequest(QPoint pos)
                 if (idxMotor == 0 || idxMotor == 1)
                     motorString = QString::number(idxMotor + 1);
 
-                const QString str = QString::asprintf("Add %-15s\t%5s",
+                const QString str = QString::asprintf("Switch to %-15s\t%5s",
                                 ele.getName().toLatin1().constData(),
                                 motorString.toLatin1().constData());
 
-                QAction* action = menu->addAction(str);
-                action->setCheckable(true);
-                action->setData(QVariant(idx++));
-            }
-
-            QAction *selectedAction = menu->exec(QCursor::pos());
-            if (selectedAction)
-            {
-                int selectIdx = selectedAction->data().toInt();
-
-                // prepare data:
-                QVector<QCPGraphData> sample;
-                QString sample_name;
-                quint8 motorIdx;
-                generateData(selectIdx, sample, sample_name, motorIdx);
-                addGraph(ui->customPlot, sample, sample_name);
-            }
-        }
-    }
-}
-
-void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
-{
-    QMenu *menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-
-    m_assoRect = axis->axisRect();
-
-    QAction* actionRemoveAll = menu->addAction("Remove all graphs", this, SLOT(removeAllGraphs()));
-    actionRemoveAll->setCheckable(true);
-    actionRemoveAll->setData(QVariant(0xFFFF));
-
-    menu->addSeparator();
-
-
-    //QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph(assoRect)));
-    QAction* actionRemoveOne = menu->addAction("Remove this graph", this, SLOT(removeGraph()));
-    actionRemoveOne->setCheckable(true);
-    actionRemoveOne->setData(QVariant(0xFFFF));
-
-    menu->addSeparator();
-
-    if (cfgRawData)
-    {
-        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
-                cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2)
-        {
-            quint32 idx = 0;
-            CfgItemMeasBasedE2DataEle actionlist;
-            const quint32 sizeOfActionList = actionlist.m_metaEle.size();
-            for (CfgMetaElement& ele : actionlist.m_metaEle)
-            {
-                quint8 idxMotor = ele.getMotorIdx();
-                QString motorString(" ");
-                if (idxMotor == 0 || idxMotor == 1)
-                    motorString = QString::number(idxMotor + 1);
-
-                const QString str = QString::asprintf("Add %-15s\t%5s",
-                                ele.getName().toLatin1().constData(),
-                                motorString.toLatin1().constData());
-
-                QAction* action = menu->addAction(str);
+                action = menu->addAction(str);
                 action->setCheckable(true);
                 action->setData(QVariant(idx++));
             }
@@ -504,18 +487,37 @@ void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
             {
                 quint32 selectIdx = selectedAction->data().toUInt();
 
-                if (selectIdx < sizeOfActionList)
+                qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
+                if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
                 {
                     // prepare data:
                     QVector<QCPGraphData> sample;
                     QString sample_name;
                     quint8 motorIdx;
                     generateData(selectIdx, sample, sample_name, motorIdx);
-                    addGraph(ui->customPlot, sample, sample_name);
+                    //addGraph(ui->customPlot, sample, sample_name);
+                    if (rect)
+                    {
+                        rect->axis(QCPAxis::atLeft)->setLabel(sample_name + " - " + QString::number(motorIdx));
+                        for (QCPGraph* graph: rect->graphs())
+                        {
+                            updateGraph(graph, sample, sample_name, motorIdx);
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+void ChartViewerWin::contextMenuRequest(QPoint pos)
+{
+    contextMenuRequest(ui->customPlot->axisRectAt(pos));
+}
+
+void ChartViewerWin::contextMenuRequest(QCPAxis *axis)
+{
+    contextMenuRequest(axis->axisRect());
 }
 
 void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)

@@ -35,7 +35,7 @@ public:
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
 
     void addGraph(QCustomPlot *customPlot, QVector<QCPGraphData>& pairs, QString& name, quint8 motorIdx = 0);
-
+    void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx);
 
     void setupSignalAndSlot();
     void createActions();
@@ -64,6 +64,7 @@ private:
 private slots:
     void removeAllGraphs();
     void removeGraph();
+    void addGraph();
 //    void removeGraph(QCPAxisRect* rect);
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
@@ -71,6 +72,7 @@ private slots:
     void showVLineItem(QMouseEvent *event);
     void contextMenuRequest(QPoint pos);
     void contextMenuRequest(QCPAxis *axis);
+    void contextMenuRequest(QCPAxisRect* rect);
     void releaseSignalAndSlot();
 };
 
