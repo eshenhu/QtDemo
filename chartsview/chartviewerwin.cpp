@@ -137,7 +137,7 @@ void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
     if (lastRect){
         lastRect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
         lastRect->axis(QCPAxis::atBottom)->setVisible(true);
-        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10));
+        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10, QFont::Bold));
     }
 }
 
@@ -242,7 +242,7 @@ void ChartViewerWin::updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs,
     {
         graph->data()->set(pairs);
         QColor color = colorPerTestElement[name];
-        graph->setPen(QPen(color, 4));
+        graph->setPen(QPen(color, 3));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
         graph->setName(name + " - " + QString::number(motorIdx));
         graph->rescaleAxes();
@@ -372,7 +372,7 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
     int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
     double closeX = (double)x;
     static double lastCloseX;
-    statusBar()->showMessage(QString("%1 , %2").arg(x).arg(y), 10000);
+    statusBar()->showMessage(QString("%1 , %2").arg(x).arg(y), 1000);
 
     QString textTitle;
     // synchronize selection of graphs with selection of corresponding legend items:

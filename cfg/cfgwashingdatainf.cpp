@@ -128,6 +128,8 @@ CfgItemMeasBasedE2DataEle CfgThrottleWashingDataE2Clz::deserialize(const DataJso
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M1EFFICI1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS));
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M1EFFICI2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS));
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M1POWER, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER));
+    ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M1MECHAPWR, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAPWR));
+    ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M1MECHAEFFI, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI));
 
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_CUR2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS));
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_THU2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS));
@@ -138,7 +140,8 @@ CfgItemMeasBasedE2DataEle CfgThrottleWashingDataE2Clz::deserialize(const DataJso
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M2EFFICI1_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS));
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M2EFFICI2_POS, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS));
     ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M2POWER, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER));
-
+    ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M2MECHAPWR, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAPWR));
+    ele.setData( (quint8)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_M2MECHAEFFI, in.getData((quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI));
     return ele;
 }
 
@@ -176,16 +179,20 @@ CfgItemMeasBasedE2DataEle::CfgItemMeasBasedE2DataEle():
     m_metaEle[8] = CfgMetaElement(TestUnitName::EFFI_POWER(), 0);
     m_metaEle[9] = CfgMetaElement(TestUnitName::EFFI_ELE(), 0);
     m_metaEle[10] = CfgMetaElement(TestUnitName::POWER(), 0);
+    m_metaEle[11] = CfgMetaElement(TestUnitName::MECHAPWR(), 0);
+    m_metaEle[12] = CfgMetaElement(TestUnitName::MECHAEFFI(), 0);
 
-    m_metaEle[11] = CfgMetaElement(TestUnitName::CURRENT(), 1);
-    m_metaEle[12] = CfgMetaElement(TestUnitName::THRUST(), 1);
-    m_metaEle[13] = CfgMetaElement(TestUnitName::TORQUE(), 1);
-    m_metaEle[14] = CfgMetaElement(TestUnitName::SPEED(), 1);
-    m_metaEle[15] = CfgMetaElement(TestUnitName::TEMP1(), 1);
-    m_metaEle[16] = CfgMetaElement(TestUnitName::TEMP2(), 1);
-    m_metaEle[17] = CfgMetaElement(TestUnitName::EFFI_POWER(), 1);
-    m_metaEle[18] = CfgMetaElement(TestUnitName::EFFI_ELE(), 1);
-    m_metaEle[19] = CfgMetaElement(TestUnitName::POWER(), 1);
+    m_metaEle[13] = CfgMetaElement(TestUnitName::CURRENT(), 1);
+    m_metaEle[14] = CfgMetaElement(TestUnitName::THRUST(), 1);
+    m_metaEle[15] = CfgMetaElement(TestUnitName::TORQUE(), 1);
+    m_metaEle[16] = CfgMetaElement(TestUnitName::SPEED(), 1);
+    m_metaEle[17] = CfgMetaElement(TestUnitName::TEMP1(), 1);
+    m_metaEle[18] = CfgMetaElement(TestUnitName::TEMP2(), 1);
+    m_metaEle[19] = CfgMetaElement(TestUnitName::EFFI_POWER(), 1);
+    m_metaEle[20] = CfgMetaElement(TestUnitName::EFFI_ELE(), 1);
+    m_metaEle[21] = CfgMetaElement(TestUnitName::POWER(), 1);
+    m_metaEle[22] = CfgMetaElement(TestUnitName::MECHAPWR(), 1);
+    m_metaEle[23] = CfgMetaElement(TestUnitName::MECHAEFFI(), 1);
 }
 
 void CfgItemMeasBasedE2DataEle::setData(quint32 idx, double value)

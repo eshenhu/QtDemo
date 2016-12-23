@@ -72,7 +72,7 @@
           "unit": "C"
         },
         {
-          "text": "EFFICIENCY 1",
+          "text": "EFFICIENCY-1",
           "index": 0,
           "isSelected": false,
           "lowLimit": 0,
@@ -80,7 +80,7 @@
           "unit": "g/W"
         },
         {
-          "text": "EFFICIENCY 2",
+          "text": "EFFICIENCY-2",
           "index": 16,
           "isSelected": false,
           "lowLimit": 0,
@@ -160,7 +160,7 @@
           "unit": "C"
         },
         {
-          "text": "EFFICIENCY 1",
+          "text": "EFFICIENCY-1",
           "index": 0,
           "isSelected": false,
           "lowLimit": -20,
@@ -168,7 +168,7 @@
           "unit": "g/W"
         },
         {
-          "text": "EFFICIENCY 2",
+          "text": "EFFICIENCY-2",
           "index": 16,
           "isSelected": false,
           "lowLimit": 0,
@@ -208,7 +208,7 @@
           "unit": "C"
         },
         {
-          "text": "EFFICIENCY 1",
+          "text": "EFFICIENCY-1",
           "index": 1,
           "isSelected": false,
           "lowLimit": -20,
@@ -216,7 +216,7 @@
           "unit": "g/W"
         },
         {
-          "text": "EFFICIENCY 2",
+          "text": "EFFICIENCY-2",
           "index": 17,
           "isSelected": false,
           "lowLimit": 0,
@@ -304,7 +304,7 @@
           "unit": "C"
         },
         {
-          "text": "EFFICIENCY 1",
+          "text": "EFFICIENCY-1",
           "index": 0,
           "isSelected": false,
           "lowLimit": "",
@@ -312,7 +312,7 @@
           "unit": "g/W"
         },
         {
-          "text": "EFFICIENCY 2",
+          "text": "EFFICIENCY-2",
           "index": 16,
           "isSelected": false,
           "lowLimit": 0,
@@ -392,7 +392,7 @@
           "unit": "C"
         },
         {
-          "text": "EFFICIENCY 1",
+          "text": "EFFICIENCY-1",
           "index": 1,
           "isSelected": false,
           "lowLimit": 0,
@@ -400,7 +400,7 @@
           "unit": "g/W"
         },
         {
-          "text": "EFFICIENCY 2",
+          "text": "EFFICIENCY-2",
           "index": 17,
           "isSelected": false,
           "lowLimit": 0,

@@ -14,6 +14,8 @@
 using namespace ModelPOC;
 
 static const quint32 divideByPower = 1000;
+static const quint32 divedeByEffi_G_W = 1000;
+static const quint32 divedeByEffi_G_A = 1000;
 /*
  *     struct ElecMotorCompStruct
     {
@@ -373,15 +375,25 @@ const static formulaT formulaTemp = [](const qint32 v, Phase phase, quint32 idxM
     return (double)(v)*1023.75/4095;
 };
 
-const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+const static functionT functionPower_G_W_Effect = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
-    //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
         // idx 0 ->1st one 1-> 2nd one
         if ((idx.idxMotor()+1) <= config.numOfMotor())
         {
-            rtn =  static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].torque);
+            //rtn =  static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].torque);
+            double thrustData = 0.00;
+            const QExtCheckBox* boxThrust = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::THRUST, idx.idxMotor());
+            if (boxThrust)
+                thrustData = boxThrust->pushData();
+
+            double pwrData = 1.00;
+            const QExtCheckBox* boxPwr = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::POWER, idx.idxMotor());
+            if (boxPwr)
+                pwrData = boxPwr->pushData();
+
+            rtn = static_cast<quint32>(divedeByEffi_G_W * thrustData / pwrData);
         }
         else
         {
@@ -390,15 +402,55 @@ const static functionT functionPowerEffect = [](const QModbus2DataUnit* data, co
     }
     else
     {
-        rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.torque);
+        //need to be improved here -- eshenhu
+        rtn = divedeByEffi_G_W;
     }
     return rtn;
 };
 
-const static formulaT formulaPowerEffect = [](const qint32 v, Phase phase, quint32 idxMotor){
+const static formulaT formulaPower_G_W_Effect = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
-    return (double)v;
+    return (double)v/divedeByEffi_G_W;
+};
+
+const static functionT functionPower_G_A_Effect = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    qint32 rtn = 0;
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
+    {
+        // idx 0 ->1st one 1-> 2nd one
+        if ((idx.idxMotor()+1) <= config.numOfMotor())
+        {
+            //rtn =  static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].torque);
+            double thrustData = 0.00;
+            const QExtCheckBox* boxThrust = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::THRUST, idx.idxMotor());
+            if (boxThrust)
+                thrustData = boxThrust->pushData();
+
+            double currentData = 0.00;
+            const QExtCheckBox* boxCurrent = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::CURRENT, idx.idxMotor());
+            if (boxCurrent)
+                currentData = boxCurrent->pushData();
+
+            rtn = static_cast<quint32>(divedeByEffi_G_A * thrustData / currentData);
+        }
+        else
+        {
+            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+        }
+    }
+    else
+    {
+        // need to be improved here -- eshenhu
+        rtn = divedeByEffi_G_A;
+    }
+    return rtn;
+};
+
+const static formulaT formulaPower_G_A_Effect = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+    return (double)v/divedeByEffi_G_A;
 };
 /*
  *  for better presious requirement, we multipule 100 for this raw data. and divide by 100 in the formula.

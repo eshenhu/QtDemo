@@ -88,7 +88,8 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                TORQUE,
                                SPEED,
                                TEMP,
-                               EFFICIENCY,
+                               EFFICIENCY_G_W,
+                               EFFICIENCY_G_A,
                                VIBRATE,
                                POWER,
                                MECHAPOWER,
@@ -104,7 +105,8 @@ static const char* JsonGUIPrimFormat[] = {
     "%10.3f",     //TORQUE
     "%10.0f",     //SPEED
     "%10.1f",     //TEMP
-    "%10.1f",     //EFFICIENCY
+    "%10.1f",     //EFFICIENCY_G_W
+    "%10.1f",     //EFFICIENCY_G_A
     "%10.0f",     //VIBRATE
     "%10.1f",     //POWER
     "%10.1f",     //MECHAPOWER

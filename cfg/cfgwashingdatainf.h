@@ -93,6 +93,8 @@ public:
         REC_M1EFFICI1_POS,
         REC_M1EFFICI2_POS,
         REC_M1POWER,
+        REC_M1MECHAPWR,
+        REC_M1MECHAEFFI,
 
         REC_CUR2_POS,
         REC_THU2_POS,
@@ -103,6 +105,8 @@ public:
         REC_M2EFFICI1_POS,
         REC_M2EFFICI2_POS,
         REC_M2POWER,
+        REC_M2MECHAPWR,
+        REC_M2MECHAEFFI,
 
         ELEMCURSOR_END
     };

@@ -22,7 +22,7 @@ void QCxtChart::updateCharts()
     const char* unitFormat = "%-5s";
     const char* numberFormat = JsonGUIElement::format(m_dataSrc->type());
 
-    static char buffer[100];
+    static char buffer[150];
     sprintf(buffer, "%s( %s ): %s", titleFormat, unitFormat, numberFormat);
 
 

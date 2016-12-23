@@ -113,8 +113,10 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString str) const
         return JsonGUIPrimType::SPEED;
     else if (str.contains("TEMP"))
         return JsonGUIPrimType::TEMP;
-    else if (str.contains("EFFICIENCY"))
-        return JsonGUIPrimType::EFFICIENCY;
+    else if (str.contains("EFFICIENCY-1"))
+        return JsonGUIPrimType::EFFICIENCY_G_W;
+    else if (str.contains("EFFICIENCY-2"))
+        return JsonGUIPrimType::EFFICIENCY_G_A;
     else if (str.contains("VIBRATE"))
         return JsonGUIPrimType::VIBRATE;
     else if (str.contains("POWER"))
