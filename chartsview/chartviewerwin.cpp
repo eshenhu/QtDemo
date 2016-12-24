@@ -9,7 +9,10 @@
 
 ChartViewerWin::ChartViewerWin(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::ChartViewerWin)
+    ui(new Ui::ChartViewerWin),
+    cfgElementList((quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_MAX),
+    cfgMetaData(cfgElementList[(quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I].cfgMetaData),
+    cfgRawData(cfgElementList[(quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I].cfgRawData)
 {
     ui->setupUi(this);
 
@@ -38,55 +41,94 @@ ChartViewerWin::~ChartViewerWin()
     delete ui;
 }
 
-bool ChartViewerWin::openJsonFile(const QString& jsonFileName)
+void ChartViewerWin::open()
 {
-    bool isFailed = false;
-    DataJsonCfgReader reader;
-
-    if (!reader.loadData(jsonFileName))
+    QString path = QCoreApplication::applicationDirPath();
+    const QString fileName = QFileDialog::getOpenFileName(this,
+                                                          tr("Open Json File"),
+                                                          path,
+                                                          tr("Json Files (*.json)"));
+    if (!fileName.isEmpty())
     {
-        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("This file can't be read with reason of either \n"
-                                " - json file format was corrupted. \n"
-                                " - data file was corrupted"),
-                             QMessageBox::Close);
-        warningBox.exec();
-        return false;
+        releaseSignalAndSlot();
+
+        openJsonFile(fileName, (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I);
+
+        initAxesAndView(ui->customPlot);
+        loadDefault2Plot();
+        setupSignalAndSlot();
+        // inform this information
+        emit leftFileOk(true);
+
+        ui->customPlot->replot();
     }
-    cfgMetaData = reader.getCfgParser();
-    cfgRawData = reader.csvDataHandler();
+}
 
-    initAxesAndView(ui->customPlot);
+/* 1 : OK
+*  0 : Fail
+*/
 
-    QVector<QCPGraphData> sample_4;
-    QString sample_name_4;
-    quint8 motorIdx_4;
-    generateData(9, sample_4, sample_name_4, motorIdx_4);
-    addGraph(ui->customPlot, sample_4, sample_name_4);
+#define RETURN_WITH_OK   {isOk = true;  break;}
+#define RETURN_WITH_NOK  {isOk = false; break;}
 
-    // prepare data:
-    QVector<QCPGraphData> sample;
-    QString sample_name;
-    quint8 motorIdx;
-    generateData(3, sample, sample_name, motorIdx);
-    addGraph(ui->customPlot, sample, sample_name);
+bool ChartViewerWin::openJsonFile(const QString& jsonFileName, quint32 location)
+{
+    bool isOk = false;
 
-//    QVector<QCPGraphData> sample_3;
-//    QString sample_name_3;
-//    quint8 motorIdx_3;
-//    generateData(4, sample_3, sample_name_3, motorIdx_3);
-//    addGraph(ui->customPlot, sample_3, sample_name_3);
+    while (location < (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_MAX)
+    {
 
-    QString title = TestPlanStringMap[(int)cfgMetaData.plan()];
-    setWindowTitle(title);
-    statusBar()->clearMessage();
+        DataJsonCfgReader reader;
 
-    ui->customPlot->replot();
+        if (!reader.loadData(jsonFileName))
+        {
+            QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                                   tr("This file can't be read with reason of either \n"
+                                      " - json file format was corrupted. \n"
+                                      " - data file was corrupted"),
+                                   QMessageBox::Close);
+            warningBox.exec();
+            RETURN_WITH_NOK
+        }
+
+        cfgElementList[location].cfgMetaData = reader.getCfgParser();
+        cfgElementList[location].cfgRawData = reader.csvDataHandler();
+
+        RETURN_WITH_OK
+    }
+    return isOk;
+}
+
+bool ChartViewerWin::loadDefault2Plot()
+{
+    QCPAxisRect* rect;
+    QCPGraph* graph;
+
+//    QVector<QCPGraphData> sample_4;
+//    QString sample_name_4;
+//    quint8 motorIdx_4;
+//    generateData(cfgElementList[0].cfgRawData, 9, sample_4, sample_name_4, motorIdx_4);
+    rect = addRect(ui->customPlot);
+//    graph = addGraph(rect);
+//    updateGraph(graph, sample_4, sample_name_4, motorIdx_4);
+    updateGraph(rect, 9);
+
+//    // prepare data:
+//    QVector<QCPGraphData> sample;
+//    QString sample_name;
+//    quint8 motorIdx;
+//    generateData(cfgElementList[0].cfgRawData, 3, sample, sample_name, motorIdx);
+    rect = addRect(ui->customPlot);
+//    graph = addGraph(rect);
+//    updateGraph(graph, sample, sample_name, motorIdx);
+    updateGraph(rect, 3);
+
+    return true;
 }
 
 void ChartViewerWin::createActions()
 {
-    QToolBar *fileToolBar = addToolBar(tr("File"));
+    QToolBar *fileToolBar = addToolBar(tr("File_A"));
 
     const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
     QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
@@ -94,6 +136,20 @@ void ChartViewerWin::createActions()
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, &QAction::triggered, this, &ChartViewerWin::open);
     fileToolBar->addAction(openAct);
+
+    QToolBar *fileToolBar_B = addToolBar(tr("File_B"));
+
+    const QIcon openIcon_B = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+    QAction *openAct_B = new QAction(openIcon_B, tr("&Open..."), this);
+    //openAct->setShortcuts(QKeySequence::Open);
+    openAct_B->setStatusTip(tr("Open an existing file"));
+    connect(openAct_B, &QAction::triggered, this, &ChartViewerWin::open_validate);
+    fileToolBar_B->addAction(openAct_B);
+
+    openAct->setEnabled(true);
+    openAct_B->setEnabled(false);
+
+    connect(this, &ChartViewerWin::leftFileOk, openAct_B, &QAction::setEnabled);
 }
 
 void ChartViewerWin::fillDataInTableWidget(QTableWidget * widget)
@@ -141,7 +197,8 @@ void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
     }
 }
 
-void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
+void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, quint32 idx,
+                                  QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx)
 {
     if (cfgRawData)
     {
@@ -200,7 +257,19 @@ void ChartViewerWin::generateData(quint32 idx, QVector<QCPGraphData>& pairs, QSt
     }
 }
 
-void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx)
+void ChartViewerWin::addRect()
+{
+//    QVector<QCPGraphData> sample_4;
+//    QString sample_name_4;
+//    quint8 motorIdx_4;
+//    generateData(cfgElementList[0].cfgRawData, 4, sample_4, sample_name_4, motorIdx_4);
+    QCPAxisRect* rect = addRect(ui->customPlot);
+//    QCPGraph* graph = addGraph(rect);
+//    updateGraph(graph, sample_4, sample_name_4, motorIdx_4);
+    updateGraph(rect, 4);
+}
+
+QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
 {
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
     rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
@@ -208,7 +277,7 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atBottom)->setVisible(false);
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("sans", 10));
-    rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
+    //rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont("sans", 8));
     //
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
@@ -218,37 +287,68 @@ void ChartViewerWin::addGraph(QCustomPlot *customPlot, QVector<QCPGraphData> &pa
         axis->setLayer("axes");
         axis->grid()->setLayer("grid");
     }
-
+    //updateAxisAtBottomRect(ui->customPlot);
     customPlot->plotLayout()->addElement(rect);
+    //customPlot->replot();
+    return rect;
+}
 
+QCPGraph* ChartViewerWin::addGraph(QCPAxisRect* rect)
+{
     // create and configure plottables:
-    QCPGraph *mainGraphCos = customPlot->addGraph(rect->axis(QCPAxis::atBottom), rect->axis(QCPAxis::atLeft));
-    mainGraphCos->data()->set(pairs);
-    //mainGraphCos->setName(sample_name);
-    mainGraphCos->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 10));
-    QColor color = colorPerTestElement[name];
-    mainGraphCos->setPen(QPen(color, 3));
-    //mainGraphCos->valueAxis()->setRange(-1, 1);
-    mainGraphCos->setName(name + " - " + QString::number(motorIdx));
-    mainGraphCos->rescaleAxes();
-
-    updateAxisAtBottomRect(ui->customPlot);
-    ui->customPlot->replot();
+    QCPGraph *mainGraphCos = ui->customPlot->addGraph(rect->axis(QCPAxis::atBottom), rect->axis(QCPAxis::atLeft));
+    return mainGraphCos;
 }
 
 void ChartViewerWin::updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx)
 {
     if (graph)
     {
+        graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 10));
         graph->data()->set(pairs);
         QColor color = colorPerTestElement[name];
         graph->setPen(QPen(color, 3));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
         graph->setName(name + " - " + QString::number(motorIdx));
         graph->rescaleAxes();
+        updateAxisAtBottomRect(ui->customPlot);
         ui->customPlot->replot();
     }
 }
+
+
+void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
+{
+    quint32 idx = 0;
+    QCPGraph* graph = nullptr;
+
+    QString sample_name;
+    quint8 motorIdx;
+
+    for (ChartViewCfgElement& ele : cfgElementList)
+    {
+        if(!ele.cfgRawData.isNull())
+        {
+            //graph = rect->graphs()[idx];
+            graph = rect->graphs().value(idx, nullptr);
+            if (!graph)
+            {
+                graph = addGraph(rect);
+            }
+            // prepare data:
+            QVector<QCPGraphData> pair;
+            generateData(ele.cfgRawData, selectedIdx, pair, sample_name, motorIdx);
+            updateGraph(graph, pair, sample_name, motorIdx);
+
+            idx++;
+        }
+    }
+    // update the rect name;
+    rect->axis(QCPAxis::atLeft)->setLabel(sample_name + " - " + QString::number(motorIdx));
+
+    ui->customPlot->replot();
+}
+
 
 void ChartViewerWin::setupSignalAndSlot()
 {
@@ -272,6 +372,7 @@ void ChartViewerWin::releaseSignalAndSlot()
 
 void ChartViewerWin::removeAllGraphs()
 {
+    emit leftFileOk(false);
     ui->customPlot->disconnect();
     ui->customPlot->clearGraphs();
     ui->customPlot->plotLayout()->clear();
@@ -321,14 +422,14 @@ void ChartViewerWin::removeGraph()
     }
 }
 
-void ChartViewerWin::addGraph()
-{
-    QVector<QCPGraphData> sample;
-    QString sample_name;
-    quint8 motorIdx;
-    generateData(4, sample, sample_name, motorIdx);
-    addGraph(ui->customPlot, sample, sample_name, motorIdx);
-}
+//void ChartViewerWin::addGraph()
+//{
+//    QVector<QCPGraphData> sample;
+//    QString sample_name;
+//    quint8 motorIdx;
+//    generateData(4, sample, sample_name, motorIdx);
+//    addGraph(ui->customPlot, sample, sample_name, motorIdx);
+//}
 
 void ChartViewerWin::clearGraphsExceptTitle()
 {
@@ -348,21 +449,11 @@ void ChartViewerWin::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart
     contextMenuRequest(axis);
 }
 
-void ChartViewerWin::open()
+void ChartViewerWin::open_validate()
 {
-    QString path = QCoreApplication::applicationDirPath();
-    const QString fileName = QFileDialog::getOpenFileName(this,
-                                                          tr("Open Json File"),
-                                                          path,
-                                                          tr("Json Files (*.json)"));
-    if (!fileName.isEmpty())
-    {
-        releaseSignalAndSlot();
-        openJsonFile(fileName);
-        setupSignalAndSlot();
-        ui->customPlot->replot();
-    }
+
 }
+
 
 void ChartViewerWin::showVLineItem(QMouseEvent *event)
 {
@@ -384,17 +475,12 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
         closeX = (*it).mainKey();
         double yData = (*it).mainValue();
 
-//        qDebug() << "ui->customePlot i ->" << i <<  "string ->" << graph->name() << "ydata is "<< yData;
+        //qDebug() << "ui->customePlot i ->" << i <<  "string ->" << graph->name() << "ydata is "<< yData;
         QString formatGraph = QString::asprintf("%-15s : %-10f \t",
-                        graph->name().toLatin1().constData(),
-                        yData);
+                                                graph->name().toLatin1().constData(),
+                                                yData);
 
-//        textTitle += formatGraph;
-//                qDebug() << "ui->customePlot string ->" << "ydata is "<< yData;
-//                QString formatGraph = QString::asprintf(" : %-10f \t",
-//                                yData);
-
-                textTitle += formatGraph;
+        textTitle += formatGraph;
     }
     //qDebug() << "ui.customPlot -> x " << title;
 
@@ -454,7 +540,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
 
     menu->addSeparator();
 
-    action = menu->addAction("Add one graph", this, SLOT(addGraph()));
+    action = menu->addAction("Add one graph", this, SLOT(addRect()));
     action->setCheckable(true);
     action->setData(UINT32_MAX);
 
@@ -490,20 +576,21 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                 qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
                 if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
                 {
-                    // prepare data:
-                    QVector<QCPGraphData> sample;
-                    QString sample_name;
-                    quint8 motorIdx;
-                    generateData(selectIdx, sample, sample_name, motorIdx);
-                    //addGraph(ui->customPlot, sample, sample_name);
-                    if (rect)
-                    {
-                        rect->axis(QCPAxis::atLeft)->setLabel(sample_name + " - " + QString::number(motorIdx));
-                        for (QCPGraph* graph: rect->graphs())
-                        {
-                            updateGraph(graph, sample, sample_name, motorIdx);
-                        }
-                    }
+                    updateGraph(rect, selectIdx);
+//                    // prepare data:
+//                    QVector<QCPGraphData> sample;
+//                    QString sample_name;
+//                    quint8 motorIdx;
+//                    generateData(selectIdx, sample, sample_name, motorIdx);
+//                    //addGraph(ui->customPlot, sample, sample_name);
+//                    if (rect)
+//                    {
+//                        rect->axis(QCPAxis::atLeft)->setLabel(sample_name + " - " + QString::number(motorIdx));
+//                        for (QCPGraph* graph: rect->graphs())
+//                        {
+//                            updateGraph(graph, sample, sample_name, motorIdx);
+//                        }
+//                    }
                 }
             }
         }
@@ -528,8 +615,15 @@ void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
 //    customPlot->plotLayout()->clear(); // clear default axis rect so we can start from scratch
 
     removeAllGraphs();
+
+    statusBar()->clearMessage();
+
+
+
+
     // first we create and prepare a text layout element:
     QString text = TestPlanStringMap[(int)cfgMetaData.plan()];
+    setWindowTitle(text);
 
     m_title = new QCPTextElement(ui->customPlot);
     m_title->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);

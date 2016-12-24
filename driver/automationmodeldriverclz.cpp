@@ -122,7 +122,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
     qInfo() << "com.automationModeDriver -> UtilDataRecordingClz.getInstance().getRecName"
                << UtilDataRecordingClz::getInstance().getRecFileName();
 
-    QModbus2DataUnit::MotorTypeEnum motorType;
+    QModbus2DataUnit::MotorTypeEnum motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
     if (res->motor_type() == CfgResHandlerInf::MotorType::PELEC)
     {
         motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
