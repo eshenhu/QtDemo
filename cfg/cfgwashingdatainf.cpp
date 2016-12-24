@@ -37,6 +37,19 @@ QVector<CfgItemMeasBasedE2DataEle> &CfgVolWashingDataE2Clz::data()
     return m_data;
 }
 
+void CfgVolWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
+{
+    name = m_data[0].getName(idx),
+            motorIdx = m_data[0].getMotorIdx(idx);
+
+    pairs.resize(m_data.size());
+    for (int i = 0; i < m_data.size(); i++)
+    {
+        pairs[i].key   = (quint32)m_data[i].getData((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_VOL_POS);
+        pairs[i].value = m_data[i].getData(idx);
+    }
+}
+
 CfgItemMeasBasedE2DataEle CfgVolWashingDataE2Clz::deserialize(const DataJsonRecElementE2 &in)
 {
     CfgItemMeasBasedE2DataEle ele;
@@ -111,6 +124,19 @@ void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & raw
 QVector<CfgItemMeasBasedE2DataEle> &CfgThrottleWashingDataE2Clz::data()
 {
     return m_data;
+}
+
+void CfgThrottleWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
+{   
+    name = m_data[0].getName(idx),
+            motorIdx = m_data[0].getMotorIdx(idx);
+
+    pairs.resize(m_data.size());
+    for (int i = 0; i < m_data.size(); i++)
+    {
+        pairs[i].key   = (quint32)m_data[i].getData((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_THRO_POS);
+        pairs[i].value = m_data[i].getData(idx);
+    }
 }
 
 CfgItemMeasBasedE2DataEle CfgThrottleWashingDataE2Clz::deserialize(const DataJsonRecElementE2 &in)

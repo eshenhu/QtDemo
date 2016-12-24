@@ -29,6 +29,12 @@ public:
     class ChartViewCfgElement
     {
     public:
+        void reset(){
+            cfgMetaData = CfgJsonRecElement();
+            cfgRawData.reset();
+        }
+
+    public:
         CfgJsonRecElement cfgMetaData;
         QSharedPointer<CfgWashingDataInf> cfgRawData;
     };
@@ -46,19 +52,19 @@ public:
 //    void createProxyWidgets();
     bool openJsonFile(const QString& jsonFileName, quint32 location);
     //void makeNewChartWidget();
+    //void resetDataStoHandler(quint8 idx);
     void initAxesAndView(QCustomPlot* customPlot);
     void generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, quint32 idx,
                       QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
 
 
-
+    bool validateMetaData();
     void setupSignalAndSlot();
     void createActions();
-    void fillDataInTableWidget(QTableWidget *);
     //void delGraph();
     //void updateGraph();
-    void initTrackFinance(QCustomPlot *customPlot, int mouseX = 0);
-    void trackFinance(QCustomPlot *customPlot, int mouseX = 0);    // Draw the track line
+//    void initTrackFinance(QCustomPlot *customPlot, int mouseX = 0);
+//    void trackFinance(QCustomPlot *customPlot, int mouseX = 0);    // Draw the track line
     void updateAxisAtBottomRect(QCustomPlot *customPlot);
 
     bool loadDefault2Plot();
@@ -68,6 +74,9 @@ public:
     void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx);
 
     QCPAxisRect* addRect(QCustomPlot *customPlot);
+
+
+    void showText();
 
 private:
     Ui::ChartViewerWin *ui = nullptr;

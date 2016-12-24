@@ -65,6 +65,11 @@ CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementB
     m_motorType = builder.m_motorType;
 }
 
+CfgResHandlerInf::ProductVersion CfgJsonRecElement::pv() const
+{
+    return m_pv;
+}
+
 TestPlanEnum CfgJsonRecElement::plan() const
 {
     return m_plan;

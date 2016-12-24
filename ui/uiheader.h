@@ -23,16 +23,16 @@ class TestUnitName{
 public:
     TestUnitName() = delete;
 public:
-    static QString VOL()       { return QStringLiteral("Voltage"); }
-    static QString THROTTLE()  { return QStringLiteral("Throttle"); }
-    static QString CURRENT()  { return QStringLiteral("Current"); }
-    static QString THRUST()   { return QStringLiteral("Thrust"); }
-    static QString TORQUE()  { return QStringLiteral("Torque"); }
-    static QString SPEED()  { return QStringLiteral("Speed"); }
-    static QString TEMP1()  { return QStringLiteral("Temp1"); }
-    static QString TEMP2()  { return QStringLiteral("Temp2"); }
-    static QString EFFI_POWER()  { return QStringLiteral("EFFI POWER"); }
-    static QString EFFI_ELE()  { return QStringLiteral("EFFI ELE"); }
+    static QString VOL()       { return QStringLiteral("VOLTAGE"); }
+    static QString THROTTLE()  { return QStringLiteral("THROTTLE"); }
+    static QString CURRENT()  { return QStringLiteral("CURRENT"); }
+    static QString THRUST()   { return QStringLiteral("THRUST"); }
+    static QString TORQUE()  { return QStringLiteral("TORQUE"); }
+    static QString SPEED()  { return QStringLiteral("SPEED"); }
+    static QString TEMP1()  { return QStringLiteral("TEMP1"); }
+    static QString TEMP2()  { return QStringLiteral("TEMP2"); }
+    static QString EFFI_POWER()  { return QStringLiteral("EFFICIENCY-1"); }
+    static QString EFFI_ELE()  { return QStringLiteral("EFFICIENCY-2"); }
     static QString POWER()  { return QStringLiteral("POWER"); }
     static QString MECHAPWR()  { return QStringLiteral("MECHAPWR"); }
     static QString MECHAEFFI()  { return QStringLiteral("MECHAEFFI"); }
@@ -97,7 +97,7 @@ enum JsonGUIPrimType : quint8 { INVALID,
 
 
 static const char* JsonGUIPrimFormat[] = {
-    "%10f",   //INVALID
+    "%10.1f",   //INVALID
     "%10.1f",   //VOLTAGE
     "%10.2f",   //CURRENT
     "%10.1f",   //THRUST

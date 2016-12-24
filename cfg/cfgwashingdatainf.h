@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include "cfg/datajsonrecelement.h"
+#include "chartsview/qcustomplot.h"
 
 class CfgMetaElement{
 public:
@@ -39,12 +40,18 @@ public:
     explicit CfgWashingDataInf(const CfgWashingTypeEnum type);
     virtual ~CfgWashingDataInf() {}
     virtual void wash(const QVector<DataJsonRecElementE2>&) = 0;
-
+    virtual void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) = 0;
     CfgWashingTypeEnum type() const;
 
 private:
     CfgWashingTypeEnum m_type;
 };
+
+//struct KV
+//{
+//    double key;
+//    double value;
+//};
 
 //Q_DECLARE_INTERFACE(cfgWashingDataInf, "cfgWashingDataInf/1.0")
 
@@ -134,6 +141,7 @@ public:
 public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
 
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
@@ -157,7 +165,7 @@ public:
 public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
-
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);

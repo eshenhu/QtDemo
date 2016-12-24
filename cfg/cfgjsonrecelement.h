@@ -29,6 +29,8 @@ public:
 
     TestPlanEnum plan() const;
 
+    CfgResHandlerInf::ProductVersion pv() const;
+
 private:
     CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder& builder);
 

@@ -97,7 +97,7 @@ void JsonGUIElement::read(const QJsonObject &json)
     m_unit = json["unit"].toString();
 }
 
-JsonGUIPrimType JsonGUIElement::lookup(const QString str) const
+JsonGUIPrimType JsonGUIElement::lookup(const QString& str)
 {
     if (str.contains("VOLTAGE"))
         return JsonGUIPrimType::VOLTAGE;
