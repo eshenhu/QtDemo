@@ -500,7 +500,7 @@ const static functionT functionMechaPower = [](const QModbus2DataUnit* data, con
 };
 
 /*
- * MechaPower = 2* pi * Torque * RPM / 60 = Torque * RPM / 9549
+ * MechaPower = 2* pi * Torque * RPM / 60 = Torque * RPM / 9.549
  */
 const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
@@ -517,7 +517,7 @@ const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint3
         rpmData = boxSpeed->pushData();
 
     qDebug() << "Mecha Power is: torqueData" << torqueData << "rpmData" << rpmData;
-    double result = torqueData * rpmData / 9549;
+    double result = torqueData * rpmData / 9.549;
 
     return result;
 };

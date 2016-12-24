@@ -275,8 +275,8 @@
           "text": "TORQUE",
           "index": 0,
           "isSelected": true,
-          "lowLimit": -5000,
-          "upLimit": 5000,
+          "lowLimit": -50,
+          "upLimit": 50,
           "unit": "N.m"
         },
         {
@@ -363,8 +363,8 @@
           "text": "TORQUE",
           "index": 1,
           "isSelected": true,
-          "lowLimit": -5000,
-          "upLimit": 5000,
+          "lowLimit": -50,
+          "upLimit": 50,
           "unit": "N.m"
         },
         {
