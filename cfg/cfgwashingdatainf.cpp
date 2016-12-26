@@ -1,6 +1,7 @@
 #include "cfgwashingdatainf.h"
 #include "ui/uiheader.h"
 #include <QMap>
+#include "util/polyfit.h"
 
 CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E2),
@@ -271,7 +272,7 @@ void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdat
         for (const DataJsonRecElementE2& data : rawdata)
         {
             map.insert(data.getData(xIdx), data.getData(yIdx));
-        }
+        }        
 
         item.data.clear();
         auto iter = map.cbegin();
@@ -297,10 +298,49 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &
         motorIdx = m_data[idx].motorIdx;
         name = m_data[idx].XKey.str + ":" + m_data[idx].YValue.str;
 
-        for (const KV& kv : m_data[idx].data)
+        const quint32 size = m_data[idx].data.size();
+
+        double* xAsix = new double[size];
+        double* yAsix = new double[size];
+//        int* zAsix = new int[size];
+//        zAsix[0] = 1;
+//        zAsix[1] = 2;
+//        int a = zAsix[0];
+//        int b = zAsix[1];
+        const quint32 order = 2;
+        double coefficients[order+1]; // y = ax*x + bx + c;
+
+        qint32 xAsixFloor = qFloor(m_data[idx].data.first().key);
+        qint32 xAsixCeil = qCeil(m_data[idx].data.last().key);
+
+        quint32 eleIdx = 0;
+        for (const KV& ele : m_data[idx].data)
         {
-            pairs.append(QCPGraphData(kv.key, kv.value));
+            xAsix[eleIdx] = ele.key;
+            yAsix[eleIdx] = ele.value;
+
+            eleIdx++;
         }
+
+        for (int x = 0; x < size; x++)
+        {
+            qDebug() << "cfgwashingdatainf x=" << xAsix[x] << "y=" << yAsix[x];
+        }
+
+        PolyFitClz::plotfit(xAsix, yAsix, size, order, coefficients);
+
+        for (qint32 x = xAsixFloor; x < xAsixCeil; x++)
+        {
+            double y = coefficients[2] * x * x
+                    +  coefficients[1] * x
+                    +  coefficients[0];
+
+            pairs.append(QCPGraphData((double)x, y));
+        }
+
+        delete[] xAsix;
+        delete[] yAsix;
+        //delete[] zAsix;
     }
     else
     {
@@ -308,7 +348,6 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &
                    << m_data.size();
     }
 }
-
 
 //-------------------------------------------------
 CfgWashingDataInf::CfgWashingDataInf(const CfgWashingTypeEnum type):

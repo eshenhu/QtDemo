@@ -584,9 +584,10 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
 
             qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
             //if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
-            //{
-            updateGraph(rect, selectIdx);
-            //}
+            if (selectIdx != UINT32_MAX)
+            {
+                updateGraph(rect, selectIdx);
+            }
         }
 
     }

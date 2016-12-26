@@ -49,7 +49,8 @@ SOURCES += main.cpp \
     cfg/cfgzerocalibrateclz.cpp \
     cfg/datajsoncfgreader.cpp \
     chartsview/qcustomplot.cpp \
-    ui/uiheader.cpp
+    ui/uiheader.cpp \
+    util/polyfit.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -106,7 +107,8 @@ HEADERS += \
     cfg/cfgzerocalibrateclz.h \
     ui/functionmap.h \
     cfg/datajsoncfgreader.h \
-    chartsview/qcustomplot.h
+    chartsview/qcustomplot.h \
+    util/polyfit.h
 
 FORMS += \
     ui/testinfoconfig.ui \
