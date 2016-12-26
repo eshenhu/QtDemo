@@ -58,8 +58,10 @@ void ChartViewerWin::open()
             initAxesAndView(ui->customPlot);
             loadDefault2Plot();
             setupSignalAndSlot();
+
+            emit testPlanChanged(cfgMetaData.plan());
             // inform this information
-            emit leftFileOk(true);
+            //emit leftFileOk(true);
         }
         ui->customPlot->replot();
     }
@@ -171,28 +173,61 @@ bool ChartViewerWin::loadDefault2Plot()
 
 void ChartViewerWin::createActions()
 {
+    /*------ add openAct -------*/
     QToolBar *fileToolBar = addToolBar(tr("File_A"));
 
     const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-    QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
+    openAct = new QAction(openIcon, tr("&Open..."), this);
     //openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, &QAction::triggered, this, &ChartViewerWin::open);
     fileToolBar->addAction(openAct);
 
+    openAct->setEnabled(true);
+
+    /*------ add openAct_B -------*/
     QToolBar *fileToolBar_B = addToolBar(tr("File_B"));
 
     const QIcon openIcon_B = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-    QAction *openAct_B = new QAction(openIcon_B, tr("&Open..."), this);
+    openAct_B = new QAction(openIcon_B, tr("&Open..."), this);
     //openAct->setShortcuts(QKeySequence::Open);
     openAct_B->setStatusTip(tr("Open an existing file"));
     connect(openAct_B, &QAction::triggered, this, &ChartViewerWin::open_validate);
     fileToolBar_B->addAction(openAct_B);
 
-    openAct->setEnabled(true);
+    openAct_B->setVisible(true);
     openAct_B->setEnabled(false);
 
-    connect(this, &ChartViewerWin::leftFileOk, openAct_B, &QAction::setEnabled);
+    //connect(this, &ChartViewerWin::leftFileOk, openAct_B, &QAction::setEnabled);
+
+    /*------ add openAct_B -------*/
+    QToolBar *curveToolBar = addToolBar(tr("Curve"));
+    curveToolBar->addSeparator();
+
+    const QIcon curveIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+    QMenu *curveMenu = new QMenu(tr("Curve"));
+
+    QAction *curveAction_current = new QAction(tr("current character curve"), this);
+    curveMenu->addAction(curveAction_current);
+
+    QAction *curveAction_thrust  = new QAction(tr("thrust character curve"), this);
+    curveMenu->addAction(curveAction_thrust);
+
+    QAction *curveAction_torque  = new QAction(tr("torque character curve"), this);
+    curveMenu->addAction(curveAction_torque);
+
+    QAction *curveAction_speed   = new QAction(tr("speed character curve"), this);
+    curveMenu->addAction(curveAction_speed);
+
+
+    QToolButton* curveButton = new QToolButton();
+    curveButton->setIcon(curveIcon);
+    curveButton->setMenu(curveMenu);
+    curveButton->setPopupMode(QToolButton::InstantPopup);
+    curveAction = curveToolBar->addWidget(curveButton);
+
+    curveAction->setVisible(true);
+    curveAction->setEnabled(false);
 }
 
 void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
@@ -321,6 +356,21 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 
 void ChartViewerWin::setupSignalAndSlot()
 {
+    connect(this, &ChartViewerWin::testPlanChanged, [this](TestPlanEnum plan){
+        openAct_B->setEnabled(false);
+        curveAction->setEnabled(false);
+
+        if (plan == TestPlanEnum::Voltage ||
+            plan == TestPlanEnum::Throttle)
+        {
+            openAct_B->setEnabled(true);
+        }
+        else if (plan == TestPlanEnum::Multiplue)
+        {
+            curveAction->setEnabled(true);
+        }
+    });
+
     // connect some interaction slots:
     connect(ui->customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)),
             this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
@@ -341,7 +391,8 @@ void ChartViewerWin::releaseSignalAndSlot()
 
 void ChartViewerWin::removeAllGraphs()
 {
-    emit leftFileOk(false);
+    //emit leftFileOk(false);
+    emit testPlanChanged(TestPlanEnum::Invaild);
     ui->customPlot->disconnect();
     ui->customPlot->clearGraphs();
     ui->customPlot->plotLayout()->clear();

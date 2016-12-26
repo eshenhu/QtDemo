@@ -191,17 +191,6 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
     AsixDataItem axisItemY;
     CfgMultiWashingDataItem item;
 
-//    REC_CUR1_POS,
-//    REC_THU1_POS,
-//    REC_TORQUE1_POS,
-//    REC_SPEED1_POS,
-//    REC_MOTOR1TMP1_POS,
-//    REC_MOTOR1TMP2_POS,
-//    REC_M1EFFICI1_POS,
-//    REC_M1EFFICI2_POS,
-//    REC_M1POWER,
-//    REC_M1MECHAPWR,
-//    REC_M1MECHAEFFI,
     item.motorIdx = 0;
     axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
     axisItemX.str = TestUnitName::CURRENT();
@@ -300,47 +289,43 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &
 
         const quint32 size = m_data[idx].data.size();
 
-        double* xAsix = new double[size];
-        double* yAsix = new double[size];
-//        int* zAsix = new int[size];
-//        zAsix[0] = 1;
-//        zAsix[1] = 2;
-//        int a = zAsix[0];
-//        int b = zAsix[1];
-        const quint32 order = 2;
-        double coefficients[order+1]; // y = ax*x + bx + c;
+        std::shared_ptr<double> xAsix(new double[size]);
+        std::shared_ptr<double> yAsix(new double[size]);
 
-        qint32 xAsixFloor = qFloor(m_data[idx].data.first().key);
-        qint32 xAsixCeil = qCeil(m_data[idx].data.last().key);
+        do {
+            const quint32 order = 2;
+            double coefficients[order+1]; // y = ax*x + bx + c;
 
-        quint32 eleIdx = 0;
-        for (const KV& ele : m_data[idx].data)
-        {
-            xAsix[eleIdx] = ele.key;
-            yAsix[eleIdx] = ele.value;
+            qint32 xAsixFloor = qFloor(m_data[idx].data.first().key);
+            qint32 xAsixCeil = qCeil(m_data[idx].data.last().key);
 
-            eleIdx++;
-        }
+            quint32 eleIdx = 0;
+            for (const KV& ele : m_data[idx].data)
+            {
+                double* xValue = xAsix.get();
+                xValue[eleIdx] = ele.key;
+                double* yValue = yAsix.get();
+                yValue[eleIdx] = ele.value;
 
-        for (int x = 0; x < size; x++)
-        {
-            qDebug() << "cfgwashingdatainf x=" << xAsix[x] << "y=" << yAsix[x];
-        }
+                eleIdx++;
+            }
 
-        PolyFitClz::plotfit(xAsix, yAsix, size, order, coefficients);
+//            for (int x = 0; x < size; x++)
+//            {
+//                qDebug() << "cfgwashingdatainf x=" << xAsix[x] << "y=" << yAsix[x];
+//            }
 
-        for (qint32 x = xAsixFloor; x < xAsixCeil; x++)
-        {
-            double y = coefficients[2] * x * x
-                    +  coefficients[1] * x
-                    +  coefficients[0];
+            PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, coefficients);
 
-            pairs.append(QCPGraphData((double)x, y));
-        }
+            for (qint32 x = xAsixFloor; x < xAsixCeil; x++)
+            {
+                double y = coefficients[2] * x * x
+                        +  coefficients[1] * x
+                        +  coefficients[0];
 
-        delete[] xAsix;
-        delete[] yAsix;
-        //delete[] zAsix;
+                pairs.append(QCPGraphData((double)x, y));
+            }
+        }while(0);
     }
     else
     {

@@ -78,9 +78,12 @@ public:
 
     void showText();
 
+
 private:
     Ui::ChartViewerWin *ui = nullptr;
-
+    QAction *openAct;
+    QAction *openAct_B;
+    QAction* curveAction;
     //QSharedPointer<QCPTextElement> m_title;
     QCPTextElement* m_title;
 
@@ -99,8 +102,8 @@ private:
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
 signals:
-    void leftFileOk(bool);
-
+    //void leftFileOk(bool);
+    void testPlanChanged(TestPlanEnum plan);
 private slots:
     void removeAllGraphs();
     void removeGraph();
@@ -116,7 +119,7 @@ private slots:
     void contextMenuRequest(QPoint pos);
     void contextMenuRequest(QCPAxis *axis);
     void contextMenuRequest(QCPAxisRect* rect);
-    void releaseSignalAndSlot();
+    void releaseSignalAndSlot();    
 };
 
 #endif // CHARTVIEWERWIN_H
