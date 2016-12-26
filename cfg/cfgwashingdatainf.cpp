@@ -1,5 +1,6 @@
 #include "cfgwashingdatainf.h"
 #include "ui/uiheader.h"
+#include <QMap>
 
 CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E2),
@@ -179,6 +180,137 @@ void CfgThrottleWashingDataE2Clz::accumulate(const CfgItemMeasBasedE2DataEle &da
     }
 }
 
+
+//-------------------------------------------------
+
+CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
+    CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
+{
+    AsixDataItem axisItemX;
+    AsixDataItem axisItemY;
+    CfgMultiWashingDataItem item;
+
+//    REC_CUR1_POS,
+//    REC_THU1_POS,
+//    REC_TORQUE1_POS,
+//    REC_SPEED1_POS,
+//    REC_MOTOR1TMP1_POS,
+//    REC_MOTOR1TMP2_POS,
+//    REC_M1EFFICI1_POS,
+//    REC_M1EFFICI2_POS,
+//    REC_M1POWER,
+//    REC_M1MECHAPWR,
+//    REC_M1MECHAEFFI,
+    item.motorIdx = 0;
+    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+    axisItemX.str = TestUnitName::CURRENT();
+    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+    axisItemY.str = TestUnitName::THRUST();
+
+    item.XKey = axisItemX;
+    item.YValue = axisItemY;
+    m_data.append(item);
+
+    item.motorIdx = 0;
+    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+    axisItemX.str = TestUnitName::CURRENT();
+    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+    axisItemY.str = TestUnitName::TORQUE();
+
+    item.XKey = axisItemX;
+    item.YValue = axisItemY;
+    m_data.append(item);
+
+    item.motorIdx = 0;
+    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+    axisItemX.str = TestUnitName::CURRENT();
+    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+    axisItemY.str = TestUnitName::SPEED();
+
+    item.XKey = axisItemX;
+    item.YValue = axisItemY;
+    m_data.append(item);
+
+    item.motorIdx = 0;
+    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+    axisItemX.str = TestUnitName::CURRENT();
+    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
+    axisItemY.str = TestUnitName::EFFI_POWER();
+
+    item.XKey = axisItemX;
+    item.YValue = axisItemY;
+    m_data.append(item);
+
+    item.motorIdx = 0;
+    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+    axisItemX.str = TestUnitName::CURRENT();
+    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
+    axisItemY.str = TestUnitName::EFFI_ELE();
+
+    item.XKey = axisItemX;
+    item.YValue = axisItemY;
+    m_data.append(item);
+
+    m_guiList.clear();
+    for (const CfgMultiWashingDataItem& item : m_data)
+    {
+        QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
+        //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
+        m_guiList.append(list.join(':'));
+    }
+}
+
+void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdata)
+{
+    for (CfgMultiWashingDataItem& item : m_data)
+    {
+        quint32 xIdx = item.XKey.idx;
+        quint32 yIdx = item.YValue.idx;
+        QMap<double, double> map;
+
+        for (const DataJsonRecElementE2& data : rawdata)
+        {
+            map.insert(data.getData(xIdx), data.getData(yIdx));
+        }
+
+        item.data.clear();
+        auto iter = map.cbegin();
+        while (iter != map.cend())
+        {
+            qDebug() << "x = " << iter.key() << "y" << iter.value();
+            item.data.append( KV(iter.key(), iter.value()) );
+
+            ++iter;
+        }
+    }
+}
+
+QVector<CfgMultiWashingDataItem> &CfgMultiWashingDataE2Clz::data()
+{
+    return m_data;
+}
+
+void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
+{
+    if (idx < (quint32)m_data.size())
+    {
+        motorIdx = m_data[idx].motorIdx;
+        name = m_data[idx].XKey.str + ":" + m_data[idx].YValue.str;
+
+        for (const KV& kv : m_data[idx].data)
+        {
+            pairs.append(QCPGraphData(kv.key, kv.value));
+        }
+    }
+    else
+    {
+        qWarning() << "Warning: out of size of array, request = " << idx << "size of container"
+                   << m_data.size();
+    }
+}
+
+
+//-------------------------------------------------
 CfgWashingDataInf::CfgWashingDataInf(const CfgWashingTypeEnum type):
     m_type(type)
 {
@@ -278,3 +410,5 @@ void CfgMetaElement::setData(double value)
 {
     data = value;
 }
+
+

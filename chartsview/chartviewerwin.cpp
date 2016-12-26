@@ -161,7 +161,7 @@ bool ChartViewerWin::loadDefault2Plot()
     QCPAxisRect* rect;
 
     rect = addRect(ui->customPlot);
-    updateGraph(rect, 9);
+    updateGraph(rect, 3);
 
     rect = addRect(ui->customPlot);
     updateGraph(rect, 3);
@@ -218,7 +218,8 @@ void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, 
     if (cfgRawData)
     {
         if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2   )
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2 ||
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
         {
             cfgRawData->generateData(idx, pairs, name, motorIdx);
         }
@@ -499,6 +500,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
 {
     m_assoRect = rect;
 
+    QString fullLabelName = rect->axis(QCPAxis::atLeft)->label();
     QString labelName = rect->axis(QCPAxis::atLeft)->label().split(':').at(0);
     QString motorIdxString = rect->axis(QCPAxis::atLeft)->label().split(':').at(1);
     quint32 motorIdxInt = motorIdxString.toInt();
@@ -542,8 +544,8 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                     cxtHeader = QStringLiteral("[*]");
 
                 const QString str = QString::asprintf("Switch to %-15s\t%5s",
-                                ele.getName().toLatin1().constData(),
-                                motorString.toLatin1().constData());
+                                                      ele.getName().toLatin1().constData(),
+                                                      motorString.toLatin1().constData());
 
                 QString matchWord;
                 if (cfgMetaData.plan() == TestPlanEnum::Voltage)
@@ -557,19 +559,36 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                 action->setCheckable(true);
                 action->setData(QVariant(idx++));
             }
+        }
+        else if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
+        {
+            QList<QString>& guiList = cfgRawData->getGUIActionList();
 
-            QAction *selectedAction = menu->exec(QCursor::pos());
-            if (selectedAction)
+            quint32 idx = 0;
+            for (const QString& str : guiList)
             {
-                quint32 selectIdx = selectedAction->data().toUInt();
+                QString cxtHeader("   ");
+                if (fullLabelName == str)
+                    cxtHeader = QStringLiteral("[*]");
 
-                qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
-                if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
-                {
-                    updateGraph(rect, selectIdx);
-                }
+                action = menu->addAction(cxtHeader + str);
+                action->setCheckable(true);
+                action->setData(QVariant(idx++));
             }
         }
+
+        QAction *selectedAction = menu->exec(QCursor::pos());
+        if (selectedAction)
+        {
+            quint32 selectIdx = selectedAction->data().toUInt();
+
+            qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
+            //if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
+            //{
+            updateGraph(rect, selectIdx);
+            //}
+        }
+
     }
 }
 

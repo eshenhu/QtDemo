@@ -41,17 +41,23 @@ public:
     virtual ~CfgWashingDataInf() {}
     virtual void wash(const QVector<DataJsonRecElementE2>&) = 0;
     virtual void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) = 0;
+    virtual QList<QString>& getGUIActionList() = 0;
     CfgWashingTypeEnum type() const;
 
 private:
     CfgWashingTypeEnum m_type;
 };
 
-//struct KV
-//{
-//    double key;
-//    double value;
-//};
+class KV
+{
+public:
+    KV(){}
+    KV(double x, double y): key(x), value(y){}
+
+public:
+    double key;
+    double value;
+};
 
 //Q_DECLARE_INTERFACE(cfgWashingDataInf, "cfgWashingDataInf/1.0")
 
@@ -142,12 +148,13 @@ public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
-
+    QList<QString> &getGUIActionList(){ return m_guiList; }
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
 private:
     QVector<CfgItemMeasBasedE2DataEle> m_data;
+    QList<QString> m_guiList;
 };
 
 
@@ -166,11 +173,52 @@ public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
+    QList<QString> &getGUIActionList(){ return m_guiList; }
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
 private:
     QVector<CfgItemMeasBasedE2DataEle> m_data;
+    QList<QString> m_guiList;
+};
+
+
+//---------------------------------------------
+/*
+ * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
+*/
+
+struct AsixDataItem
+{
+    QString str;
+    quint32 idx;
+};
+
+struct CfgMultiWashingDataItem
+{
+    quint32 motorIdx;
+    AsixDataItem XKey;
+    AsixDataItem YValue;
+    QVector<KV> data;
+};
+
+class CfgMultiWashingDataE2Clz : public CfgWashingDataInf
+{
+public:
+    CfgMultiWashingDataE2Clz();
+    ~CfgMultiWashingDataE2Clz() {}
+    // cfgWashingDataInf interface
+public:
+    void wash(const QVector<DataJsonRecElementE2>&) override;
+    QVector<CfgMultiWashingDataItem>& data();
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
+    QList<QString> &getGUIActionList(){ return m_guiList; }
+private:
+    //CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
+    //void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
+private:
+    QVector<CfgMultiWashingDataItem> m_data;
+    QList<QString> m_guiList;
 };
 
 #endif // CFGWASHINGDATAINF_H

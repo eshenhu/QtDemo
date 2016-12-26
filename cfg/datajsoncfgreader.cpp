@@ -43,14 +43,15 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                 {
                     DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
                     handler.loadData(csvFullFileName);
-                    //m_csvDataHandler = new CfgThrottleWashingDataE2Clz();
+
                     m_csvDataHandler = QSharedPointer<CfgThrottleWashingDataE2Clz>::create();
-                    QSharedPointer<CfgThrottleWashingDataE2Clz> dynCast =
-                            qSharedPointerDynamicCast<CfgThrottleWashingDataE2Clz>(m_csvDataHandler);
-                    if (dynCast != nullptr)
-                    {
-                         dynCast->wash(handler.data());
-                    }
+                    m_csvDataHandler->wash(handler.data());
+//                    QSharedPointer<CfgThrottleWashingDataE2Clz> dynCast =
+//                            qSharedPointerDynamicCast<CfgThrottleWashingDataE2Clz>(m_csvDataHandler);
+//                    if (dynCast != nullptr)
+//                    {
+//                         dynCast->wash(handler.data());
+//                    }
                 }
                     break;
                 case (quint32)TestPlanEnum::Voltage:
@@ -58,16 +59,28 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                     DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
                     handler.loadData(csvFullFileName);
                     m_csvDataHandler = QSharedPointer<CfgVolWashingDataE2Clz>::create();
-                    QSharedPointer<CfgVolWashingDataE2Clz> dynCast =
-                            qSharedPointerDynamicCast<CfgVolWashingDataE2Clz>(m_csvDataHandler);
-                    if (dynCast != nullptr)
-                    {
-                         dynCast->wash(handler.data());
-                    }
+                    m_csvDataHandler->wash(handler.data());
+//                    QSharedPointer<CfgVolWashingDataE2Clz> dynCast =
+//                            qSharedPointerDynamicCast<CfgVolWashingDataE2Clz>(m_csvDataHandler);
+//                    if (dynCast != nullptr)
+//                    {
+//                         dynCast->wash(handler.data());
+//                    }
+                }
+                break;
+
+                case (quint32)TestPlanEnum::Multiplue:
+                {
+                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgMultiWashingDataE2Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
                 }
                 break;
 
                 default:
+                    qCWarning(TEXT_LOGGING) << "This plan was not supported now, plan = "
+                                            << static_cast<quint32>(cfgParser.plan());
                     break;
                 }
             }
