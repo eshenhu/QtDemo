@@ -220,10 +220,13 @@ void ChartViewerWin::createActions()
     curveMenu->addAction(curveAction_speed);
 
 
-    QToolButton* curveButton = new QToolButton();
-    curveButton->setIcon(curveIcon);
+    QPushButton* curveButton = new QPushButton();
+    curveButton->setText(tr("characteristic curve"));
+    //curveButton->setIcon(curveIcon);
     curveButton->setMenu(curveMenu);
-    curveButton->setPopupMode(QToolButton::InstantPopup);
+    //curveButton->setPopupMode(QToolButton::InstantPopup);
+
+    //curveButton->setDefaultAction(curveAction_current);
     curveAction = curveToolBar->addWidget(curveButton);
 
     curveAction->setVisible(true);
@@ -306,13 +309,14 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
 {
     if (graph)
     {
+        QString displayStr = name.split(':').value(1, "");
         graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 10));
         graph->setAntialiasedFill(true);
         graph->data()->set(pairs);
-        QColor color = colorPerTestElement[name];
+        QColor color = colorPerTestElement[displayStr];
         graph->setPen(QPen(color, 3));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
-        graph->setName(name + ": " + QString::number(motorIdx));
+        graph->setName(displayStr + ": " + QString::number(motorIdx));
         graph->rescaleValueAxis();
         graph->rescaleAxes();
         updateAxisAtBottomRect(ui->customPlot);

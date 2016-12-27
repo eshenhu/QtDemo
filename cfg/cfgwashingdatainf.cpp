@@ -2,6 +2,7 @@
 #include "ui/uiheader.h"
 #include <QMap>
 #include "util/polyfit.h"
+#include <memory>
 
 CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E2),
@@ -41,8 +42,8 @@ QVector<CfgItemMeasBasedE2DataEle> &CfgVolWashingDataE2Clz::data()
 
 void CfgVolWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
 {
-    name = m_data[0].getName(idx),
-            motorIdx = m_data[0].getMotorIdx(idx);
+    name = m_data[0].getName((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_VOL_POS) + ':' +  m_data[0].getName(idx),
+    motorIdx = m_data[0].getMotorIdx(idx);
 
     pairs.resize(m_data.size());
     for (int i = 0; i < m_data.size(); i++)
@@ -130,8 +131,8 @@ QVector<CfgItemMeasBasedE2DataEle> &CfgThrottleWashingDataE2Clz::data()
 
 void CfgThrottleWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
 {   
-    name = m_data[0].getName(idx),
-            motorIdx = m_data[0].getMotorIdx(idx);
+    name = m_data[0].getName((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_THRO_POS) + ':' + m_data[0].getName(idx);
+    motorIdx = m_data[0].getMotorIdx(idx);
 
     pairs.resize(m_data.size());
     for (int i = 0; i < m_data.size(); i++)
