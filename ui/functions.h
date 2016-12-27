@@ -301,9 +301,9 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
                   /CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
     }
 
-    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result;
+    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result/1000;
 
-    return result;
+    return result/1000;
 };
 
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){

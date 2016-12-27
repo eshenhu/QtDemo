@@ -186,109 +186,518 @@ void CfgThrottleWashingDataE2Clz::accumulate(const CfgItemMeasBasedE2DataEle &da
 //-------------------------------------------------
 
 CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
-    CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
+    CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGMULTI_E2),
+    m_data(0)
+
 {
     AsixDataItem axisItemX;
     AsixDataItem axisItemY;
     CfgMultiWashingDataItem item;
 
-    item.motorIdx = 0;
-    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
-    axisItemX.str = TestUnitName::CURRENT();
-    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
-    axisItemY.str = TestUnitName::THRUST();
+    QVector<CfgMultiWashingDataItem> itemList;
 
-    item.XKey = axisItemX;
-    item.YValue = axisItemY;
-    m_data.append(item);
-
-    item.motorIdx = 0;
-    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
-    axisItemX.str = TestUnitName::CURRENT();
-    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
-    axisItemY.str = TestUnitName::TORQUE();
-
-    item.XKey = axisItemX;
-    item.YValue = axisItemY;
-    m_data.append(item);
-
-    item.motorIdx = 0;
-    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
-    axisItemX.str = TestUnitName::CURRENT();
-    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
-    axisItemY.str = TestUnitName::SPEED();
-
-    item.XKey = axisItemX;
-    item.YValue = axisItemY;
-    m_data.append(item);
-
-    item.motorIdx = 0;
-    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
-    axisItemX.str = TestUnitName::CURRENT();
-    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
-    axisItemY.str = TestUnitName::EFFI_POWER();
-
-    item.XKey = axisItemX;
-    item.YValue = axisItemY;
-    m_data.append(item);
-
-    item.motorIdx = 0;
-    axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
-    axisItemX.str = TestUnitName::CURRENT();
-    axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
-    axisItemY.str = TestUnitName::EFFI_ELE();
-
-    item.XKey = axisItemX;
-    item.YValue = axisItemY;
-    m_data.append(item);
-
-    m_guiList.clear();
-    for (const CfgMultiWashingDataItem& item : m_data)
+    //-------=  0 = -----------------------
+    do
     {
-        QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
-        //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
-        m_guiList.append(list.join(':'));
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+    }while(0);
+
+    //-----------= 0 =-----------------------------
+    m_data.append(itemList);
+    itemList.clear();
+
+    //-------=  1 = -----------------------
+    do
+    {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+    }while(0);
+    //-----------= 1 =-----------------------------
+    m_data.append(itemList);
+    itemList.clear();
+
+    //-------=  2 = -----------------------
+    do
+    {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemY.str = TestUnitName::SPEED();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+    }while(0);
+    //-----------= 2 =-----------------------------
+    m_data.append(itemList);
+    itemList.clear();
+
+    //-------=  3 = -----------------------
+    do
+    {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemY.str = TestUnitName::CURRENT();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemY.str = TestUnitName::THRUST();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemY.str = TestUnitName::TORQUE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI1_POS;
+        axisItemY.str = TestUnitName::EFFI_POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
+        axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+    }while(0);
+    //-----------= 3 =-----------------------------
+    m_data.append(itemList);
+    itemList.clear();
+
+
+    //-----------= GUI =---------------------------
+    m_guiList.clear();
+    m_guiList.resize(m_data.size());
+
+    quint32 idxItemList = 0;
+    for (const QVector<CfgMultiWashingDataItem>& itemList : m_data)
+    {
+        for (const CfgMultiWashingDataItem& item : itemList)
+        {
+            QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
+            //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
+            m_guiList[idxItemList].append(list.join(':'));
+        }
+        idxItemList++;
     }
 }
 
 void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdata)
 {
-    for (CfgMultiWashingDataItem& item : m_data)
+    for (QVector<CfgMultiWashingDataItem>& itemList : m_data)
     {
-        quint32 xIdx = item.XKey.idx;
-        quint32 yIdx = item.YValue.idx;
-        QMap<double, double> map;
-
-        for (const DataJsonRecElementE2& data : rawdata)
+        for (CfgMultiWashingDataItem& item : itemList)
         {
-            map.insert(data.getData(xIdx), data.getData(yIdx));
-        }        
+            quint32 xIdx = item.XKey.idx;
+            quint32 yIdx = item.YValue.idx;
+            QMap<double, double> map;
 
-        item.data.clear();
-        auto iter = map.cbegin();
-        while (iter != map.cend())
-        {
-            qDebug() << "x = " << iter.key() << "y" << iter.value();
-            item.data.append( KV(iter.key(), iter.value()) );
+            for (const DataJsonRecElementE2& data : rawdata)
+            {
+                map.insert(data.getData(xIdx), data.getData(yIdx));
+            }
 
-            ++iter;
+            item.data.clear();
+            auto iter = map.cbegin();
+            while (iter != map.cend())
+            {
+                //qDebug() << "x = " << iter.key() << "y" << iter.value();
+                item.data.append( KV(iter.key(), iter.value()) );
+
+                ++iter;
+            }
         }
     }
 }
 
-QVector<CfgMultiWashingDataItem> &CfgMultiWashingDataE2Clz::data()
-{
-    return m_data;
-}
+//QVector<CfgMultiWashingDataItem> &CfgMultiWashingDataE2Clz::data()
+//{
+//    return m_data;
+//}
 
-void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
+void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
 {
-    if (idx < (quint32)m_data.size())
+    quint32 itemListIdx = (0xFFFF0000 & composeIdx) >> 16;
+    quint32 idx         = (0x0000FFFF & composeIdx);
+
+    if (itemListIdx >= m_data.size())
     {
-        motorIdx = m_data[idx].motorIdx;
-        name = m_data[idx].XKey.str + ":" + m_data[idx].YValue.str;
+        qWarning() << "Warning: out of size of array, request = " << idx << "size of container"
+                   << m_data.size();
+        return;
+    }
+    QVector<CfgMultiWashingDataItem>& itemList = m_data[itemListIdx];
 
-        const quint32 size = m_data[idx].data.size();
+    if (idx < (quint32)itemList.size())
+    {
+        motorIdx = itemList[idx].motorIdx;
+        name = itemList[idx].XKey.str + ":" + itemList[idx].YValue.str;
+
+        const quint32 size = itemList[idx].data.size();
 
         std::shared_ptr<double> xAsix(new double[size]);
         std::shared_ptr<double> yAsix(new double[size]);
@@ -297,11 +706,11 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &
             const quint32 order = 2;
             double coefficients[order+1]; // y = ax*x + bx + c;
 
-            qint32 xAsixFloor = qFloor(m_data[idx].data.first().key);
-            qint32 xAsixCeil = qCeil(m_data[idx].data.last().key);
+            qint32 xAsixFloor = qFloor(itemList[idx].data.first().key);
+            qint32 xAsixCeil = qCeil(itemList[idx].data.last().key);
 
             quint32 eleIdx = 0;
-            for (const KV& ele : m_data[idx].data)
+            for (const KV& ele : itemList[idx].data)
             {
                 double* xValue = xAsix.get();
                 xValue[eleIdx] = ele.key;
@@ -311,27 +720,33 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &
                 eleIdx++;
             }
 
+//            double* pX = xAsix.get();
+//            double* pY = yAsix.get();
+
 //            for (int x = 0; x < size; x++)
 //            {
-//                qDebug() << "cfgwashingdatainf x=" << xAsix[x] << "y=" << yAsix[x];
+//                qDebug() << "cfgwashingdatainf x=" << *(pX+x) << "y=" << *(pY+x);
 //            }
 
-            PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, coefficients);
+            PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, &coefficients[0]);
 
-            for (qint32 x = xAsixFloor; x < xAsixCeil; x++)
+            qint32 step = (xAsixCeil - xAsixFloor)/size;
+            step = (step == 0 ? 1 : step);
+            for (qint32 x = xAsixFloor; x < xAsixCeil; x+=step)
             {
                 double y = coefficients[2] * x * x
                         +  coefficients[1] * x
                         +  coefficients[0];
 
                 pairs.append(QCPGraphData((double)x, y));
+                qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
             }
         }while(0);
     }
     else
     {
         qWarning() << "Warning: out of size of array, request = " << idx << "size of container"
-                   << m_data.size();
+                   << itemList.size();
     }
 }
 

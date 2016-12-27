@@ -70,6 +70,7 @@ public:
     bool loadDefault2Plot();
 
     QCPGraph* addGraph(QCPAxisRect* rect);
+    void updateGraphDuringMultiplePlan(quint32 baseIdx);
     void updateGraph(QCPAxisRect* rect, quint32 idx);
     void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx);
 
@@ -84,6 +85,7 @@ private:
     QAction *openAct;
     QAction *openAct_B;
     QAction* curveAction;
+    quint32 itemListIdx = 0;
     //QSharedPointer<QCPTextElement> m_title;
     QCPTextElement* m_title;
 
@@ -120,6 +122,9 @@ private slots:
     void contextMenuRequest(QCPAxis *axis);
     void contextMenuRequest(QCPAxisRect* rect);
     void releaseSignalAndSlot();    
+
+private:
+    quint32 setupIdxMultipleTest(quint32 idx);
 };
 
 #endif // CHARTVIEWERWIN_H

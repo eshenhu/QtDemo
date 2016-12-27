@@ -41,7 +41,7 @@ public:
     virtual ~CfgWashingDataInf() {}
     virtual void wash(const QVector<DataJsonRecElementE2>&) = 0;
     virtual void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) = 0;
-    virtual QList<QString>& getGUIActionList() = 0;
+    virtual QList<QString>& getGUIActionList(quint32) = 0;
     CfgWashingTypeEnum type() const;
 
 private:
@@ -148,7 +148,7 @@ public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
-    QList<QString> &getGUIActionList(){ return m_guiList; }
+    QList<QString> &getGUIActionList(quint32) override { return m_guiList; }
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
@@ -173,7 +173,7 @@ public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
     QVector<CfgItemMeasBasedE2DataEle>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
-    QList<QString> &getGUIActionList(){ return m_guiList; }
+    QList<QString> &getGUIActionList(quint32) override { return m_guiList; }
 private:
     CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
@@ -210,15 +210,21 @@ public:
     // cfgWashingDataInf interface
 public:
     void wash(const QVector<DataJsonRecElementE2>&) override;
-    QVector<CfgMultiWashingDataItem>& data();
+//    QVector<CfgMultiWashingDataItem>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
-    QList<QString> &getGUIActionList(){ return m_guiList; }
+    QList<QString> &getGUIActionList(quint32 idx) override
+    {
+        if (idx < m_guiList.size())
+            return m_guiList[idx];
+        else
+            return m_guiList[0];
+    }
 private:
     //CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     //void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
 private:
-    QVector<CfgMultiWashingDataItem> m_data;
-    QList<QString> m_guiList;
+    QVector<QVector<CfgMultiWashingDataItem>> m_data;
+    QVector<QList<QString>> m_guiList;
 };
 
 #endif // CFGWASHINGDATAINF_H

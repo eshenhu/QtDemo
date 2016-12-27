@@ -163,10 +163,10 @@ bool ChartViewerWin::loadDefault2Plot()
     QCPAxisRect* rect;
 
     rect = addRect(ui->customPlot);
-    updateGraph(rect, 3);
+    updateGraph(rect, setupIdxMultipleTest(3));
 
     rect = addRect(ui->customPlot);
-    updateGraph(rect, 3);
+    updateGraph(rect, setupIdxMultipleTest(3));
 
     return true;
 }
@@ -200,34 +200,30 @@ void ChartViewerWin::createActions()
 
     //connect(this, &ChartViewerWin::leftFileOk, openAct_B, &QAction::setEnabled);
 
-    /*------ add openAct_B -------*/
+    /*------ add open -------*/
     QToolBar *curveToolBar = addToolBar(tr("Curve"));
     curveToolBar->addSeparator();
 
-    const QIcon curveIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-    QMenu *curveMenu = new QMenu(tr("Curve"));
+    QComboBox* curveComBox = new QComboBox();
+    curveComBox->addItem(tr("current character curve"));
+    curveComBox->addItem(tr("thrust character curve"));
+    curveComBox->addItem(tr("torque character curve"));
+    curveComBox->addItem(tr("speed character curve"));
+    curveComBox->setCurrentIndex(0);
 
-    QAction *curveAction_current = new QAction(tr("current character curve"), this);
-    curveMenu->addAction(curveAction_current);
+    connect(curveComBox,
+            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            [=](int index){
+        static int lastCurveComBoxIdx = -1;
+        if (index != lastCurveComBoxIdx)
+        {
+            lastCurveComBoxIdx = index;
+//            quint32 startIdx = CfgMultiWashingDataE2Clz::getBasedIdx(index);
+            updateGraphDuringMultiplePlan(index);
+        }
+    });
 
-    QAction *curveAction_thrust  = new QAction(tr("thrust character curve"), this);
-    curveMenu->addAction(curveAction_thrust);
-
-    QAction *curveAction_torque  = new QAction(tr("torque character curve"), this);
-    curveMenu->addAction(curveAction_torque);
-
-    QAction *curveAction_speed   = new QAction(tr("speed character curve"), this);
-    curveMenu->addAction(curveAction_speed);
-
-
-    QPushButton* curveButton = new QPushButton();
-    curveButton->setText(tr("characteristic curve"));
-    //curveButton->setIcon(curveIcon);
-    curveButton->setMenu(curveMenu);
-    //curveButton->setPopupMode(QToolButton::InstantPopup);
-
-    //curveButton->setDefaultAction(curveAction_current);
-    curveAction = curveToolBar->addWidget(curveButton);
+    curveAction = curveToolBar->addWidget(curveComBox);
 
     curveAction->setVisible(true);
     curveAction->setEnabled(false);
@@ -271,7 +267,7 @@ void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, 
 void ChartViewerWin::addRect()
 {
     QCPAxisRect* rect = addRect(ui->customPlot);
-    updateGraph(rect, 4);
+    updateGraph(rect, setupIdxMultipleTest(2));
 }
 
 QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
@@ -314,7 +310,7 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
         graph->setAntialiasedFill(true);
         graph->data()->set(pairs);
         QColor color = colorPerTestElement[displayStr];
-        graph->setPen(QPen(color, 3));
+        graph->setPen(QPen(color, 2));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
         graph->setName(displayStr + ": " + QString::number(motorIdx));
         graph->rescaleValueAxis();
@@ -324,6 +320,18 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
     }
 }
 
+void ChartViewerWin::updateGraphDuringMultiplePlan(quint32 baseIdx)
+{
+//    removeAllGraphs();
+    for (QCPAxisRect* rect : ui->customPlot->axisRects())
+    {
+        m_assoRect = rect;
+        removeGraph();
+    }
+    itemListIdx = baseIdx;
+
+    updateGraph(ui->customPlot->axisRect(0), setupIdxMultipleTest(0));
+}
 
 void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 {
@@ -368,10 +376,12 @@ void ChartViewerWin::setupSignalAndSlot()
             plan == TestPlanEnum::Throttle)
         {
             openAct_B->setEnabled(true);
+            itemListIdx = 0;
         }
         else if (plan == TestPlanEnum::Multiplue)
         {
             curveAction->setEnabled(true);
+            itemListIdx = 0;
         }
     });
 
@@ -392,10 +402,26 @@ void ChartViewerWin::releaseSignalAndSlot()
     ui->customPlot->disconnect();
 }
 
+quint32 ChartViewerWin::setupIdxMultipleTest(quint32 idx)
+{
+    return (itemListIdx << 16 | idx);
+}
+
+//void ChartViewerWin::clearGraphsExceptTitle()
+//{
+//    QCPLayoutGrid* gridLayout = ui->customPlot->plotLayout();
+//    // we fix the title on the grid (0,0)
+//    for (int i=gridLayout->elementCount()-1; i>=1; --i)
+//    {
+//      if (gridLayout->elementAt(i))
+//        gridLayout->removeAt(i);
+//    }
+//    gridLayout->simplify();
+//}
+
 
 void ChartViewerWin::removeAllGraphs()
 {
-    //emit leftFileOk(false);
     emit testPlanChanged(TestPlanEnum::Invaild);
     ui->customPlot->disconnect();
     ui->customPlot->clearGraphs();
@@ -410,9 +436,6 @@ void ChartViewerWin::removeAllGraphs()
 void ChartViewerWin::removeGraph()
 {
     qDebug() << "ui->customPlot remove " << m_assoRect->axis(QCPAxis::atLeft)->label();
-
-
-//    ui->customPlot->removeLayer();
 
     if (m_assoRect)
     {
@@ -617,7 +640,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
         }
         else if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
         {
-            QList<QString>& guiList = cfgRawData->getGUIActionList();
+            QList<QString>& guiList = cfgRawData->getGUIActionList(itemListIdx);
 
             quint32 idx = 0;
             for (const QString& str : guiList)
@@ -641,7 +664,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
             //if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
             if (selectIdx != UINT32_MAX)
             {
-                updateGraph(rect, selectIdx);
+                updateGraph(rect, setupIdxMultipleTest(selectIdx));
             }
         }
 

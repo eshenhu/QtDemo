@@ -22,7 +22,7 @@ std::map<QString, QColor> colorPerTestElement =
     { TestUnitName::CURRENT(), QColor("#FF0000") },
     { TestUnitName::THRUST(), QColor("#FF00FF") },
     { TestUnitName::TORQUE(), QColor("#A020F0") },
-    { TestUnitName::SPEED(), QColor("#C1FFC1") },
+    { TestUnitName::SPEED(), QColor("#20B2AA") },
     { TestUnitName::TEMP1(), QColor("#00FF00") },
     { TestUnitName::TEMP2(), QColor("#7FFFD4") },
     { TestUnitName::EFFI_POWER(), QColor("#FFB5C5") },
