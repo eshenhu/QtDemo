@@ -305,6 +305,10 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI;
         axisItemY.str = TestUnitName::MECHAEFFI();
 
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         // motor 1
         item.motorIdx = 1;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
@@ -411,6 +415,11 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         axisItemX.str = TestUnitName::THROTTLE();
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI;
         axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
     }while(0);
 
     //-----------= -1 =-----------------------------
@@ -420,6 +429,16 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
     //-------=  0 = -----------------------
     do
     {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 0;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
         axisItemX.str = TestUnitName::CURRENT();
@@ -465,6 +484,46 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         axisItemX.str = TestUnitName::CURRENT();
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1EFFICI2_POS;
         axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
 
         item.XKey = axisItemX;
         item.YValue = axisItemY;
@@ -519,6 +578,36 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.XKey = axisItemX;
         item.YValue = axisItemY;
         itemList.append(item);
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR2_POS;
+        axisItemX.str = TestUnitName::CURRENT();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
     }while(0);
 
     //-----------= 0 =-----------------------------
@@ -528,6 +617,16 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
     //-------=  1 = -----------------------
     do
     {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 0;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
         axisItemX.str = TestUnitName::THRUST();
@@ -578,7 +677,47 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.YValue = axisItemY;
         itemList.append(item);
 
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU1_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 1;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
         axisItemX.str = TestUnitName::THRUST();
@@ -624,6 +763,36 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         axisItemX.str = TestUnitName::THRUST();
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
         axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THU2_POS;
+        axisItemX.str = TestUnitName::THRUST();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
 
         item.XKey = axisItemX;
         item.YValue = axisItemY;
@@ -639,6 +808,16 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.motorIdx = 0;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
         axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_CUR1_POS;
         axisItemY.str = TestUnitName::CURRENT();
 
@@ -686,7 +865,47 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.YValue = axisItemY;
         itemList.append(item);
 
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE1_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 1;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
         axisItemX.str = TestUnitName::TORQUE();
@@ -736,6 +955,36 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.XKey = axisItemX;
         item.YValue = axisItemY;
         itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_TORQUE2_POS;
+        axisItemX.str = TestUnitName::TORQUE();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
     }while(0);
     //-----------= 2 =-----------------------------
     m_data.append(itemList);
@@ -744,6 +993,16 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
     //-------=  3 = -----------------------
     do
     {
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 0;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
         axisItemX.str = TestUnitName::SPEED();
@@ -794,7 +1053,47 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         item.YValue = axisItemY;
         itemList.append(item);
 
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 0;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED1_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M1MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         //---- motot -1 ----------
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_THRO_POS;
+        axisItemY.str = TestUnitName::THROTTLE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
         item.motorIdx = 1;
         axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
         axisItemX.str = TestUnitName::SPEED();
@@ -840,6 +1139,36 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
         axisItemX.str = TestUnitName::SPEED();
         axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2EFFICI2_POS;
         axisItemY.str = TestUnitName::EFFI_ELE();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2POWER;
+        axisItemY.str = TestUnitName::POWER();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAPWR;
+        axisItemY.str = TestUnitName::MECHAPWR();
+
+        item.XKey = axisItemX;
+        item.YValue = axisItemY;
+        itemList.append(item);
+
+        item.motorIdx = 1;
+        axisItemX.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_SPEED2_POS;
+        axisItemX.str = TestUnitName::SPEED();
+        axisItemY.idx = (quint32)DataJsonRecElementE2::ELEMCURSOR::REC_M2MECHAEFFI;
+        axisItemY.str = TestUnitName::MECHAEFFI();
 
         item.XKey = axisItemX;
         item.YValue = axisItemY;
@@ -963,7 +1292,7 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
                         +  coefficients[0];
 
                 pairs.append(QCPGraphData((double)x, y));
-                qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
+                //qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
             }
         }while(0);
     }

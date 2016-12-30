@@ -43,6 +43,7 @@
 #include <QProgressDialog>
 #include <QSerialPortInfo>
 #include <QString>
+#include <memory>
 
 #include "ui/compqchartwidget.h"
 #include "ui/configtab.h"
@@ -168,10 +169,12 @@ ActionWidget::ActionWidget(QWidget *parent)
         }
     });
 
-    connect(m_subTestTabWidget->showgraph_btn(), &QPushButton::clicked, [this](bool checked){
+    connect(m_subTestTabWidget->showgraph_btn(), &QPushButton::clicked, [=](bool checked){
         Q_UNUSED(checked)
 
-        ChartViewerWin* chartViewer = new ChartViewerWin();
+        //std::unique_ptr<ChartViewerWin> chartViewer(new ChartViewerWin(parent));
+        ChartViewerWin* chartViewer = new ChartViewerWin(parent);
+        chartViewer->setWindowModality(Qt::ApplicationModal);
         chartViewer->show();
     });
 

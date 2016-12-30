@@ -278,6 +278,9 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
 
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atBottom)->setVisible(false);
+    //rect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10));
+    //rect->axis(QCPAxis::atBottom)->setLabel(name + " - " + QString::number(motorIdx));
+
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("sans", 10));
     //rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
     rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont("sans", 8));
@@ -313,7 +316,7 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
         QColor color = colorPerTestElement[displayStr];
         graph->setPen(QPen(color, 2));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
-        graph->setName(displayStr + ": " + QString::number(motorIdx));
+        graph->setName(displayStr + ":" + QString::number(motorIdx));
         graph->rescaleValueAxis();
         graph->rescaleAxes();
         updateAxisAtBottomRect(ui->customPlot);
@@ -362,6 +365,9 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
     }
     // update the rect name;
     rect->axis(QCPAxis::atLeft)->setLabel(sample_name + ":" + QString::number(motorIdx));
+
+    QString xAxisName = sample_name.split(':').value(0);
+    rect->axis(QCPAxis::atBottom)->setLabel(xAxisName);
 
     ui->customPlot->replot();
 }
@@ -423,6 +429,7 @@ quint32 ChartViewerWin::setupIdxMultipleTest(quint32 idx)
 
 void ChartViewerWin::removeAllGraphs()
 {
+    showText();
     emit testPlanChanged(TestPlanEnum::Invaild);
     ui->customPlot->disconnect();
     ui->customPlot->clearGraphs();
@@ -491,8 +498,6 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
     static double lastCloseX;
     statusBar()->showMessage(QString("%1 , %2").arg(x).arg(y), 1000);
 
-    QString textTitle;
-
     QCPGraph *graph = ui->customPlot->graph(0);
     if (!graph)
         return;
@@ -504,16 +509,25 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
         closeXX = (*it).mainKey();
     }
 
-    double midX = (closeX + closeXX + 0.5) / 2;
+    double midX = (closeX + closeXX) / 2;
     if (x > midX)
     {
         closeX = closeXX;
     }
-    //qDebug() << "ui.customPlot -> x " << title;
+    //
 
     if (closeX != lastCloseX){
         lastCloseX = closeX;
 
+        static char buffer[100];
+        sprintf(buffer, "%s : %s",
+                "<small>%-15s</small> ", "<b><big><i> %10.1f </i></big></b> ");
+
+        QString textTitle = QString::asprintf(buffer,
+            ui->customPlot->axisRect(0)->axis(QCPAxis::atBottom)->label().toLatin1().constData(),
+            closeX);
+
+        //qDebug() << "ui.customPlot -> x " << x << closeX;
         // synchronize selection of graphs with selection of corresponding legend items:
         for (int i=0; i<ui->customPlot->graphCount(); ++i)
         {
@@ -528,7 +542,7 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
             JsonGUIPrimType guiType = JsonGUIElement::lookup(graph->name().split(':').at(0));
             const char* formatData = JsonGUIElement::format(guiType);
 
-            static char buffer[100];
+//            static char buffer[100];
             sprintf(buffer, "%s : %s%s%s",
                     "<small>%-15s</small> ", "<b><big><i>", formatData, "</i></big></b>   ");
 
@@ -668,7 +682,6 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                 updateGraph(rect, setupIdxMultipleTest(selectIdx));
             }
         }
-
     }
 }
 
@@ -699,5 +712,3 @@ void ChartViewerWin::showText()
     //ui->textEdit->setText("<b>Hello</b> <i>Qt!</i>");
     ui->textEdit->setText("<b><big><i>Welcome to the graph!</i></big></b> ");
 }
-
-

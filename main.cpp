@@ -86,7 +86,15 @@ int main(int argc, char *argv[])
                                                     "drone.engine.debug=true"));
     qSetMessagePattern(QStringLiteral("[%{type}] %{time} %{appname} (%{file}:%{line}) - %{message}"));
     qInstallMessageHandler(myMessageHandler);
+
     QApplication a(argc, argv);
+
+    QFont f;
+    int defaultFontSize = f.pointSize();
+    f.setPointSize(defaultFontSize + 2);
+    f.setFamily("Segoe UI Semibold");
+
+    a.setFont(f);
     MainWindow window;
     window.show();
     return a.exec();
