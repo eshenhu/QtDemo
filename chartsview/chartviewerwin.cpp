@@ -205,6 +205,7 @@ void ChartViewerWin::createActions()
     curveToolBar->addSeparator();
 
     QComboBox* curveComBox = new QComboBox();
+    curveComBox->addItem(tr("throttle character curve"));
     curveComBox->addItem(tr("current character curve"));
     curveComBox->addItem(tr("thrust character curve"));
     curveComBox->addItem(tr("torque character curve"));
@@ -360,7 +361,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
         }
     }
     // update the rect name;
-    rect->axis(QCPAxis::atLeft)->setLabel(sample_name + ": " + QString::number(motorIdx));
+    rect->axis(QCPAxis::atLeft)->setLabel(sample_name + ":" + QString::number(motorIdx));
 
     ui->customPlot->replot();
 }
