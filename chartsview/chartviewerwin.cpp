@@ -368,6 +368,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 
     QString xAxisName = sample_name.split(':').value(0);
     rect->axis(QCPAxis::atBottom)->setLabel(xAxisName);
+    rect->axis(QCPAxis::atBottom)->setVisible(false);
 
     ui->customPlot->replot();
 }

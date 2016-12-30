@@ -205,6 +205,8 @@ struct CfgMultiWashingDataItem
 class CfgMultiWashingDataE2Clz : public CfgWashingDataInf
 {
 public:
+    static const quint32 MAX_POINT_XASIX = 100;
+public:
     CfgMultiWashingDataE2Clz();
     ~CfgMultiWashingDataE2Clz() {}
     // cfgWashingDataInf interface
@@ -222,6 +224,7 @@ public:
 private:
     //CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
     //void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
+    double weightValues(QList<double>& values);
 private:
     QVector<QVector<CfgMultiWashingDataItem>> m_data;
     QVector<QList<QString>> m_guiList;

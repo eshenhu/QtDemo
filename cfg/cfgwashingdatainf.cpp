@@ -1204,14 +1204,21 @@ void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdat
         {
             quint32 xIdx = item.XKey.idx;
             quint32 yIdx = item.YValue.idx;
-            QMap<double, double> map;
+            QMultiMap<double, double> multiMap;
 
             for (const DataJsonRecElementE2& data : rawdata)
             {
                 double key = data.getData(xIdx);
                 double value = data.getData(yIdx);
-                value = (map.value(key, value) + value)/2;
-                map.insert(key, value);
+                //value = (map.value(key, value) + value)/2;
+                multiMap.insert(key, value);
+            }
+
+            QMap<double, double> map;
+            for (const double uniqueKey : multiMap.uniqueKeys())
+            {
+                QList<double> valueArrays = multiMap.values(uniqueKey);
+                map.insert(uniqueKey, weightValues(valueArrays));
             }
 
             item.data.clear();
@@ -1283,7 +1290,8 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
 
             PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, &coefficients[0]);
 
-            qint32 step = (xAsixCeil - xAsixFloor)/size;
+            const quint32 trimSize = size < MAX_POINT_XASIX ? size : MAX_POINT_XASIX;
+            qint32 step = (xAsixCeil - xAsixFloor)/trimSize;
             step = (step == 0 ? 1 : step);
             for (qint32 x = xAsixFloor; x < xAsixCeil; x+=step)
             {
@@ -1301,6 +1309,40 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
         qWarning() << "Warning: out of size of array, request = " << idx << "size of container"
                    << itemList.size();
     }
+}
+
+/*
+ * We can make more functionality here. --eshenhu -Dec-30-16
+ */
+double CfgMultiWashingDataE2Clz::weightValues(QList<double> &values)
+{
+    quint32 size = values.size();
+    double result;
+    if (size == 0)
+    {
+        result = 0;
+    }
+    else if (size == 1)
+    {
+        result = values.value(0);
+    }
+    else if (size == 2)
+    {
+        result = (values.value(0) + values.value(1))/2;
+    }
+    else
+    {
+        qSort(values);
+        double cal = 0.0;
+        for (double& inner : values)
+        {
+            cal += inner;
+        }
+        cal -= values.first();
+        cal -= values.last();
+        result = cal/(size-2);
+    }
+    return result;
 }
 
 //-------------------------------------------------
