@@ -161,11 +161,10 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
                 rtn = true;
         }
     }
-    qInfo() << "util.measdataformat tick=" <<  m_tick << "m_phase=" << (quint8)m_phase
-            << "vol=" << m_data->getVol() << "thro_1" << m_data->getThro_1()
-            << "m_delay_start" << m_delay_start << "m_PRP_delay" << m_PRP_delay
-            << "m_soft_delay" << m_soft_delay;
-
+//    qDebug() << "util.measdataformat tick=" <<  m_tick << "m_phase=" << (quint8)m_phase
+//            << "vol=" << m_data->getVol() << "thro_1" << m_data->getThro_1()
+//            << "m_delay_start" << m_delay_start << "m_PRP_delay" << m_PRP_delay
+//            << "m_soft_delay" << m_soft_delay;
 
     return rtn;
 }

@@ -1218,7 +1218,9 @@ void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElementE2> & rawdat
             for (const double uniqueKey : multiMap.uniqueKeys())
             {
                 QList<double> valueArrays = multiMap.values(uniqueKey);
-                map.insert(uniqueKey, weightValues(valueArrays));
+                double uniqueValue = weightValues(valueArrays);
+                map.insert(uniqueKey, uniqueValue);
+                //qDebug() << "map insert unique = " << uniqueKey << "valueArrays" << uniqueValue;
             }
 
             item.data.clear();
@@ -1263,7 +1265,7 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
         std::shared_ptr<double> yAsix(new double[size]);
 
         do {
-            const quint32 order = 2;
+            const quint32 order = 5;
             double coefficients[order+1]; // y = ax*x + bx + c;
 
             qint32 xAsixFloor = qFloor(itemList[idx].data.first().key);
@@ -1295,9 +1297,12 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
             step = (step == 0 ? 1 : step);
             for (qint32 x = xAsixFloor; x < xAsixCeil; x+=step)
             {
-                double y = coefficients[2] * x * x
-                        +  coefficients[1] * x
-                        +  coefficients[0];
+                double y = coefficients[4] * x * x * x * x * x
+                         + coefficients[4] * x * x * x * x
+                         + coefficients[3] * x * x * x
+                         + coefficients[2] * x * x
+                         + coefficients[1] * x
+                         + coefficients[0];
 
                 pairs.append(QCPGraphData((double)x, y));
                 //qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;

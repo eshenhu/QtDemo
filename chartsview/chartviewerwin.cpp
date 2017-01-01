@@ -298,6 +298,33 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
     return rect;
 }
 
+/*
+ * Get the (lowest, highest) range from all the graph.
+*/
+void ChartViewerWin::rescalePlot()
+{
+    double lowest = 0;
+    double highest = 1;
+
+    for (const QCPAxisRect* rect : ui->customPlot->axisRects())
+    {
+        const QCPRange range = rect->axis(QCPAxis::atBottom)->range();
+        if (lowest > range.lower)
+            lowest = range.lower;
+        if (highest < range.upper)
+            highest = range.upper;
+    }
+
+    for (const QCPAxisRect* rect : ui->customPlot->axisRects())
+    {
+        const QCPRange range = rect->axis(QCPAxis::atBottom)->range();
+        if (lowest != range.lower || highest != range.upper)
+        {
+            rect->axis(QCPAxis::atBottom)->setRange(lowest, highest);
+        }
+    }
+}
+
 QCPGraph* ChartViewerWin::addGraph(QCPAxisRect* rect)
 {
     // create and configure plottables:
@@ -317,8 +344,8 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
         graph->setPen(QPen(color, 2));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
         graph->setName(displayStr + ":" + QString::number(motorIdx));
-        graph->rescaleValueAxis();
-        graph->rescaleAxes();
+        //graph->rescaleValueAxis(true);
+        graph->rescaleAxes(false);
         updateAxisAtBottomRect(ui->customPlot);
         ui->customPlot->replot();
     }
@@ -359,7 +386,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
             QVector<QCPGraphData> pair;
             generateData(ele.cfgRawData, selectedIdx, pair, sample_name, motorIdx);
             updateGraph(graph, pair, sample_name, motorIdx);
-
+            rescalePlot();
             idx++;
         }
     }
@@ -485,8 +512,6 @@ void ChartViewerWin::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart
     //QPoint pos;
     contextMenuRequest(axis);
 }
-
-
 
 void ChartViewerWin::showVLineItem(QMouseEvent *event)
 {
@@ -676,7 +701,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
         {
             quint32 selectIdx = selectedAction->data().toUInt();
 
-            qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
+            //qDebug() << "ui->custormPlot selectIdx = " << selectIdx;
             //if (selectIdx <= static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::ELEMCURSOR_END))
             if (selectIdx != UINT32_MAX)
             {

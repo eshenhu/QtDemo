@@ -75,7 +75,7 @@ public:
     void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx);
 
     QCPAxisRect* addRect(QCustomPlot *customPlot);
-
+    void rescalePlot();
 
     void showText();
 
