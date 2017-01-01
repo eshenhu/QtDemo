@@ -199,11 +199,12 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
         m_data->setThro_2(m_thro);
         m_data->setDis(UINT_MAX);
 
-        m_calc_value += m_step;
-        if(m_calc_value > (m_end_vol + m_step))
+
+        if(m_calc_value > m_end_vol)
         {
             rtn = true;
         }
+        m_calc_value += m_step;
     }
     else
     {
@@ -242,11 +243,11 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
         m_data->setThro_2(m_calc_value);
         m_data->setDis(UINT_MAX);
 
-        m_calc_value += m_step;
-        if(m_calc_value > (m_end_thro + m_step))
+        if(m_calc_value > m_end_thro)
         {
             rtn = true;
         }
+        m_calc_value += m_step;
     }
     else
     {
@@ -278,11 +279,12 @@ bool PeriodicalDisMeasDataUpdate::updateValue()
         m_data->setThro_2(m_thro);
         m_data->setDis(m_calc_value);
 
-        m_calc_value += m_step;
-        if(m_calc_value > (m_end_dis + m_step))
+
+        if(m_calc_value > m_end_dis)
         {
             rtn = true;
         }
+        m_calc_value += m_step;
     }
     else
     {

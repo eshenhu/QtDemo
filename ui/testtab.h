@@ -83,9 +83,20 @@ private:
 class AgingTstTab : public QWidget
 {
     Q_OBJECT
+private:
+    QSpinBox *m_throttle;
+    QDoubleSpinBox *m_voltage;
+    QComboBox *m_duration;
+    QPushButton *m_apply_btn;
 
 public:
     explicit AgingTstTab(QWidget *parent = 0);
+
+Q_SIGNALS:
+    void updateUserSelection(UiCompMeasData data);
+
+public slots:
+    void validateUserInput(bool checked = false);
 };
 class CalibrateTstTab : public QWidget
 {
@@ -133,6 +144,8 @@ private:
     ThrottleTstTab* m_throTstTab;
     DistanceTstTab* m_disTstTab;
     ThrottleTstTab* m_multiTstTab;
+
+    AgingTstTab* m_agingTstTab;
 
 //    QIcon m_playIcon = QIcon(":/play.png");
 //    QIcon m_pauseIcon = QIcon(":/play.png");

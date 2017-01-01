@@ -48,7 +48,14 @@ public:
         D10Sec = 10,
         D15Sec = 15,
         D20Sec = 20,
-        D30Sec = 30
+        D30Sec = 30,
+        D60Sec = 60,
+        D180Sec = 180,
+        D300Sec = 300,
+        D600Sec = 600,
+        D1200Sec = 1200,
+        D1800Sec = 1800,
+        D3600Sec = 3600
     };
 
     static constexpr double DEFAULT_VOL = 10.0;
@@ -124,7 +131,9 @@ TestTab::TestTab(QWidget *parent)
     m_multiTstTab = new ThrottleTstTab(TestPlanEnum::Multiplue);
     tabList[TestPlanEnum::Multiplue] = m_multiTstTab;
 
-    tabList[TestPlanEnum::Aging] = new AgingTstTab();
+    m_agingTstTab = new AgingTstTab();
+    tabList[TestPlanEnum::Aging] = m_agingTstTab;
+
     //tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
     tabList[TestPlanEnum::Manual] = new ManualTstTab();
 
@@ -149,6 +158,9 @@ TestTab::TestTab(QWidget *parent)
             this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Aging], tr("Aging"));
+    connect(m_agingTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+                                this, SIGNAL(updateUserSelection(UiCompMeasData)));
+
     //m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Manual], tr("Manual"));
 
@@ -533,7 +545,75 @@ void ThrottleTstTab::validateUserInput(bool checked)
 AgingTstTab::AgingTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
+    // series settings
+    m_throttle = new QSpinBox();
+    m_throttle->setMinimumWidth(70);
+    m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_throttle->setRange(0, pCfgResHdl->max_throttle());
+    //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_throttle->setSingleStep(ConstValue::STEP_THR);
+    m_throttle->setValue(ConstValue::DEFAULT_THR);
 
+    m_voltage = new QDoubleSpinBox();
+    m_voltage->setDecimals(1);
+    m_voltage->setMinimumWidth(70);
+    m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_voltage->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage->setValue(ConstValue::DEFAULT_VOL);
+
+    m_duration = new QComboBox();
+    m_duration->setMinimumWidth(70);
+    m_duration->setMaximumWidth(70);
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D30Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D60Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D180Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D300Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D600Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D1200Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D1800Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D3600Sec));
+    m_duration->setCurrentIndex(2);
+
+    m_apply_btn = new QPushButton(tr("Apply"));
+
+    connect(m_apply_btn, SIGNAL(clicked(bool)), this, SLOT(validateUserInput(bool)));
+
+    QFormLayout *seriesSettingsLayout = new QFormLayout();
+    seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
+    seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
+    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
+    seriesSettingsLayout->addRow(m_apply_btn);
+
+    QFormLayout *outputListLayout = new QFormLayout();
+
+    QHBoxLayout *horizonLayout = new QHBoxLayout();
+    horizonLayout->addLayout(seriesSettingsLayout, 0);
+    horizonLayout->addLayout(outputListLayout, 1);
+
+    setLayout(horizonLayout);
+
+    QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
+        Q_UNUSED(checked)
+    });
+}
+
+void AgingTstTab::validateUserInput(bool checked)
+{
+    Q_UNUSED(checked)
+
+    UiCompMeasData val;
+    val.type = TestPlanEnum::Voltage;
+    VoltageTstData& data = val.data.u;
+
+    data.thro = m_throttle->value();
+    data.vol_beg = m_voltage->value();
+    data.vol_end = m_voltage->value() + 1.0;
+    data.vol_step = 5.0;
+    data.duration = (quint16)m_duration->currentText().toInt();
+    emit updateUserSelection(val);
 }
 
 CalibrateTstTab::CalibrateTstTab(QWidget *parent)

@@ -75,6 +75,13 @@ struct MultipuleTstData
    quint16 duration;
 };
 
+struct AgingTstData
+{
+   quint16 thro;
+   double vol;
+   quint16 duration;
+};
+
 enum DistanceTstDataEnum : quint32 {
     ZEROPOS     = 0,
     GOTOZEROPOS  = 0xFFFFFFEE
