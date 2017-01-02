@@ -1297,13 +1297,17 @@ void CfgMultiWashingDataE2Clz::generateData(quint32 composeIdx, QVector<QCPGraph
             step = (step == 0 ? 1 : step);
             for (qint32 x = xAsixFloor; x < xAsixCeil; x+=step)
             {
-                double y = coefficients[4] * x * x * x * x * x
+                double y = coefficients[5] * x * x * x * x * x
                          + coefficients[4] * x * x * x * x
                          + coefficients[3] * x * x * x
                          + coefficients[2] * x * x
                          + coefficients[1] * x
                          + coefficients[0];
-
+//                double y = coefficients[4] * x * x * x * x
+//                         + coefficients[3] * x * x * x
+//                         + coefficients[2] * x * x
+//                         + coefficients[1] * x
+//                         + coefficients[0];
                 pairs.append(QCPGraphData((double)x, y));
                 //qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
             }

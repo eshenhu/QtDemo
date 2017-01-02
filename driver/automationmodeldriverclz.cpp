@@ -688,6 +688,9 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                     qCInfo(DRONE_LOGGING) << "com.comm.state changed from State::" << (quint32)state
                                           << "to State - State::MeasFinishedState";
                     enterFSMResetState(tr("Measurement Finished!"));
+
+                    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+                    helper.closeFile();
                 }
                 else
                 {
