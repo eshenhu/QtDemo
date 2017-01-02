@@ -283,7 +283,6 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
 
     if (data->uvalues().r.s.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
     {
-
         const quint8 value = data->uvalues().r.s.motorInfo.elec.limitStatus;
         if (value == (quint8)QModbus2DataUnit::LimitStatusHEXEnum::HEXINVALID)
             rtn = QModbus2DataUnit::LimitStatusEnum::INVALID;

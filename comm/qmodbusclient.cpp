@@ -565,12 +565,13 @@ bool QModbus2ClientPrivate::processReadMeasStartCodeResponse(const QModbus2Respo
 
         if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
         {
-            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.distancePos >> val.motorInfo.elec.voltage
                     >> val.motorInfo.elec.elecMotorStruct[0].current >> val.motorInfo.elec.elecMotorStruct[0].lift
                     >> val.motorInfo.elec.elecMotorStruct[0].torque >> val.motorInfo.elec.elecMotorStruct[0].speed
                     >> val.motorInfo.elec.elecMotorStruct[0].temp_1 >> val.motorInfo.elec.elecMotorStruct[0].temp_2;
 
             qCDebug(QT_MODBUS2) << "com.comm.data = elec.limitStatus" << val.motorInfo.elec.limitStatus
+                                << "elec.distancePos" << val.motorInfo.elec.distancePos
                                 << "elec.voltage" << val.motorInfo.elec.voltage
                                 << "elec.elecMotorStruct[0].current " << val.motorInfo.elec.elecMotorStruct[0].current;
 
@@ -626,14 +627,14 @@ bool QModbus2ClientPrivate::processReadManualMeasStartCodeResponse(const QModbus
 
         if (val.motorType == static_cast<quint8>(QModbus2DataUnit::MotorTypeEnum::ELECE))
         {
-            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+            stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.distancePos >> val.motorInfo.elec.voltage
                     >> val.motorInfo.elec.elecMotorStruct[0].current >> val.motorInfo.elec.elecMotorStruct[0].lift
                     >> val.motorInfo.elec.elecMotorStruct[0].torque >> val.motorInfo.elec.elecMotorStruct[0].speed
                     >> val.motorInfo.elec.elecMotorStruct[0].temp_1 >> val.motorInfo.elec.elecMotorStruct[0].temp_2;
 
             if (val.numOfMotor >= 2)
             {
-                stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.voltage
+                stream >> val.motorInfo.elec.limitStatus >> val.motorInfo.elec.distancePos >> val.motorInfo.elec.voltage
                         >> val.motorInfo.elec.elecMotorStruct[1].current >> val.motorInfo.elec.elecMotorStruct[1].lift
                         >> val.motorInfo.elec.elecMotorStruct[1].torque >> val.motorInfo.elec.elecMotorStruct[1].speed
                         >> val.motorInfo.elec.elecMotorStruct[1].temp_1 >> val.motorInfo.elec.elecMotorStruct[1].temp_2;

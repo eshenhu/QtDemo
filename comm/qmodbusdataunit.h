@@ -157,6 +157,7 @@ public:
     struct ElecMotorCompStruct
     {
         quint8   limitStatus;
+        quint32  distancePos;
         quint16  voltage;
         ElecMotorStruct elecMotorStruct[2];  // currently, we have 2 motors with maximum size.
     };
@@ -177,7 +178,7 @@ public:
     };
 
     struct MeasStartRecStruct{
-        quint16 humidity;
+        quint32 humidity;
         quint32 envtemp;
         quint32 pressure;
         //quint16 altitude;

@@ -88,6 +88,7 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
                  << "motorType" <<  (qint32)data->uvalues().r.s.motorType
                  << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
                  << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
+                 << "distancePos" << data->uvalues().r.s.motorInfo.elec.distancePos
                  << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
                  << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
                  << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
