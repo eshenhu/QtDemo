@@ -99,7 +99,13 @@ void JsonGUIElement::read(const QJsonObject &json)
 
 JsonGUIPrimType JsonGUIElement::lookup(const QString& str)
 {
-    if (str.contains("VOLTAGE"))
+    if (str.contains("ENVHUMIDITY"))
+        return JsonGUIPrimType::ENVHUMIDITY;
+    else if (str.contains("ENVTEMP"))
+        return JsonGUIPrimType::ENVTEMP;
+    else if (str.contains("ENVPRESSURE"))
+        return JsonGUIPrimType::ENVPRESSURE;
+    else if (str.contains("VOLTAGE"))
         return JsonGUIPrimType::VOLTAGE;
     else if (str.contains("CURRENT"))
         return JsonGUIPrimType::CURRENT;

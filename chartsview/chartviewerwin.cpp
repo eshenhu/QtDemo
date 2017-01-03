@@ -243,7 +243,7 @@ void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
     if (lastRect){
         lastRect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
         lastRect->axis(QCPAxis::atBottom)->setVisible(true);
-        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10, QFont::Bold));
+        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("Dotum", 10, QFont::Bold));
     }
 }
 
@@ -278,12 +278,12 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
 
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atBottom)->setVisible(false);
-    //rect->axis(QCPAxis::atBottom)->setLabelFont(QFont("sans", 10));
+    //rect->axis(QCPAxis::atBottom)->setLabelFont(QFont("Dotum", 10));
     //rect->axis(QCPAxis::atBottom)->setLabel(name + " - " + QString::number(motorIdx));
 
-    rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("sans", 10));
+    rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("Dotum", 10));
     //rect->axis(QCPAxis::atLeft)->setLabel(name + " - " + QString::number(motorIdx));
-    rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont("sans", 8));
+    rect->axis(QCPAxis::atLeft)->setTickLabelFont(QFont("Dotum", 8));
     //
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
     //rect->setMargins(QMargins(0, 0, 0, 0));

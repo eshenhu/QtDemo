@@ -8,6 +8,30 @@
       },
       "display": [
         {
+          "text": "ENVHUMIDITY",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "RH"
+        },
+        {
+          "text": "ENVTEMP",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "DegC"
+        },
+        {
+          "text": "ENVPRESSURE",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 5000,
+          "unit": "HPa"
+        },
+        {
           "text": "VOLTAGE",
           "index": 255,
           "isSelected": true,
@@ -103,6 +127,30 @@
         "numOfMotor": 2
       },
       "display": [
+        {
+          "text": "ENVHUMIDITY",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "RH"
+        },
+        {
+          "text": "ENVTEMP",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "DegC"
+        },
+        {
+          "text": "ENVPRESSURE",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 5000,
+          "unit": "HPa"
+        },
         {
           "text": "VOLTAGE",
           "index": 255,
@@ -239,6 +287,30 @@
         "numOfMotor": 2
       },
       "display": [
+         {
+          "text": "ENVHUMIDITY",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "RH"
+        },
+        {
+          "text": "ENVTEMP",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "DegC"
+        },
+        {
+          "text": "ENVPRESSURE",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 5000,
+          "unit": "HPa"
+        },
         {
           "text": "VOLTAGE",
           "index": 255,

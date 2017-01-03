@@ -88,6 +88,9 @@ enum DistanceTstDataEnum : quint32 {
 };
 
 enum JsonGUIPrimType : quint8 { INVALID,
+                               ENVHUMIDITY,
+                               ENVTEMP,
+                               ENVPRESSURE,
                                VOLTAGE,
                                CURRENT,
                                THRUST,
@@ -105,6 +108,9 @@ enum JsonGUIPrimType : quint8 { INVALID,
 
 static const char* JsonGUIPrimFormat[] = {
     "%10.1f",   //INVALID
+    "%10.3f",   //ENVHUMIDITY
+    "%10.2f",   //ENVTEMP
+    "%10.2f",   //ENVPRESSURE
     "%10.1f",   //VOLTAGE
     "%10.2f",   //CURRENT
     "%10.1f",   //THRUST

@@ -72,6 +72,51 @@ const static formulaT formulaDummy = [](const qint32 v, Phase phase, quint32 idx
     return 0;
 };
 
+//static const quint32 divideByHumidity = 1000;
+const static functionT functionEnvHumidity = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(data)
+    Q_UNUSED(config)
+    Q_UNUSED(idx)
+
+    quint32 v = (qint32)data->uvalues().r.s.humidity;
+    return v;
+};
+const static formulaT formulaEnvHumidity = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(v)
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+
+    return (double)(v)/1000;
+};
+
+const static functionT functionEnvTemp = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(data)
+    Q_UNUSED(config)
+    Q_UNUSED(idx)
+    quint32 v = (qint32)data->uvalues().r.s.envtemp;
+    return v;
+};
+const static formulaT formulaEnvTemp = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(v)
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+    return (double)(v)/100;
+};
+
+const static functionT functionEnvPressure = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(data)
+    Q_UNUSED(config)
+    Q_UNUSED(idx)
+    quint32 v = (qint32)data->uvalues().r.s.pressure;
+    return v;
+};
+const static formulaT formulaEnvPressure = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(v)
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+    return (double)(v)/100;
+};
+
 const static functionT functionVol = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
     Q_UNUSED(config)
@@ -506,6 +551,7 @@ const static functionT functionMechaPower = [](const QModbus2DataUnit* data, con
 const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
+    Q_UNUSED(v)
 
     double torqueData = 0.00;
     const QExtCheckBox* boxTorque = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TORQUE, idxMotor);
@@ -525,6 +571,9 @@ const static formulaT formulaMechaPower = [](const qint32 v, Phase phase, quint3
 
 const static functionT functionMechaEffi = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx)
 {
+    Q_UNUSED(data)
+    Q_UNUSED(config)
+    Q_UNUSED(idx)
     qint32 rtn = 0;
     return rtn;
 };
@@ -532,6 +581,7 @@ const static functionT functionMechaEffi = [](const QModbus2DataUnit* data, cons
  *  Mecha Power / Power * 100
  */
 const static formulaT formulaMechaEffi = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(v)
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
 
