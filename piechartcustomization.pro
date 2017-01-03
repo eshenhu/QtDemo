@@ -50,7 +50,8 @@ SOURCES += main.cpp \
     cfg/datajsoncfgreader.cpp \
     chartsview/qcustomplot.cpp \
     ui/uiheader.cpp \
-    util/polyfit.cpp
+    util/polyfit.cpp \
+    ui/fileselectdialog.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -108,12 +109,14 @@ HEADERS += \
     ui/functionmap.h \
     cfg/datajsoncfgreader.h \
     chartsview/qcustomplot.h \
-    util/polyfit.h
+    util/polyfit.h \
+    ui/fileselectdialog.h
 
 FORMS += \
     ui/testinfoconfig.ui \
     ui/optionsframe.ui \
-    chartsview/chartviewerwin.ui
+    chartsview/chartviewerwin.ui \
+    ui/fileselectdialog.ui
 
 SUBDIRS += \
     comm/doc/snippets/snippets.pro \
