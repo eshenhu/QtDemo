@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
                                                     "driver.usb.low=true\n"
                                                     "drone.engine.debug=true"));
     qSetMessagePattern(QStringLiteral("[%{type}] %{time} %{appname} (%{file}:%{line}) - %{message}"));
-    qInstallMessageHandler(myMessageHandler);
+    //qInstallMessageHandler(myMessageHandler);
 
     QApplication a(argc, argv);
 

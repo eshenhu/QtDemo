@@ -114,6 +114,7 @@ private slots:
 //    void removeGraph(QCPAxisRect* rect);
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
+    void open_and_compare();
     void open();
     void open_validate();
     void addRect();

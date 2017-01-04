@@ -2,11 +2,13 @@
 #include "ui_chartviewerwin.h"
 
 #include "ui/uiheader.h"
+#include <memory>
 #include <QGraphicsLinearLayout>
 #include <QLineSeries>
 #include <QValueAxis>
 #include "cfg/datajsoncfgreader.h"
 #include "cfg/cfgjsonprimaryelement.h"
+#include "ui/fileselectdialog.h"
 
 ChartViewerWin::ChartViewerWin(QWidget *parent) :
     QMainWindow(parent),
@@ -36,6 +38,12 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 ChartViewerWin::~ChartViewerWin()
 {
     delete ui;
+}
+
+void ChartViewerWin::open_and_compare()
+{
+    std::unique_ptr<FileSelectDialog> fileSelection(new FileSelectDialog(this));
+    fileSelection->exec();
 }
 
 void ChartViewerWin::open()
@@ -180,7 +188,7 @@ void ChartViewerWin::createActions()
     openAct = new QAction(openIcon, tr("&Open..."), this);
     //openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, &QAction::triggered, this, &ChartViewerWin::open);
+    connect(openAct, &QAction::triggered, this, &ChartViewerWin::open_and_compare);
     fileToolBar->addAction(openAct);
 
     openAct->setEnabled(true);
