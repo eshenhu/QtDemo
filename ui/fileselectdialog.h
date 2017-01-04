@@ -5,10 +5,31 @@
 #include <QVector>
 #include <QLineEdit>
 #include <QToolButton>
+#include <cfg/cfgjsonrecelement.h>
+#include <cfg/cfgwashingdatainf.h>
 
 namespace Ui {
 class FileSelectDialog;
 }
+
+class ChartViewCfgElement
+{
+public:
+    ChartViewCfgElement()
+    {
+        reset();
+    }
+
+    void reset(){
+        cfgMetaData = CfgJsonRecElement();
+        cfgRawData.reset();
+    }
+
+public:
+    CfgJsonRecElement cfgMetaData;
+    QSharedPointer<CfgWashingDataInf> cfgRawData;
+};
+
 
 class FileSelectDialog : public QDialog
 {
@@ -36,9 +57,13 @@ public:
     explicit FileSelectDialog(QWidget *parent = 0);
     ~FileSelectDialog();
 
+public:
+    QVector<ChartViewCfgElement> cfgElementList;
+
 private:
     void setupSignalAndSlot();
     void initSetupUi();
+    bool openJsonFile(const QString& jsonFileName, quint32 location);
 
 private:
     bool cntUpFileSelection()
@@ -66,11 +91,13 @@ private:
 private:
     Ui::FileSelectDialog *ui;
     quint32 m_cntFileSelection;
-private:
     QVector<CompRowFileSelectionClz> m_rowFileSelection;
 private slots:
     void createFileCmpBox();
     void deleteFileCmpBox();
+
+    void defaultAction(bool);
+    void validate();
 };
 
 #endif // FILESELECTDIALOG_H

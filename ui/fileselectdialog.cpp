@@ -4,11 +4,13 @@
 #include <QTimer>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
 
 FileSelectDialog::FileSelectDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FileSelectDialog),
-    m_cntFileSelection(1)
+    m_cntFileSelection(1),
+    cfgElementList(MAX_ROW_FILE_SELECTION)
 {
     ui->setupUi(this);
 
@@ -32,8 +34,10 @@ FileSelectDialog::~FileSelectDialog()
 
 void FileSelectDialog::initSetupUi()
 {
+    m_rowFileSelection[0].lineEdit->setText("");
     for (int i = MIN_ROW_FILE_SELECTION; i<MAX_ROW_FILE_SELECTION; i++)
     {
+        m_rowFileSelection[i].lineEdit->setText("");
         m_rowFileSelection[i].lineEdit->hide();
         m_rowFileSelection[i].toolBtn->hide();
     }
@@ -47,6 +51,17 @@ void FileSelectDialog::setupSignalAndSlot()
     });
     connect(this->ui->pushButton_plus, &QPushButton::clicked, this, &FileSelectDialog::createFileCmpBox);
     connect(this->ui->pushButton_minus, &QPushButton::clicked, this, &FileSelectDialog::deleteFileCmpBox);
+    connect(this->ui->buttonBox, &QDialogButtonBox::accepted, this, &FileSelectDialog::validate);
+    connect(this->ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+   //connect(ui->toolButton_open, SIGNAL(clicked(bool)), this, SLOT(defaultAction(bool)));
+//    connect(ui->toolButton_open_2, SIGNAL(clicked(bool)), this, SLOT(defaultAction(bool)));
+//    connect(ui->toolButton_open_3, SIGNAL(clicked(bool)), this, SLOT(defaultAction(bool)));
+    for(const CompRowFileSelectionClz& item : m_rowFileSelection)
+    {
+        connect(item.toolBtn, SIGNAL(clicked(bool)), this, SLOT(defaultAction(bool)));
+    }
+
 }
 
 void FileSelectDialog::createFileCmpBox()
@@ -82,32 +97,6 @@ void FileSelectDialog::createFileCmpBox()
 */
 void FileSelectDialog::deleteFileCmpBox()
 {
-//    ui->lineEdit_filePath_2->show();
-//    ui->toolButton_open_2->show();
-//    ui->lineEdit_filePath_3->show();
-//    ui->toolButton_open_3->show();
-//    ui->lineEdit_filePath_4->show();
-//    ui->toolButton_open_4->show();
-//    ui->lineEdit_filePath_5->show();
-//    ui->toolButton_open_5->show();
-//    ui->lineEdit_filePath_6->show();
-//    ui->toolButton_open_6->show();
-//    ui->lineEdit_filePath_7->show();
-//    ui->toolButton_open_7->show();
-//    ui->lineEdit_filePath_8->show();
-//    ui->toolButton_open_8->show();
-;
-//    int index = ui->verticalLayout_2->count() - 1;
-//    QLayoutItem* item = ui->verticalLayout_2->takeAt(index);
-//    QLayout* layout = item->layout();
-//    ui->verticalLayout_2->removeItem(item);
-
-//    delete item;
-//    for (int i = 0; i < layout->count(); ++i)
-//    {
-//        delete layout->itemAt(i);
-//    }
-
     if (!cntDwnFileSelection())
         return;
 
@@ -119,6 +108,7 @@ void FileSelectDialog::deleteFileCmpBox()
 
     for (quint32 i=m_cntFileSelection; i<MAX_ROW_FILE_SELECTION; ++i )
     {
+        m_rowFileSelection[i].lineEdit->setText("");
         m_rowFileSelection[i].lineEdit->hide();
         m_rowFileSelection[i].toolBtn->hide();
     }
@@ -129,4 +119,119 @@ void FileSelectDialog::deleteFileCmpBox()
         QSize size = this->sizeHint();
         this->resize(size);
     });
+}
+
+void FileSelectDialog::defaultAction(bool)
+{
+    QToolButton* send = qobject_cast<QToolButton*>(sender());
+    QString path = QCoreApplication::applicationDirPath();
+    const QString fileName = QFileDialog::getOpenFileName(this,
+                                                          tr("Open Json File"),
+                                                          path,
+                                                          tr("Json Files (*.json)"));
+
+    for(const CompRowFileSelectionClz& item : m_rowFileSelection)
+    {
+        if (item.toolBtn == send)
+        {
+            item.lineEdit->setReadOnly(true);
+            item.lineEdit->setText(fileName);
+            break;
+        }
+    }
+}
+
+void FileSelectDialog::validate()
+{
+    for (ChartViewCfgElement& ele : cfgElementList)
+    {
+        ele.reset();
+    }
+
+    do{
+        for (quint32 i = 0; i <= m_cntFileSelection; i++)
+        {
+            if (m_rowFileSelection[i].lineEdit->text().isEmpty())
+            {
+                QMessageBox::warning(this, tr("Warning"),
+                                     tr("<p>Empty file name was not allowed!"),
+                                     QMessageBox::Ok);
+                break;
+            }
+        }
+
+        for (quint32 i = 0; i <= m_cntFileSelection; i++)
+        {
+            const QString filename = m_rowFileSelection[i].lineEdit->text();
+            if (openJsonFile(filename, i))
+            {
+                break;
+            }
+        }
+    }while(0);
+}
+
+//void ChartViewerWin::open()
+//{
+//    QString path = QCoreApplication::applicationDirPath();
+//    const QString fileName = QFileDialog::getOpenFileName(this,
+//                                                          tr("Open Json File"),
+//                                                          path,
+//                                                          tr("Json Files (*.json)"));
+//    if (!fileName.isEmpty())
+//    {
+//        for (ChartViewerWin::ChartViewCfgElement& ele : cfgElementList)
+//        {
+//            ele.reset();
+//        }
+
+//        if (openJsonFile(fileName, (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I))
+//        {
+//            releaseSignalAndSlot();
+//            initAxesAndView(ui->customPlot);
+//            loadDefault2Plot();
+//            setupSignalAndSlot();
+
+//            emit testPlanChanged(cfgMetaData.plan());
+//            // inform this information
+//            //emit leftFileOk(true);
+//        }
+//        ui->customPlot->replot();
+//    }
+//}
+
+/* 1 : OK
+*  0 : Fail
+*/
+
+#define RETURN_WITH_OK   {isOk = true;  break;}
+#define RETURN_WITH_NOK  {isOk = false; break;}
+
+#include "cfg/datajsoncfgreader.h"
+
+bool FileSelectDialog::openJsonFile(const QString& jsonFileName, quint32 location)
+{
+    bool isOk = false;
+
+    while (location < MAX_ROW_FILE_SELECTION)
+    {
+        DataJsonCfgReader reader;
+
+        if (!reader.loadData(jsonFileName))
+        {
+            QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                                   tr("This file can't be read with reason of either \n"
+                                      " - json file format was corrupted. \n"
+                                      " - data file was corrupted"),
+                                   QMessageBox::Close);
+            warningBox.exec();
+            RETURN_WITH_NOK
+        }
+
+        cfgElementList[location].cfgMetaData = reader.getCfgParser();
+        cfgElementList[location].cfgRawData = reader.csvDataHandler();
+
+        RETURN_WITH_OK
+    }
+    return isOk;
 }
