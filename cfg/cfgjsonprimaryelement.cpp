@@ -105,6 +105,8 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString& str)
         return JsonGUIPrimType::ENVTEMP;
     else if (str.contains("ENVPRESSURE"))
         return JsonGUIPrimType::ENVPRESSURE;
+    else if (str.contains("ECHODISTANCE"))
+        return JsonGUIPrimType::ECHODISTANCE;
     else if (str.contains("VOLTAGE"))
         return JsonGUIPrimType::VOLTAGE;
     else if (str.contains("CURRENT"))

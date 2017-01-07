@@ -117,6 +117,31 @@ const static formulaT formulaEnvPressure = [](const qint32 v, Phase phase, quint
     return (double)(v)/100;
 };
 
+const static functionT functionEchoDistance = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
+    Q_UNUSED(idx)
+
+    quint32 v = 0;
+    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
+    {
+        v = (qint32)data->uvalues().r.s.motorInfo.elec.distancePos;
+    }
+    else
+    {
+        v = 0;
+        qCritical() << "com.ui.functions Voltage can not enabled on non-elec motor type";
+    }
+    return v;
+};
+
+/*
+ * y (mm) = x * 0.16 / 1000;
+*/
+const static formulaT formulaEchoDistance = [](const qint32 v, Phase phase, quint32 idxMotor){
+    Q_UNUSED(phase)
+    Q_UNUSED(idxMotor)
+    return (double)(v)*0.16/1000;
+};
+
 const static functionT functionVol = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
     Q_UNUSED(config)

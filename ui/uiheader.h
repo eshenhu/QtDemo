@@ -38,6 +38,7 @@ public:
 public:
     static QString VOL()       { return QStringLiteral("VOLTAGE"); }
     static QString THROTTLE()  { return QStringLiteral("THROTTLE"); }
+    static QString DISTANCE()  { return QStringLiteral("DISTANCE"); }
     static QString CURRENT()  { return QStringLiteral("CURRENT"); }
     static QString THRUST()   { return QStringLiteral("THRUST"); }
     static QString TORQUE()  { return QStringLiteral("TORQUE"); }
@@ -104,6 +105,7 @@ enum JsonGUIPrimType : quint8 { INVALID,
                                ENVHUMIDITY,
                                ENVTEMP,
                                ENVPRESSURE,
+                               ECHODISTANCE,
                                VOLTAGE,
                                CURRENT,
                                THRUST,
@@ -124,6 +126,7 @@ static const char* JsonGUIPrimFormat[] = {
     "%10.3f",   //ENVHUMIDITY
     "%10.2f",   //ENVTEMP
     "%10.2f",   //ENVPRESSURE
+    "%10.0f",   //ECHODISTANCE
     "%10.1f",   //VOLTAGE
     "%10.2f",   //CURRENT
     "%10.1f",   //THRUST

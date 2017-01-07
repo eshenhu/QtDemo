@@ -668,8 +668,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
     {
         if( signal.m_type == SignalType::ECHO &&
                 (  signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::MeasStartCode
-                   || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode
-                   ))
+                   || signal.m_info.mp_dataUnit->registerType() == QModbus2DataUnit::RegisterType::FatalErrorInfoCode ))
         {
             if (processReceivedMeasDataUnit(signal.m_info.mp_dataUnit))
             {

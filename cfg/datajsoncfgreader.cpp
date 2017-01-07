@@ -78,6 +78,15 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                 }
                 break;
 
+                case (quint32)TestPlanEnum::Distance:
+                {
+                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgDistanceWashingDataE2Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                break;
+
                 default:
                     qCWarning(TEXT_LOGGING) << "This plan was not supported now, plan = "
                                             << static_cast<quint32>(cfgParser.plan());

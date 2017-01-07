@@ -155,7 +155,8 @@ void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, 
     {
         if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
             cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2 ||
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGDISTANCE)
         {
             cfgRawData->generateData(idx, pairs, name, motorIdx);
         }
@@ -272,7 +273,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
     QCPGraph* graph = nullptr;
 
     QString sample_name;
-    quint8 motorIdx;
+    quint8 motorIdx = 0;
 
     for (ChartViewCfgElement& ele : cfgElementList)
     {
@@ -309,7 +310,8 @@ void ChartViewerWin::setupSignalAndSlot()
         curveAction->setEnabled(false);
 
         if (plan == TestPlanEnum::Voltage ||
-            plan == TestPlanEnum::Throttle)
+            plan == TestPlanEnum::Throttle ||
+            plan == TestPlanEnum::Distance    )
         {
             itemListIdx = 0;
         }
@@ -547,7 +549,8 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
     if (cfgRawData)
     {
         if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2)
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2 ||
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGDISTANCE)
         {
             quint32 idx = 0;
             CfgItemMeasBasedE2DataEle actionlist;
@@ -571,6 +574,8 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                     matchWord = TestUnitName::VOL();
                 else if (cfgMetaData.plan() == TestPlanEnum::Throttle)
                     matchWord = TestUnitName::THROTTLE();
+                else if (cfgMetaData.plan() == TestPlanEnum::Distance)
+                    matchWord = TestUnitName::DISTANCE();
 
                 if (false == (!matchWord.isEmpty() && ele.getName() == matchWord))
                     action = menu->addAction(cxtHeader + str);

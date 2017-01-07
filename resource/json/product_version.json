@@ -328,6 +328,14 @@
           "unit": "%"
         },
         {
+           "text": "ECHODISTANCE",
+           "index": 255,
+           "isSelected": false,
+           "lowLimit": 0,
+           "upLimit": 500,
+           "unit": "mm"
+        },
+        {
           "text": "CURRENT",
           "index": 0,
           "isSelected": true,

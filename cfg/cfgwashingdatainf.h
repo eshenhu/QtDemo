@@ -31,7 +31,8 @@ enum class CfgWashingTypeEnum {
     CFGWASHINGTHROTTLE_E1,
     CFGWASHINGTHROTTLE_E2,
     CFGWASHINGMULTI_E1,
-    CFGWASHINGMULTI_E2
+    CFGWASHINGMULTI_E2,
+    CFGWASHINGDISTANCE
 };
 
 class CfgWashingDataInf
@@ -96,6 +97,7 @@ public:
     {
         REC_VOL_POS = 0,
         REC_THRO_POS,
+        REC_DISTANCE_POS,
 
         REC_CUR1_POS,
         REC_THU1_POS,
@@ -168,6 +170,30 @@ class CfgVolWashingDataE2Clz : public CfgWashingDataInf
 public:
     CfgVolWashingDataE2Clz();
     ~CfgVolWashingDataE2Clz() {}
+    // cfgWashingDataInf interface
+public:
+    void wash(const QVector<DataJsonRecElementE2>&) override;
+    QVector<CfgItemMeasBasedE2DataEle>& data();
+    void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
+    QList<QString> &getGUIActionList(quint32) override { return m_guiList; }
+private:
+    CfgItemMeasBasedE2DataEle deserialize(const DataJsonRecElementE2& in);
+    void accumulate(const CfgItemMeasBasedE2DataEle& data, CfgItemMeasBasedE2DataEle&);
+private:
+    QVector<CfgItemMeasBasedE2DataEle> m_data;
+    QList<QString> m_guiList;
+};
+
+//---------------------------------------------
+/*
+ * The result shoudle be startwith the Vol on the X axis. Others on the Y asix.
+*/
+
+class CfgDistanceWashingDataE2Clz : public CfgWashingDataInf
+{
+public:
+    CfgDistanceWashingDataE2Clz();
+    ~CfgDistanceWashingDataE2Clz() {}
     // cfgWashingDataInf interface
 public:
     void wash(const QVector<DataJsonRecElementE2>&) override;

@@ -16,6 +16,7 @@ static std::map<JsonGUIPrimType, FunctionPair> m_funMap =
     { JsonGUIPrimType::ENVHUMIDITY,{ Functions::functionEnvHumidity,         Functions::formulaEnvHumidity      }},
     { JsonGUIPrimType::ENVTEMP,    { Functions::functionEnvTemp,             Functions::formulaEnvTemp      }},
     { JsonGUIPrimType::ENVPRESSURE,{ Functions::functionEnvPressure,         Functions::formulaEnvPressure      }},
+    { JsonGUIPrimType::ECHODISTANCE,{ Functions::functionEchoDistance,       Functions::formulaEchoDistance     }},
     { JsonGUIPrimType::VOLTAGE,    { Functions::functionVol,                 Functions::formulaVol      }},
     { JsonGUIPrimType::CURRENT,    { Functions::functionCurrent,             Functions::formulaCurrent  }},
     { JsonGUIPrimType::THRUST,     { Functions::functionThrust,              Functions::formulaThrust  }},
