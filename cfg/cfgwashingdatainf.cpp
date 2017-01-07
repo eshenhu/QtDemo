@@ -141,7 +141,7 @@ QVector<CfgItemMeasBasedE2DataEle> &CfgDistanceWashingDataE2Clz::data()
 
 void CfgDistanceWashingDataE2Clz::generateData(quint32 idx, QVector<QCPGraphData> &pairs, QString &name, quint8 &motorIdx)
 {
-    name = m_data[0].getName((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_VOL_POS) + ':' +  m_data[0].getName(idx),
+    name = m_data[0].getName((quint32)CfgItemMeasBasedE2DataEle::ELEMEASCURSOR::REC_DISTANCE_POS) + ':' +  m_data[0].getName(idx),
     motorIdx = m_data[0].getMotorIdx(idx);
 
     pairs.resize(m_data.size());

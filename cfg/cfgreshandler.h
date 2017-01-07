@@ -9,6 +9,8 @@
 #include <QtGlobal>
 
 
+static const quint32 MAX_SUPPORT_MOTOR = 2;
+
 struct CfgMotorProdVersionStu
 {
     CfgResHandlerInf::ProductVersion v;
@@ -87,6 +89,9 @@ public:
     quint32 highThroLimit() const;
     void setHighThroLimit(const quint32 &highThroLimit);
 
+    QString SerialNumber() const;
+    void setSerialNumber(const QString &SerialNumber);
+
 private:
     void loadSetting();
 
@@ -96,6 +101,8 @@ private:
 
     quint32 m_lowThroLimit;
     quint32 m_highThroLimit;
+
+    QString m_SerialNumber;
 
     QSettings& m_set;
 };
@@ -125,6 +132,37 @@ private:
     CfgResHandlerInf::ProductVersion m_prod;
 };
 
+
+static const double defaultDivisionOnThrust[MAX_SUPPORT_MOTOR] = { 45.17, 46.64 };
+static const double defaultDivisionOnTorque[MAX_SUPPORT_MOTOR] = { 61.36, 58.56 };
+
+class CfgCalibrateCfgModel
+{
+    struct CfgCalibrateCfgPerMotor
+    {
+        double divisionOnThrust;
+        double divisionOnTorque;
+    };
+
+public:
+    CfgCalibrateCfgModel(QSettings& set);
+    ~CfgCalibrateCfgModel(){}
+
+public:
+    double getDivisionThrustCaliOnMotor(const quint32 idxMotor);
+    bool setDivisionThrustCaliOnMotor(const quint32 idxMotor, const double value);
+
+    double getDivisionTorqueCaliOnMotor(const quint32 idxMotor);
+    bool setDivisionTorqueCaliOnMotor(const quint32 idxMotor, const double value);
+
+private:
+    void loadSetting();
+
+private:
+    QSettings& m_set;
+    CfgCalibrateCfgPerMotor CfgCalibrateCfgPerMotor[MAX_SUPPORT_MOTOR];
+};
+
 class CfgResHandler : public QObject, public CfgResHandlerInf
 {
     Q_OBJECT
@@ -137,12 +175,14 @@ public:
     CfgMotorBootCfgModel *bootCfg() const;
     CfgDeviceCfgModel *deviceCfg() const;
     CfgProductVersionCfgModel *prodCfg() const;
+    CfgCalibrateCfgModel *calibrateCfg() const;
 
 private:
     QSettings m_setting;
     CfgMotorBootCfgModel* m_bootCfg = nullptr;
     CfgDeviceCfgModel* m_deviceCfg = nullptr;
     CfgProductVersionCfgModel* m_prodCfg = nullptr;
+    CfgCalibrateCfgModel* m_calibrateCfg = nullptr;
 
 signals:
 
@@ -240,7 +280,16 @@ public:
         Q_ASSERT(m_prodCfg != nullptr);
         return m_prodCfg->prod_version();
     }
-
+    double getDivisionThrustCaliOnMotor(const quint32 idxMotor) const
+    {
+        Q_ASSERT(idxMotor <= MAX_SUPPORT_MOTOR);
+        return m_calibrateCfg->getDivisionThrustCaliOnMotor(idxMotor);
+    }
+    double getDivisionTorqueCaliOnMotor(const quint32 idxMotor) const
+    {
+        Q_ASSERT(idxMotor <= MAX_SUPPORT_MOTOR);
+        return m_calibrateCfg->getDivisionTorqueCaliOnMotor(idxMotor);
+    }
 
 };
 

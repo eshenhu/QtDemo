@@ -18,8 +18,8 @@ class DeviceInfoConfig : public QFrame
 
 public:
     enum Freq {
-        B50HZ = 0,
-        B400HZ = 1
+        B50HZ = 50,
+        B400HZ = 400
     };
     Q_ENUMS(Freq)
 
@@ -46,7 +46,7 @@ public:
     };
 
 public:
-    explicit DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent = 0);
+    explicit DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent = 0);
     ~DeviceInfoConfig();
 
 private:
@@ -54,7 +54,7 @@ private:
 
     Q_PROPERTY(Settings setting READ get_setting WRITE set_setting)
     Settings m_setting;
-    CfgDeviceCfgModel* const m_model;
+    CfgDeviceCfgModel* const m_cfg;
 
 public:
     Settings get_setting() const

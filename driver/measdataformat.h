@@ -168,4 +168,31 @@ private:
 public:
     bool updateValue() override;
 };
+
+/*
+ * it was perferred make a new base class to do such job. --eshenhu
+*/
+class OneShotManualMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
+{
+public:
+    OneShotManualMeasDataUpdate(const double vol, const quint32 thro,
+                                const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                const quint32 durationInSec = 5, const quint32 intervalInMSec = 500);
+    ~OneShotManualMeasDataUpdate(){}
+
+private:
+    double  m_vol;
+    quint32 m_thro;
+
+public:
+    void updateValueManually(const double vol, const quint32 thro)
+    {
+        m_vol = vol;
+        m_thro = thro;
+    }
+
+    // MeasDataUpdateInf interface
+public:
+    bool updateValue() override;
+};
 #endif // MEASDATAFORMAT_H

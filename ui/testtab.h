@@ -98,6 +98,8 @@ Q_SIGNALS:
 public slots:
     void validateUserInput(bool checked = false);
 };
+
+
 class CalibrateTstTab : public QWidget
 {
     Q_OBJECT
@@ -108,9 +110,18 @@ public:
 class ManualTstTab : public QWidget
 {
     Q_OBJECT
+private:
+    QSpinBox *m_throttle;
+    QDoubleSpinBox *m_voltage;
+    QPushButton *m_set_btn;
+    QPushButton *m_apply_btn;
 
 public:
     explicit ManualTstTab(QWidget *parent = 0);
+
+Q_SIGNALS:
+    void updateUserSelection(UiCompMeasData data);
+    void syncDataDuringManual(const double vol, const quint32 thro);
 };
 
 class TestTab : public QWidget
@@ -146,6 +157,7 @@ private:
     ThrottleTstTab* m_multiTstTab;
 
     AgingTstTab* m_agingTstTab;
+    ManualTstTab* m_manualTstTab;
 
 //    QIcon m_playIcon = QIcon(":/play.png");
 //    QIcon m_pauseIcon = QIcon(":/play.png");
@@ -153,6 +165,7 @@ private:
 
 Q_SIGNALS:
     void updateUserSelection(UiCompMeasData data);
+    void syncDataDuringManual(const double vol, const quint32 thro);
 
 private:
     void enableTestTab(TestPlanEnum);

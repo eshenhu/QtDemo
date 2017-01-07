@@ -1,13 +1,17 @@
 #include "cfgreshandler.h"
 
 #include <QSettings>
+#include <QCoreApplication>
+#include <QDebug>
 
 CfgResHandler::CfgResHandler(QObject *parent) : QObject(parent),
-    m_setting("drone", "meas")
+  m_setting(QCoreApplication::applicationDirPath() + QStringLiteral("config.ini"), QSettings::IniFormat)
 {
+    qDebug() << "[CONFIG] file save to " << m_setting.fileName();
     m_bootCfg = new CfgMotorBootCfgModel(m_setting);
     m_deviceCfg = new CfgDeviceCfgModel(m_setting);
     m_prodCfg = new CfgProductVersionCfgModel(m_setting);
+    m_calibrateCfg = new CfgCalibrateCfgModel(m_setting);
 }
 
 CfgResHandler::~CfgResHandler()
@@ -18,6 +22,8 @@ CfgResHandler::~CfgResHandler()
         delete m_deviceCfg;
     if(m_prodCfg)
         delete m_prodCfg;
+    if(m_calibrateCfg)
+        delete m_calibrateCfg;
 }
 
 CfgMotorBootCfgModel *CfgResHandler::bootCfg() const
@@ -35,6 +41,11 @@ CfgProductVersionCfgModel *CfgResHandler::prodCfg() const
     return m_prodCfg;
 }
 
+CfgCalibrateCfgModel *CfgResHandler::calibrateCfg() const
+{
+    return m_calibrateCfg;
+}
+
 CfgMotorBootCfgModel::CfgMotorBootCfgModel(QSettings& set):
     m_boot_delay(5),
     m_boot_rape(10),
@@ -47,9 +58,9 @@ CfgMotorBootCfgModel::CfgMotorBootCfgModel(QSettings& set):
 void CfgMotorBootCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/motor");
-    m_boot_delay = m_set.value("boot_delay", 5).toInt();
-    m_boot_rape  = m_set.value("boot_rape", 10).toInt();
-    m_PRP = m_set.value("duration", 10).toInt();
+    m_boot_delay = m_set.value("boot_delay", 2).toInt();
+    m_boot_rape  = m_set.value("boot_rape", 2).toInt();
+    m_PRP = m_set.value("PRP", 2).toInt();
     m_bootVol = m_set.value("boot_vol", 5).toInt();
     m_set.endGroup();
 }
@@ -114,6 +125,7 @@ quint32 CfgDeviceCfgModel::vane() const
 void CfgDeviceCfgModel::setVane(const quint32 &vane)
 {
     m_vane = vane;
+    m_set.setValue("cfg/device/vanes", vane);
 }
 
 quint32 CfgDeviceCfgModel::HZ() const
@@ -124,16 +136,29 @@ quint32 CfgDeviceCfgModel::HZ() const
 void CfgDeviceCfgModel::setHZ(const quint32 &HZ)
 {
     m_HZ = HZ;
+    m_set.setValue("cfg/device/HZ", HZ);
 }
 
 void CfgDeviceCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/device");
-    m_vane = m_set.value("vane", 1).toInt();
+    m_vane = m_set.value("vanes", 1).toInt();
     m_HZ  = m_set.value("HZ", 50).toInt();
     m_lowThroLimit = m_set.value("ThroLowLimit", 0).toInt();
     m_highThroLimit = m_set.value("ThroHighLimit", 90).toInt();
+    m_SerialNumber = m_set.value("SN").toString();
     m_set.endGroup();
+}
+
+QString CfgDeviceCfgModel::SerialNumber() const
+{
+    return m_SerialNumber;
+}
+
+void CfgDeviceCfgModel::setSerialNumber(const QString &SerialNumber)
+{
+    m_SerialNumber = SerialNumber;
+    m_set.setValue("cfg/device/SN", SerialNumber);
 }
 
 quint32 CfgDeviceCfgModel::highThroLimit() const
@@ -144,6 +169,7 @@ quint32 CfgDeviceCfgModel::highThroLimit() const
 void CfgDeviceCfgModel::setHighThroLimit(const quint32 &highThroLimit)
 {
     m_highThroLimit = highThroLimit;
+    m_set.setValue("cfg/device/ThroHighLimit", m_highThroLimit);
 }
 
 quint32 CfgDeviceCfgModel::lowThroLimit() const
@@ -154,6 +180,7 @@ quint32 CfgDeviceCfgModel::lowThroLimit() const
 void CfgDeviceCfgModel::setLowThroLimit(const quint32 &lowThroLimit)
 {
     m_lowThroLimit = lowThroLimit;
+    m_set.setValue("cfg/device/ThroLowLimit", lowThroLimit);
 }
 
 CfgProductVersionCfgModel::CfgProductVersionCfgModel(QSettings &set):
@@ -218,4 +245,94 @@ void CfgProductVersionCfgModel::loadSetting()
         m_prod = CfgResHandlerInf::ProductVersion::INVALID;
 
     m_set.endGroup();
+}
+
+CfgCalibrateCfgModel::CfgCalibrateCfgModel(QSettings &set):
+    m_set(set)
+{
+    for (int i = 0; i < MAX_SUPPORT_MOTOR; ++i) {
+
+         struct CfgCalibrateCfgPerMotor& cfgCali = CfgCalibrateCfgPerMotor[i];
+         cfgCali.divisionOnThrust = defaultDivisionOnThrust[i];
+         cfgCali.divisionOnTorque = defaultDivisionOnTorque[i];
+    }
+
+    loadSetting();
+}
+
+double CfgCalibrateCfgModel::getDivisionThrustCaliOnMotor(const quint32 idxMotor){
+    if (idxMotor < MAX_SUPPORT_MOTOR){
+        return CfgCalibrateCfgPerMotor[idxMotor].divisionOnThrust;
+    }
+    else
+    {
+        qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+        return 1.0;
+    }
+}
+
+bool CfgCalibrateCfgModel::setDivisionThrustCaliOnMotor(const quint32 idxMotor, const double value){
+    bool result = false;
+    if (idxMotor < MAX_SUPPORT_MOTOR){
+        CfgCalibrateCfgPerMotor[idxMotor].divisionOnThrust = value;
+        result = true;
+    }
+    else
+    {
+        qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+    }
+    return result;
+}
+
+double CfgCalibrateCfgModel::getDivisionTorqueCaliOnMotor(const quint32 idxMotor){
+    if (idxMotor < MAX_SUPPORT_MOTOR){
+        return CfgCalibrateCfgPerMotor[idxMotor].divisionOnTorque;
+    }
+    else
+    {
+        qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+        return 1;
+    }
+}
+
+bool CfgCalibrateCfgModel::setDivisionTorqueCaliOnMotor(const quint32 idxMotor, const double value){
+    bool result = false;
+    if (idxMotor < MAX_SUPPORT_MOTOR){
+        CfgCalibrateCfgPerMotor[idxMotor].divisionOnTorque = value;
+        result = true;
+    }
+    else
+    {
+        qWarning() << "Could not exceed the maximum supported motor " << MAX_SUPPORT_MOTOR;
+    }
+    return result;
+}
+
+void CfgCalibrateCfgModel::loadSetting()
+{
+//    int size = 2;
+//    m_set.beginWriteArray("cfg/calibrate");
+//    for (int i = 0; i < size; ++i) {
+//        m_set.setArrayIndex(i);
+//        m_set.setValue("divisionOnThrust", defaultDivisionOnThrust[i]);
+//        m_set.setValue("divisionOnTorque", defaultDivisionOnThrust[i]);
+//    }
+//    m_set.endArray();
+    int size = m_set.beginReadArray("cfg/calibrate");
+
+    size = size > MAX_SUPPORT_MOTOR ? MAX_SUPPORT_MOTOR : size;
+
+    for (int i = 0; i < size; ++i) {
+         m_set.setArrayIndex(i);
+
+         struct CfgCalibrateCfgPerMotor& cfgCali = CfgCalibrateCfgPerMotor[i];
+         cfgCali.divisionOnThrust = m_set.value("divisionOnThrust", defaultDivisionOnThrust[i]).toDouble();
+         cfgCali.divisionOnTorque = m_set.value("divisionOnTorque", defaultDivisionOnTorque[i]).toDouble();
+    }
+
+    for (int i = 0; i < MAX_SUPPORT_MOTOR; ++i) {
+        qDebug() << "calibrate is idx " << i << CfgCalibrateCfgPerMotor[i].divisionOnThrust << CfgCalibrateCfgPerMotor[i].divisionOnTorque;
+
+    }
+    m_set.endArray();
 }

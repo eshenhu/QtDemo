@@ -292,3 +292,22 @@ bool PeriodicalDisMeasDataUpdate::updateValue()
     }
     return rtn;
 }
+
+OneShotManualMeasDataUpdate::OneShotManualMeasDataUpdate(const double vol, const quint32 thro,
+                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay,
+                                                         const quint32 boot_voltage, const quint32 durationInSec, const quint32 intervalInMSec)
+     :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
+      m_vol(vol),
+      m_thro(thro)
+{
+}
+
+bool OneShotManualMeasDataUpdate::updateValue()
+{
+    m_data->setVol(m_vol);
+    m_data->setThro_1(m_thro);
+    m_data->setThro_2(m_thro);
+    m_data->setDis(UINT_MAX);
+
+    return false;
+}

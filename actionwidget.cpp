@@ -91,6 +91,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     //------------------------------------------------
 
 
+    m_driver = new AutomationModelDriverClz(this);
 
     createTabWidget();
     //createChartView();
@@ -101,8 +102,6 @@ ActionWidget::ActionWidget(QWidget *parent)
     baseLayout->addWidget(m_chartWidget, 1);
     //baseLayout->addWidget(m_chartView, 1);
     setLayout(baseLayout);
-
-    m_driver = new AutomationModelDriverClz(this);
 
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
@@ -171,8 +170,6 @@ ActionWidget::ActionWidget(QWidget *parent)
 
     connect(m_subTestTabWidget->showgraph_btn(), &QPushButton::clicked, [=](bool checked){
         Q_UNUSED(checked)
-
-        //std::unique_ptr<ChartViewerWin> chartViewer(new ChartViewerWin(parent));
         ChartViewerWin* chartViewer = new ChartViewerWin(parent);
         chartViewer->setWindowModality(Qt::ApplicationModal);
         chartViewer->show();
@@ -199,18 +196,13 @@ void ActionWidget::createTabWidget()
     m_tabWidget->setTabBarAutoHide(true);
 
     m_subTestTabWidget = new TestTab();
-//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(UiCompMeasData)),
-//            this, SLOT(updateUserInput(UiCompMeasData)));
 
     connect(m_subTestTabWidget, &TestTab::updateUserSelection, [this](UiCompMeasData data){
         m_measData = data;
     });
-//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(ThrottleTstData)),
-//            this, SLOT(updateUserInput(ThrottleTstData)));
-//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(DistanceTstData)),
-//            this, SLOT(updateUserInput(DistanceTstData)));
-//    connect(m_subTestTabWidget, SIGNAL(updateUserSelection(MultipuleTstData)),
-//            this, SLOT(updateUserInput(MultipuleTstData)));
+
+    connect(m_subTestTabWidget, SIGNAL(syncDataDuringManual(double,quint32)),
+            m_driver, SLOT(syncDataDuringManualTest(double,quint32)));
 
     m_tabWidget->addTab(m_subTestTabWidget, tr("Test"));
     m_subConfigTabWidget = new ConfigTab(UniResLocation::getCfgResHdl());

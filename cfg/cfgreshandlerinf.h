@@ -35,6 +35,9 @@ public:
     virtual quint32 max_throttle() const = 0;
     virtual quint32 max_distance() const = 0;
     virtual ProductVersion prod_version() const = 0;
+
+    virtual double getDivisionThrustCaliOnMotor(const quint32 idxMotor) const = 0;
+    virtual double getDivisionTorqueCaliOnMotor(const quint32 idxMotor) const = 0;
 };
 
 Q_DECLARE_INTERFACE(CfgResHandlerInf, "CfgResHandlerInf/1.0")

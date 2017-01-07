@@ -119,6 +119,7 @@ const static formulaT formulaEnvPressure = [](const qint32 v, Phase phase, quint
 
 const static functionT functionEchoDistance = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     Q_UNUSED(idx)
+    Q_UNUSED(config)
 
     quint32 v = 0;
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
@@ -288,16 +289,23 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
         result = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
     }
 
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
+    double div = pCfgResHdl->getDivisionThrustCaliOnMotor(idxMotor);
+
     if (phase == Phase::Phase_NomalRunning){
         QString str = QString("functions.h formulaThrust idxMotor = %1 formula = (%2 - %3)/ %4")
                     .arg(idxMotor)
                     .arg(v)
                     .arg(CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
-                    .arg(CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor));
+                    .arg(div);
         qDebug() << str;
 
+
+
         result = (double)((qint32)(v) - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
-                                 / CfgZeroCalibrateClz::getDivisionThrustCaliOnMotor(idxMotor);
+                 / div;
+
+
     }
 
     qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result;
@@ -359,17 +367,21 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
         result = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
     }
 
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
+    double div = pCfgResHdl->getDivisionTorqueCaliOnMotor(idxMotor);
+
     if (phase == Phase::Phase_NomalRunning)
     {
         QString str = QString("functions.h formulaTorque idxMotor = %1 formula = (%2 - %3)/ %4")
                     .arg(idxMotor)
                     .arg(v)
                     .arg(CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
-                    .arg(CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
+                    .arg(div);
         qDebug() << str;
 
-        result = ((double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
-                  /CfgZeroCalibrateClz::getDivisionTorqueCaliOnMotor(idxMotor));
+
+        result = (double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
+                  /div;
     }
 
     qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result/1000;

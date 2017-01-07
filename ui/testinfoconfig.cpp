@@ -2,64 +2,59 @@
 #include "ui_testinfoconfig.h"
 #include "cfg/cfgreshandler.h"
 
-DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* model, QWidget *parent) :
+DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::DeviceInfoConfig),
-    m_model(model)
+    m_cfg(cfg)
 
 {
     ui->setupUi(this);
-
-//    ui->parityCombo->setCurrentIndex(1);
-//    ui->baudCombo->setCurrentText(QString::number(m_settings.baud));
-//    ui->dataBitsCombo->setCurrentText(QString::number(m_settings.dataBits));
-//    ui->stopBitsCombo->setCurrentText(QString::number(m_settings.stopBits));
-//    ui->timeoutSpinner->setValue(m_settings.responseTime);
-//    ui->retriesSpinner->setValue(m_settings.numberOfRetries);
-
-//    connect(ui->applyButton, &QPushButton::clicked, [this]() {
-//        m_settings.parity = ui->parityCombo->currentIndex();
-//        if (m_settings.parity > 0)
-//            m_settings.parity++;
-//        m_settings.baud = ui->baudCombo->currentText().toInt();
-//        m_settings.dataBits = ui->dataBitsCombo->currentText().toInt();
-//        m_settings.stopBits = ui->stopBitsCombo->currentText().toInt();
-//        m_settings.responseTime = ui->timeoutSpinner->value();
-//        m_settings.numberOfRetries = ui->retriesSpinner->value();
-
-//        hide();
-//    });
-    //connect(ui->ESCFreq_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFreqChanged(int)));
 
     const QIntValidator* validator = new QIntValidator(0, 100, this);
     ui->Thr_Min_LE->setValidator(validator);
     ui->Thr_Max_LE->setValidator(validator);
 
-    m_model->setLowThroLimit(ui->Thr_Min_LE->text().toInt());
-    m_model->setHighThroLimit(ui->Thr_Max_LE->text().toInt());
+    ui->Thr_Min_LE->setText(QString("%1").arg(m_cfg->lowThroLimit()));
+    ui->Thr_Max_LE->setText(QString("%1").arg(m_cfg->highThroLimit()));
 
-//    connect(ui->THRUnit_combox, SIGNAL(currentIndexChanged(int)),
+    int idx = ui->ESCFreq_combox->findText(QString::number(m_cfg->HZ()));
+    idx = (idx == -1 ? 0 : idx);
+    ui->ESCFreq_combox->setCurrentIndex(idx);
 
-//            static_cast<void (QSpinBox::*)(int)>
+    idx = ui->propVanes_combox->findText(QString::number(m_cfg->vane()));
+    idx = (idx == -1 ? 0 : idx);
+    ui->propVanes_combox->setCurrentIndex(idx);
 
-    m_model->setHZ(ui->ESCFreq_combox->currentIndex());
+    ui->SN_LE->setText(m_cfg->SerialNumber());
 
-    m_model->setVane(ui->propVanes_combox->currentText().toInt());
+//    connect(ui->ESCFreq_combox,
+//            static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged),
+//            [this](int index){
+//        if(index == 0)
+//            m_cfg->setHZ(DeviceInfoConfig::Freq::B50HZ);
+//        else
+//            m_cfg->setHZ(DeviceInfoConfig::Freq::B400HZ);
+//    });
 
-    connect(ui->ESCFreq_combox,
-            static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged),
-            [this](int index){
-        if(index == 0)
-            m_model->setHZ(DeviceInfoConfig::Freq::B50HZ);
+//    connect(ui->propVanes_combox, static_cast<void (QComboBox::*) (const QString&)>(&QComboBox::currentTextChanged),
+//            [this](const QString& text){
+//        QString vanes = text;
+//        m_cfg->setVane(static_cast<DeviceInfoConfig::Vanes>(vanes.toInt()));
+//    });
+
+    connect(ui->Apply, &QPushButton::clicked, [this](){
+        m_cfg->setLowThroLimit(ui->Thr_Min_LE->text().toInt());
+        m_cfg->setHighThroLimit(ui->Thr_Max_LE->text().toInt());
+
+        if (ui->ESCFreq_combox->currentIndex() == 0)
+            m_cfg->setHZ(DeviceInfoConfig::Freq::B50HZ);
         else
-            m_model->setHZ(DeviceInfoConfig::Freq::B400HZ);
+            m_cfg->setHZ(DeviceInfoConfig::Freq::B400HZ);
+
+        m_cfg->setVane(ui->propVanes_combox->currentText().toInt());
+        //m_cfg->setSerialNumber(ui->SN_LE->text());
     });
 
-    connect(ui->propVanes_combox, static_cast<void (QComboBox::*) (const QString&)>(&QComboBox::currentTextChanged),
-            [this](const QString& text){
-        QString vanes = text;
-        m_model->setVane(static_cast<DeviceInfoConfig::Vanes>(vanes.toInt()));
-    });
 }
 
 DeviceInfoConfig::~DeviceInfoConfig()

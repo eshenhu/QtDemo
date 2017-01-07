@@ -96,6 +96,12 @@ struct AgingTstData
    quint16 duration;
 };
 
+struct ManualTstData
+{
+   quint16 thro;
+   double vol;
+};
+
 enum DistanceTstDataEnum : quint32 {
     ZEROPOS     = 0,
     GOTOZEROPOS  = 0xFFFFFFEE
@@ -154,9 +160,16 @@ union UiMeasData{
     ThrottleTstData v;
     DistanceTstData w;
     MultipuleTstData x;
+    ManualTstData y;
 };
 
-struct UiCompMeasData{
+class UiCompMeasData{
+public:
+    UiCompMeasData()
+    {
+        type = TestPlanEnum::Invaild;
+    }
+public:
     TestPlanEnum type;
     UiMeasData data;
 };

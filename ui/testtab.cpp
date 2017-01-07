@@ -135,8 +135,8 @@ TestTab::TestTab(QWidget *parent)
     tabList[TestPlanEnum::Aging] = m_agingTstTab;
 
     //tabList[TestPlanEnum::Calibrate] = new CalibrateTstTab();
-    tabList[TestPlanEnum::Manual] = new ManualTstTab();
-
+    m_manualTstTab = new ManualTstTab();
+    tabList[TestPlanEnum::Manual] = m_manualTstTab;
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Voltage], tr("Voltage"));
 //    connect(m_volTstTab, &VoltageTstTab::updateUserSelection, [this](VoltageTstData data){
@@ -163,6 +163,8 @@ TestTab::TestTab(QWidget *parent)
 
     //m_tabWidget->addTab(tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
     m_tabWidget->addTab(tabList[TestPlanEnum::Manual], tr("Manual"));
+    connect(m_manualTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+                                this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
 
 //    QGridLayout *settingsLayout = new QGridLayout();
@@ -321,6 +323,8 @@ DistanceTstTab::DistanceTstTab(QWidget *parent)
 
 void DistanceTstTab::validateUserInput(bool checked)
 {
+    Q_UNUSED(checked)
+
     if(m_disStart->value() >= m_disEnd->value())
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
@@ -449,8 +453,8 @@ void VoltageTstTab::validateUserInput(bool checked)
 }
 
 ThrottleTstTab::ThrottleTstTab(TestPlanEnum type, QWidget *parent)
-    :m_type(type),
-     QWidget(parent)
+    : QWidget(parent),
+     m_type(type)
 {
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     // series settings
@@ -594,10 +598,6 @@ AgingTstTab::AgingTstTab(QWidget *parent)
     horizonLayout->addLayout(outputListLayout, 1);
 
     setLayout(horizonLayout);
-
-    QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
-        Q_UNUSED(checked)
-    });
 }
 
 void AgingTstTab::validateUserInput(bool checked)
@@ -625,5 +625,57 @@ CalibrateTstTab::CalibrateTstTab(QWidget *parent)
 ManualTstTab::ManualTstTab(QWidget *parent)
     : QWidget(parent)
 {
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
+    // series settings
+    m_throttle = new QSpinBox();
+    m_throttle->setMinimumWidth(70);
+    m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_throttle->setRange(5, pCfgResHdl->max_throttle());
+    //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_throttle->setSingleStep(ConstValue::STEP_THR);
+    m_throttle->setValue(ConstValue::DEFAULT_THR);
 
+    m_voltage = new QDoubleSpinBox();
+    m_voltage->setDecimals(1);
+    m_voltage->setMinimumWidth(70);
+    m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_voltage->setRange(5.0, pCfgResHdl->max_vol());
+    //m_voltage_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage->setValue(ConstValue::DEFAULT_VOL);
+
+    m_apply_btn = new QPushButton(tr("Apply"));
+    m_set_btn = new QPushButton(tr("Set"));
+
+    QFormLayout *seriesSettingsLayout = new QFormLayout();
+    seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
+    seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
+    seriesSettingsLayout->addRow(m_apply_btn);
+    seriesSettingsLayout->addRow(m_set_btn);
+
+    QFormLayout *outputListLayout = new QFormLayout();
+
+    QHBoxLayout *horizonLayout = new QHBoxLayout();
+    horizonLayout->addLayout(seriesSettingsLayout, 0);
+    horizonLayout->addLayout(outputListLayout, 1);
+
+    setLayout(horizonLayout);
+
+    QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
+        Q_UNUSED(checked)
+
+        UiCompMeasData val;
+        val.type = TestPlanEnum::Manual;
+        ManualTstData& data = val.data.y;
+
+        data.thro = m_throttle->value();
+        data.vol = m_voltage->value();
+        emit updateUserSelection(val);
+    });
+
+    QObject::connect(m_set_btn, &QPushButton::clicked, [this](bool checked){
+        Q_UNUSED(checked)
+
+        emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
+    });
 }

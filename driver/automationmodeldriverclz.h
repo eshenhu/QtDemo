@@ -123,6 +123,7 @@ signals:
 
 public slots:
     void readReady();
+    void syncDataDuringManualTest(const double vol, const quint32 thro);
 
 public:
     void startMeasTest(const UiCompMeasData data, const CfgResHandlerInf* res, const QSerialPortSetting::Settings setting);

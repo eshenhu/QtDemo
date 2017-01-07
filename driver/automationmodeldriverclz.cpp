@@ -176,6 +176,11 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
                                                      data.data.w.duration);
         mp_refresh->setSeed(mp_data);
     }
+    else if (data.type == TestPlanEnum::Manual){
+        mp_refresh = new OneShotManualMeasDataUpdate(data.data.y.vol, data.data.y.thro,
+                                                     res->boot_delay(), res->boot_PRP(), res->boot_rape(), data.data.y.vol);
+        mp_refresh->setSeed(mp_data);
+    }
     else{
         qCWarning(DRONE_LOGGING) << tr("com.engine Sorry, we don't support this selection temporaily ");
         return;
@@ -256,6 +261,33 @@ void AutomationModelDriverClz::readReady()
     reply->deleteLater();
 }
 
+void AutomationModelDriverClz::syncDataDuringManualTest(const double vol, const quint32 thro)
+{
+    if (mp_refresh != nullptr && m_uiCfgData.type != TestPlanEnum::Invaild)
+    {
+        if (state == State::MeasRunningState)
+        {
+            if (m_uiCfgData.type == TestPlanEnum::Manual)
+            {
+                OneShotManualMeasDataUpdate* refresh = dynamic_cast<OneShotManualMeasDataUpdate*>(mp_refresh);
+                refresh->updateValueManually(vol, thro);
+            }
+            else
+            {
+                qCWarning(DRONE_LOGGING) << "Can't send manual sync data to non-manual test plan";
+            }
+        }
+        else
+        {
+            qCInfo(DRONE_LOGGING) << "Can't change the real time value due to FSM state was not in RUNNING state";
+        }
+    }
+    else
+    {
+        qCWarning(DRONE_LOGGING) << "Can't send manual sync data to non-ongoing test!";
+    }
+}
+
 void AutomationModelDriverClz::processReceivedDataUnit(const QModbus2DataUnit &data)
 {
     SignalOverLine signal(&data);
@@ -317,12 +349,13 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
 */
 bool AutomationModelDriverClz::processReceivedMeasDataUnit(const QModbus2DataUnit * const data)
 {
+    Q_UNUSED(data)
     return true;
 }
 
 void AutomationModelDriverClz::doLaterReceivedMeasDataUnit(const QModbus2DataUnit * const data)
 {
-
+    Q_UNUSED(data)
 }
 
 void AutomationModelDriverClz::processSendTimeout()

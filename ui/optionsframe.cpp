@@ -12,9 +12,17 @@ OptionsFrame::OptionsFrame(CfgMotorBootCfgModel* cfg, QWidget *parent) :
 
     //CfgResHandlerInf* res = ActionWidget::getCfgResHdl();
 
-    ui->startdelay_comboBox->setCurrentIndex(0);
-    ui->PRP_comboBox->setCurrentIndex(0);
-    ui->softdelay_comboBox->setCurrentIndex(0);
+    int idx = ui->startdelay_comboBox->findText(QString::number(m_cfg->boot_delay()));
+    idx = (idx == -1 ? 0 : idx);
+    ui->startdelay_comboBox->setCurrentIndex(idx);
+
+    idx = ui->PRP_comboBox->findText(QString::number(m_cfg->PRP()));
+    idx = (idx == -1 ? 0 : idx);
+    ui->PRP_comboBox->setCurrentIndex(idx);
+
+    idx = ui->softdelay_comboBox->findText(QString::number(m_cfg->boot_rape()));
+    idx = (idx == -1 ? 0 : idx);
+    ui->softdelay_comboBox->setCurrentIndex(idx);
 
     connect(ui->apply_button, &QPushButton::clicked, [this](){
         m_cfg->set_boot_delay(ui->startdelay_comboBox->currentText().toInt());
