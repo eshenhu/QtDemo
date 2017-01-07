@@ -15,7 +15,7 @@ std::map<int, QString> TestPlanStringMap =
     { (int)TestPlanEnum::Manual,     QStringLiteral("Manual Test") }
 };
 
-std::map<QString, QColor> colorPerTestElement =
+std::map<QString, QColor> TestUnitColor::colorPerTestElement =
 {
     { TestUnitName::VOL(), QColor("#0000FF") },
     { TestUnitName::THROTTLE(), QColor("#2E8B57") },
@@ -31,3 +31,28 @@ std::map<QString, QColor> colorPerTestElement =
     { TestUnitName::MECHAPWR(), QColor("#8B0000") },
     { TestUnitName::MECHAEFFI(), QColor("#B8860B") },
 };
+
+QVector<QColor> TestUnitColor::colorPerGraph = {QColor("#0000FF"),
+                                                QColor("#2E8B57"),
+                                                QColor("#FF0000"),
+                                                QColor("#FF00FF"),
+                                                QColor("#A020F0"),
+                                                QColor("#20B2AA"),
+                                                QColor("#00FF00"),
+                                                QColor("#7FFFD4")};
+
+
+QColor TestUnitColor::getColor(const QString testUnitName, const quint32 idxOfGraph, const bool isCmpEnabled)
+{
+    QColor color;
+
+    if (isCmpEnabled)
+    {
+        color = colorPerGraph.value(idxOfGraph, QColor("#B8860B"));
+    }
+    else
+    {
+        color = colorPerTestElement[testUnitName];
+    }
+    return color;
+}

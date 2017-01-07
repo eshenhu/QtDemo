@@ -4,6 +4,7 @@
 #include <QString>
 #include <map>
 #include <QColor>
+#include <QVector>
 
 enum TestPlanEnum {
     Invaild,
@@ -16,8 +17,20 @@ enum TestPlanEnum {
     Manual
 };
 
+const static quint32 MIN_ROW_FILE_SELECTION = 1;
+const static quint32 MAX_ROW_FILE_SELECTION = 8;
+
 extern std::map<int, QString> TestPlanStringMap;
-extern std::map<QString, QColor> colorPerTestElement;
+
+class TestUnitColor
+{
+    TestUnitColor() = delete;
+public:
+    static QColor getColor(const QString testUnitName, const quint32 idxOfGraph, const bool isCmpEnabled);
+private:
+    static std::map<QString, QColor> colorPerTestElement;
+    static QVector<QColor> colorPerGraph;
+};
 
 class TestUnitName{
 public:

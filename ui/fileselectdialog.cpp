@@ -9,8 +9,8 @@
 FileSelectDialog::FileSelectDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FileSelectDialog),
-    m_cntFileSelection(1),
-    cfgElementList(MAX_ROW_FILE_SELECTION)
+    cfgElementList(MAX_ROW_FILE_SELECTION),
+    m_cntFileSelection(1)
 {
     ui->setupUi(this);
 
@@ -130,6 +130,9 @@ void FileSelectDialog::defaultAction(bool)
                                                           path,
                                                           tr("Json Files (*.json)"));
 
+    if (fileName.isNull())
+        return;
+
     for(const CompRowFileSelectionClz& item : m_rowFileSelection)
     {
         if (item.toolBtn == send)
@@ -143,32 +146,58 @@ void FileSelectDialog::defaultAction(bool)
 
 void FileSelectDialog::validate()
 {
+    CfgResHandlerInf::ProductVersion pv_0;
+    TestPlanEnum plan_0;
+
     for (ChartViewCfgElement& ele : cfgElementList)
     {
         ele.reset();
     }
 
-    do{
-        for (quint32 i = 0; i <= m_cntFileSelection; i++)
+    for (quint32 i = 0; i < m_cntFileSelection; i++)
+    {
+        if (m_rowFileSelection[i].lineEdit->text().isEmpty())
         {
-            if (m_rowFileSelection[i].lineEdit->text().isEmpty())
-            {
-                QMessageBox::warning(this, tr("Warning"),
-                                     tr("<p>Empty file name was not allowed!"),
-                                     QMessageBox::Ok);
-                break;
-            }
+            QMessageBox::warning(this, tr("Warning"),
+                                 tr("<p>Empty file name was not allowed!"),
+                                 QMessageBox::Ok);
+            goto goto_end;
         }
+    }
 
-        for (quint32 i = 0; i <= m_cntFileSelection; i++)
+    for (quint32 i = 0; i < m_cntFileSelection; i++)
+    {
+        const QString filename = m_rowFileSelection[i].lineEdit->text();
+        if (!openJsonFile(filename, i))
         {
-            const QString filename = m_rowFileSelection[i].lineEdit->text();
-            if (openJsonFile(filename, i))
-            {
-                break;
-            }
+            goto goto_end;
         }
-    }while(0);
+    }
+
+    pv_0 = cfgElementList[0].cfgMetaData.pv();
+    plan_0 = cfgElementList[0].cfgMetaData.plan();
+
+    for (quint32 i = 0; i < m_cntFileSelection; i++)
+    {
+        CfgResHandlerInf::ProductVersion pv = cfgElementList[i].cfgMetaData.pv();
+        TestPlanEnum plan = cfgElementList[i].cfgMetaData.plan();
+
+        if ( pv != pv_0 || plan != plan_0)
+        {
+            QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                                   tr("<p>Those files was not compitable either"
+                                      "<p>- Test Plan   "
+                                      "<p>- Product Version "),
+                                   QMessageBox::Close);
+            warningBox.exec();
+
+            goto goto_end;
+        }
+    }
+
+
+goto_end:
+    this->accept();
 }
 
 //void ChartViewerWin::open()
@@ -212,6 +241,7 @@ void FileSelectDialog::validate()
 bool FileSelectDialog::openJsonFile(const QString& jsonFileName, quint32 location)
 {
     bool isOk = false;
+    cfgElementList[location].reset();
 
     while (location < MAX_ROW_FILE_SELECTION)
     {

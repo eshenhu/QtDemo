@@ -7,6 +7,7 @@
 #include <QToolButton>
 #include <cfg/cfgjsonrecelement.h>
 #include <cfg/cfgwashingdatainf.h>
+#include "ui/uiheader.h"
 
 namespace Ui {
 class FileSelectDialog;
@@ -35,8 +36,7 @@ class FileSelectDialog : public QDialog
 {
     Q_OBJECT
 public:
-    const static int MIN_ROW_FILE_SELECTION = 1;
-    const static int MAX_ROW_FILE_SELECTION = 8;
+
     struct CompRowFileSelectionClz{
         CompRowFileSelectionClz()
         {

@@ -14,8 +14,7 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ChartViewerWin),
     cfgElementList((quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_MAX),
-    cfgMetaData(cfgElementList[(quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I].cfgMetaData),
-    cfgRawData(cfgElementList[(quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I].cfgRawData)
+    cfgRawData(nullptr)
 {
     ui->setupUi(this);
 
@@ -44,126 +43,34 @@ void ChartViewerWin::open_and_compare()
 {
     std::unique_ptr<FileSelectDialog> fileSelection(new FileSelectDialog(this));
     fileSelection->exec();
-}
+    cfgElementList = std::move(fileSelection->cfgElementList);
+    cfgMetaData = cfgElementList[0].cfgMetaData;
+    cfgRawData = cfgElementList[0].cfgRawData;
 
-void ChartViewerWin::open()
-{
-    QString path = QCoreApplication::applicationDirPath();
-    const QString fileName = QFileDialog::getOpenFileName(this,
-                                                          tr("Open Json File"),
-                                                          path,
-                                                          tr("Json Files (*.json)"));
-    if (!fileName.isEmpty())
+    quint32 countOfGraph = 0;
+    for (const ChartViewCfgElement& ele : cfgElementList)
     {
-        for (ChartViewerWin::ChartViewCfgElement& ele : cfgElementList)
-        {
-            ele.reset();
-        }
-
-        if (openJsonFile(fileName, (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_I))
-        {
-            releaseSignalAndSlot();
-            initAxesAndView(ui->customPlot);
-            loadDefault2Plot();
-            setupSignalAndSlot();
-
-            emit testPlanChanged(cfgMetaData.plan());
-            // inform this information
-            //emit leftFileOk(true);
-        }
-        ui->customPlot->replot();
+        if (!ele.cfgRawData.isNull())
+            ++countOfGraph;
     }
-}
 
-/*
- * We only allow compare the files with same 'test plan' and 'pv';
-*/
-bool ChartViewerWin::validateMetaData()
-{
-    bool rtn = true;
-    CfgResHandlerInf::ProductVersion pv = cfgMetaData.pv();
-    TestPlanEnum plan = cfgMetaData.plan();
-
-    for (ChartViewerWin::ChartViewCfgElement& ele : cfgElementList)
+    m_isCmpEnabled = false;
+    if (countOfGraph == 0)
     {
-        if ( pv != ele.cfgMetaData.pv() || plan != ele.cfgMetaData.plan())
-        {
-            rtn = false;
-            break;
-        }
+        qWarning() << "No Json File was selected!";
+        return;
     }
-    return rtn;
-}
+    else if (countOfGraph > 1)
+        m_isCmpEnabled = true;
 
-void ChartViewerWin::open_validate()
-{
-    QString path = QCoreApplication::applicationDirPath();
-    const QString fileName = QFileDialog::getOpenFileName(this,
-                                                          tr("Open Json File"),
-                                                          path,
-                                                          tr("Json Files (*.json)"));
+    releaseSignalAndSlot();
+    initAxesAndView(ui->customPlot);
+    loadDefault2Plot();
+    setupSignalAndSlot();
 
-    if (!fileName.isEmpty())
-    {
-        if (openJsonFile(fileName, (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_II))
-        {
-            if (validateMetaData())
-            {
-                releaseSignalAndSlot();
-                initAxesAndView(ui->customPlot);
-                loadDefault2Plot();
-                setupSignalAndSlot();
-            }
-            else
-            {
-                quint32 idx = (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_II;
-                ChartViewerWin::ChartViewCfgElement ele = cfgElementList.value(idx);
-                ele.reset();
+    emit testPlanChanged(cfgMetaData.plan());
 
-                QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                                       tr("Those two files was not compitable  \n\
-                                           - Test Plan    \n\
-                                           - Product Version "),
-                                       QMessageBox::Close);
-                warningBox.exec();
-            }
-        }
-        ui->customPlot->replot();
-    }
-}
-/* 1 : OK
-*  0 : Fail
-*/
-
-#define RETURN_WITH_OK   {isOk = true;  break;}
-#define RETURN_WITH_NOK  {isOk = false; break;}
-
-bool ChartViewerWin::openJsonFile(const QString& jsonFileName, quint32 location)
-{
-    bool isOk = false;
-
-    while (location < (quint32)ChartViewerWin::ChartViewIdxSupFileE::IDX_SUP_FILE_MAX)
-    {
-
-        DataJsonCfgReader reader;
-
-        if (!reader.loadData(jsonFileName))
-        {
-            QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                                   tr("This file can't be read with reason of either \n"
-                                      " - json file format was corrupted. \n"
-                                      " - data file was corrupted"),
-                                   QMessageBox::Close);
-            warningBox.exec();
-            RETURN_WITH_NOK
-        }
-
-        cfgElementList[location].cfgMetaData = reader.getCfgParser();
-        cfgElementList[location].cfgRawData = reader.csvDataHandler();
-
-        RETURN_WITH_OK
-    }
-    return isOk;
+    ui->customPlot->replot();
 }
 
 bool ChartViewerWin::loadDefault2Plot()
@@ -193,20 +100,6 @@ void ChartViewerWin::createActions()
 
     openAct->setEnabled(true);
 
-    /*------ add openAct_B -------*/
-    QToolBar *fileToolBar_B = addToolBar(tr("File_B"));
-
-    const QIcon openIcon_B = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-    openAct_B = new QAction(openIcon_B, tr("&Open..."), this);
-    //openAct->setShortcuts(QKeySequence::Open);
-    openAct_B->setStatusTip(tr("Open an existing file"));
-    connect(openAct_B, &QAction::triggered, this, &ChartViewerWin::open_validate);
-    fileToolBar_B->addAction(openAct_B);
-
-    openAct_B->setVisible(true);
-    openAct_B->setEnabled(false);
-
-    //connect(this, &ChartViewerWin::leftFileOk, openAct_B, &QAction::setEnabled);
 
     /*------ add open -------*/
     QToolBar *curveToolBar = addToolBar(tr("Curve"));
@@ -340,7 +233,7 @@ QCPGraph* ChartViewerWin::addGraph(QCPAxisRect* rect)
     return mainGraphCos;
 }
 
-void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx)
+void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx, quint32 idxOfGraph)
 {
     if (graph)
     {
@@ -348,7 +241,8 @@ void ChartViewerWin::updateGraph(QCPGraph* graph, QVector<QCPGraphData> &pairs, 
         graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlus, QPen(Qt::black), QBrush(Qt::white), 10));
         graph->setAntialiasedFill(true);
         graph->data()->set(pairs);
-        QColor color = colorPerTestElement[displayStr];
+
+        QColor color = TestUnitColor::getColor(displayStr, idxOfGraph, m_isCmpEnabled);
         graph->setPen(QPen(color, 2));
         //mainGraphCos->valueAxis()->setRange(-1, 1);
         graph->setName(displayStr + ":" + QString::number(motorIdx));
@@ -374,7 +268,7 @@ void ChartViewerWin::updateGraphDuringMultiplePlan(quint32 baseIdx)
 
 void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 {
-    quint32 idx = 0;
+    quint32 idxOfGraph = 0;
     QCPGraph* graph = nullptr;
 
     QString sample_name;
@@ -385,7 +279,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
         if(!ele.cfgRawData.isNull())
         {
             //graph = rect->graphs()[idx];
-            graph = rect->graphs().value(idx, nullptr);
+            graph = rect->graphs().value(idxOfGraph, nullptr);
             if (!graph)
             {
                 graph = addGraph(rect);
@@ -393,9 +287,9 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
             // prepare data:
             QVector<QCPGraphData> pair;
             generateData(ele.cfgRawData, selectedIdx, pair, sample_name, motorIdx);
-            updateGraph(graph, pair, sample_name, motorIdx);
+            updateGraph(graph, pair, sample_name, motorIdx, idxOfGraph);
             rescalePlot();
-            idx++;
+            idxOfGraph++;
         }
     }
     // update the rect name;
@@ -412,13 +306,11 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 void ChartViewerWin::setupSignalAndSlot()
 {
     connect(this, &ChartViewerWin::testPlanChanged, [this](TestPlanEnum plan){
-        openAct_B->setEnabled(false);
         curveAction->setEnabled(false);
 
         if (plan == TestPlanEnum::Voltage ||
             plan == TestPlanEnum::Throttle)
         {
-            openAct_B->setEnabled(true);
             itemListIdx = 0;
         }
         else if (plan == TestPlanEnum::Multiplue)

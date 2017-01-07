@@ -7,6 +7,7 @@
 
 #include "cfg/datajsoncfgreader.h"
 #include "chartsview/qcustomplot.h"
+#include "ui/fileselectdialog.h"
 class QCustomPlot;
 namespace Ui {
 class ChartViewerWin;
@@ -20,23 +21,10 @@ class ChartViewerWin : public QMainWindow
 public:
     enum class ChartViewIdxSupFileE : quint32
     {
-        IDX_SUP_FILE_I,
-        IDX_SUP_FILE_II,
+        IDX_SUP_FILE_I  = 0,
+        IDX_SUP_FILE_II = 1,
 
-        IDX_SUP_FILE_MAX
-    };
-
-    class ChartViewCfgElement
-    {
-    public:
-        void reset(){
-            cfgMetaData = CfgJsonRecElement();
-            cfgRawData.reset();
-        }
-
-    public:
-        CfgJsonRecElement cfgMetaData;
-        QSharedPointer<CfgWashingDataInf> cfgRawData;
+        IDX_SUP_FILE_MAX = MAX_ROW_FILE_SELECTION
     };
 
 public:
@@ -50,15 +38,12 @@ public:
 
     //void createWidgets();
 //    void createProxyWidgets();
-    bool openJsonFile(const QString& jsonFileName, quint32 location);
     //void makeNewChartWidget();
     //void resetDataStoHandler(quint8 idx);
     void initAxesAndView(QCustomPlot* customPlot);
     void generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, quint32 idx,
                       QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx);
 
-
-    bool validateMetaData();
     void setupSignalAndSlot();
     void createActions();
     //void delGraph();
@@ -72,7 +57,7 @@ public:
     QCPGraph* addGraph(QCPAxisRect* rect);
     void updateGraphDuringMultiplePlan(quint32 baseIdx);
     void updateGraph(QCPAxisRect* rect, quint32 idx);
-    void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx);
+    void updateGraph(QCPGraph * graph, QVector<QCPGraphData> &pairs, QString &name, quint8 motorIdx, quint32 idxOfGraph);
 
     QCPAxisRect* addRect(QCustomPlot *customPlot);
     void rescalePlot();
@@ -83,7 +68,6 @@ public:
 private:
     Ui::ChartViewerWin *ui = nullptr;
     QAction *openAct;
-    QAction *openAct_B;
     QAction* curveAction;
     quint32 itemListIdx = 0;
     //QSharedPointer<QCPTextElement> m_title;
@@ -92,15 +76,16 @@ private:
     QCPItemStraightLine* vCursor = nullptr;
 
 
-    QVector<ChartViewerWin::ChartViewCfgElement> cfgElementList;
-    CfgJsonRecElement& cfgMetaData;
-    QSharedPointer<CfgWashingDataInf>& cfgRawData;
+    QVector<ChartViewCfgElement> cfgElementList;
+    CfgJsonRecElement cfgMetaData;
+    QSharedPointer<CfgWashingDataInf> cfgRawData;
 
 
     QCPMarginGroup *marginGroup = nullptr;
     QCPAxisRect* m_assoRect = nullptr;
 
     double m_key_diff = 0;
+    bool m_isCmpEnabled = false;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
 signals:
@@ -115,8 +100,6 @@ private slots:
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
     void open_and_compare();
-    void open();
-    void open_validate();
     void addRect();
     void showVLineItem(QMouseEvent *event);
     void contextMenuRequest(QPoint pos);
