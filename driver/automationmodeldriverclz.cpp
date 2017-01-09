@@ -380,6 +380,8 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
     case State::FreqAdjustState:
     case State::StartBtnQueryState:
     case State::AlarmQueryState:
+    case State::DistanceStepIntoLowState:
+    case State::DistanceStepIntoBegState:
     case State::MeasRunningState:
     case State::MeasFinishedState:
     {
@@ -494,7 +496,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
         {
             if (modbusDevice->state() == QModbus2Device::ConnectedState
                || modbusDevice->state() == QModbus2Device::ConnectingState){
-                modbusDevice->disconnectDevice();
+//                modbusDevice->disconnectDevice();
                 QTimer::singleShot(msecTimeInterval, [this](){ sendResetCmd();});
             }
             qCWarning(DRONE_LOGGING) << "unexpected signal was received during state -- State::ResetState"

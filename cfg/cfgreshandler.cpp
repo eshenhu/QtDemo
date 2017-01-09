@@ -250,7 +250,7 @@ void CfgProductVersionCfgModel::loadSetting()
 CfgCalibrateCfgModel::CfgCalibrateCfgModel(QSettings &set):
     m_set(set)
 {
-    for (int i = 0; i < MAX_SUPPORT_MOTOR; ++i) {
+    for (quint32 i = 0; i < MAX_SUPPORT_MOTOR; ++i) {
 
          struct CfgCalibrateCfgPerMotor& cfgCali = CfgCalibrateCfgPerMotor[i];
          cfgCali.divisionOnThrust = defaultDivisionOnThrust[i];
@@ -318,21 +318,16 @@ void CfgCalibrateCfgModel::loadSetting()
 //        m_set.setValue("divisionOnTorque", defaultDivisionOnThrust[i]);
 //    }
 //    m_set.endArray();
-    int size = m_set.beginReadArray("cfg/calibrate");
 
+    quint32 size = static_cast<quint32>(m_set.beginReadArray("cfg/calibrate"));
     size = size > MAX_SUPPORT_MOTOR ? MAX_SUPPORT_MOTOR : size;
 
-    for (int i = 0; i < size; ++i) {
+    for (quint32 i = 0; i < size; ++i) {
          m_set.setArrayIndex(i);
 
          struct CfgCalibrateCfgPerMotor& cfgCali = CfgCalibrateCfgPerMotor[i];
          cfgCali.divisionOnThrust = m_set.value("divisionOnThrust", defaultDivisionOnThrust[i]).toDouble();
          cfgCali.divisionOnTorque = m_set.value("divisionOnTorque", defaultDivisionOnTorque[i]).toDouble();
-    }
-
-    for (int i = 0; i < MAX_SUPPORT_MOTOR; ++i) {
-        qDebug() << "calibrate is idx " << i << CfgCalibrateCfgPerMotor[i].divisionOnThrust << CfgCalibrateCfgPerMotor[i].divisionOnTorque;
-
     }
     m_set.endArray();
 }
