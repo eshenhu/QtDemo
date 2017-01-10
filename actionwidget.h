@@ -86,6 +86,7 @@ public Q_SLOTS:
 
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
+    void doEnableWidgetInFront(bool);
 
 private:
     QChartView*       m_chartView;

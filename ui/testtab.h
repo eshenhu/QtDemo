@@ -12,6 +12,7 @@ class QComboBox;
 class QPushButton;
 class QTabWidget;
 class CfgResHandlerInf;
+class QGroupBox;
 
 class DistanceTstTab : public QWidget
 {
@@ -140,11 +141,18 @@ public:
 
     QPushButton *showgraph_btn() const;
 
+    QTabWidget *tabWidget() const;
+
+    QGroupBox *chartSettings() const;
+
+    void enableLimitCheckBox(bool);
+
 private:
     //QComboBox *m_testSeletionComboBox;
-    QCheckBox *m_volCheckBox;
-    QCheckBox *m_animationsCheckBox;
-    QCheckBox *m_legendCheckBox;
+    QCheckBox *m_volLimCheckBox;
+    QCheckBox *m_currentLimCheckBox;
+    QCheckBox *m_legendLimCheckBox;
+    QGroupBox *m_chartSettings;
 
     QDialogButtonBox* m_buttonBox;
 

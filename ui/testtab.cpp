@@ -82,19 +82,19 @@ public:
 TestTab::TestTab(QWidget *parent)
     : QWidget(parent)
 {
-    m_volCheckBox = new QCheckBox();
-    m_animationsCheckBox = new QCheckBox();
-    m_animationsCheckBox->setCheckState(Qt::Checked);
+    m_volLimCheckBox = new QCheckBox();
+    m_currentLimCheckBox = new QCheckBox();
+    m_currentLimCheckBox->setCheckState(Qt::Checked);
 
-    m_legendCheckBox = new QCheckBox();
+    m_legendLimCheckBox = new QCheckBox();
 
     QFormLayout *chartSettingsLayout = new QFormLayout();
     //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
-    chartSettingsLayout->addRow("Vol Limit", m_volCheckBox);
-    chartSettingsLayout->addRow("Cur Limit", m_animationsCheckBox);
-    chartSettingsLayout->addRow("Temp Limit", m_legendCheckBox);
-    QGroupBox *chartSettings = new QGroupBox("Limit Protection");
-    chartSettings->setLayout(chartSettingsLayout);
+    chartSettingsLayout->addRow("Vol Limit", m_volLimCheckBox);
+    chartSettingsLayout->addRow("Cur Limit", m_currentLimCheckBox);
+    chartSettingsLayout->addRow("Temp Limit", m_legendLimCheckBox);
+    m_chartSettings = new QGroupBox("Limit Protection");
+    m_chartSettings->setLayout(chartSettingsLayout);
 
     //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
 
@@ -175,11 +175,28 @@ TestTab::TestTab(QWidget *parent)
 //    settingsLayout->addWidget(seriesSettings, 0, 2);
 //    settingsLayout->setColumnStretch(2, 0);
     QVBoxLayout *settingsLayout = new QVBoxLayout();
-    settingsLayout->addWidget(chartSettings, 0);
+    settingsLayout->addWidget(m_chartSettings, 0);
     settingsLayout->addWidget(m_tabWidget, 1);
     settingsLayout->addWidget(seriesSettings, 0);
 
     setLayout(settingsLayout);
+}
+
+QTabWidget *TestTab::tabWidget() const
+{
+    return m_tabWidget;
+}
+
+QGroupBox *TestTab::chartSettings() const
+{
+    return m_chartSettings;
+}
+
+void TestTab::enableLimitCheckBox(bool isEnabled)
+{
+    m_volLimCheckBox->setChecked(isEnabled);
+    m_currentLimCheckBox;
+    m_legendLimCheckBox;
 }
 
 //void TestTab::updateOptionsSelection(int index)

@@ -103,6 +103,14 @@ ActionWidget::ActionWidget(QWidget *parent)
     //baseLayout->addWidget(m_chartView, 1);
     setLayout(baseLayout);
 
+
+//    for (int idx = 0; idx <= m_subTestTabWidget->tabWidget()->count(); ++idx)
+//    {
+//        m_subTestTabWidget->tabWidget()->setTabEnabled(idx, false);
+//    }
+//    m_subTestTabWidget->chartSettings()->setCheckable(false);
+//    m_tabWidget->setTabEnabled(1, false);
+
     connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
             const AutomationModelDriverClz::QModBusState state, QString str){
@@ -148,6 +156,7 @@ ActionWidget::ActionWidget(QWidget *parent)
             }while(1);
 
             if (isStatusOK){
+                doEnableWidgetInFront(false);
                 m_subTestTabWidget->start_btn()->setText(QStringLiteral("Stop"));
                 m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
 
@@ -156,11 +165,13 @@ ActionWidget::ActionWidget(QWidget *parent)
                 m_measData.type = TestPlanEnum::Invaild;
             }
             else{
+                doEnableWidgetInFront(true);
                 m_subTestTabWidget->start_btn()->setChecked(false);
             }
         }
         else
         {
+            doEnableWidgetInFront(true);
             m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
             m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
 
@@ -353,6 +364,19 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
         p.name = QString("");
     }
     return p;
+}
+
+/*
+ * dim / shine the Widget in front.
+ *      false: dim
+ *      true : shine
+*/
+void ActionWidget::doEnableWidgetInFront(bool doshine)
+{
+    for (int idx = 0; idx <= m_tabWidget->count(); ++idx)
+    {
+        m_tabWidget->setTabEnabled(idx, doshine);
+    }
 }
 
 //#include "moc_actionwidget.cpp"
