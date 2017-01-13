@@ -47,7 +47,7 @@ class CfgJsonRecElement::CfgJsonRecElementBuilder
 {
 public:
     CfgJsonRecElementBuilder(){
-        m_pv = CfgResHandlerInf::ProductVersion::PV11;
+        m_pv = CfgResHandlerInf::ProductVersion::INVALID;
     }
 
     CfgJsonRecElementBuilder(CfgResHandlerInf::ProductVersion v)

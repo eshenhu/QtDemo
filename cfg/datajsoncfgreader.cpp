@@ -41,37 +41,25 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                 {
                 case (quint32)TestPlanEnum::Throttle:
                 {
-                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
                     handler.loadData(csvFullFileName);
 
                     m_csvDataHandler = QSharedPointer<CfgThrottleWashingDataE2Clz>::create();
                     m_csvDataHandler->wash(handler.data());
-//                    QSharedPointer<CfgThrottleWashingDataE2Clz> dynCast =
-//                            qSharedPointerDynamicCast<CfgThrottleWashingDataE2Clz>(m_csvDataHandler);
-//                    if (dynCast != nullptr)
-//                    {
-//                         dynCast->wash(handler.data());
-//                    }
                 }
                     break;
                 case (quint32)TestPlanEnum::Voltage:
                 {
-                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
                     handler.loadData(csvFullFileName);
                     m_csvDataHandler = QSharedPointer<CfgVolWashingDataE2Clz>::create();
                     m_csvDataHandler->wash(handler.data());
-//                    QSharedPointer<CfgVolWashingDataE2Clz> dynCast =
-//                            qSharedPointerDynamicCast<CfgVolWashingDataE2Clz>(m_csvDataHandler);
-//                    if (dynCast != nullptr)
-//                    {
-//                         dynCast->wash(handler.data());
-//                    }
                 }
                 break;
 
                 case (quint32)TestPlanEnum::Multiplue:
                 {
-                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
                     handler.loadData(csvFullFileName);
                     m_csvDataHandler = QSharedPointer<CfgMultiWashingDataE2Clz>::create();
                     m_csvDataHandler->wash(handler.data());
@@ -80,7 +68,7 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
 
                 case (quint32)TestPlanEnum::Distance:
                 {
-                    DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler handler;
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
                     handler.loadData(csvFullFileName);
                     m_csvDataHandler = QSharedPointer<CfgDistanceWashingDataE2Clz>::create();
                     m_csvDataHandler->wash(handler.data());

@@ -121,20 +121,12 @@
         }
       ]
     },
-    "PV2": {
+    "PV4": {
       "config": {
         "motorType": "elec",
-        "numOfMotor": 2
+        "numOfMotor": 1
       },
       "display": [
-        {
-          "text": "ENVHUMIDITY",
-          "index": 255,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "RH"
-        },
         {
           "text": "ENVTEMP",
           "index": 255,
@@ -142,14 +134,6 @@
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "DegC"
-        },
-        {
-          "text": "ENVPRESSURE",
-          "index": 255,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 5000,
-          "unit": "HPa"
         },
         {
           "text": "VOLTAGE",
@@ -160,35 +144,43 @@
           "unit": "V"
         },
         {
+          "text": "THROTTLE",
+          "index": 255,
+          "isSelected": true,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "%"
+        },
+        {
           "text": "CURRENT",
           "index": 0,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 40,
+          "upLimit": 50,
           "unit": "A"
         },
         {
           "text": "THRUST",
           "index": 0,
           "isSelected": true,
-          "lowLimit": -5000,
-          "upLimit": 5000,
+          "lowLimit": -1500,
+          "upLimit": 1500,
           "unit": "g"
         },
         {
-          "text": "THROTTLE",
+          "text": "TORQUE",
           "index": 0,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "%"
+          "isSelected": true,
+          "lowLimit": -15,
+          "upLimit": 15,
+          "unit": "N.m"
         },
         {
           "text": "SPEED",
           "index": 0,
           "isSelected": false,
           "lowLimit": 0,
-          "upLimit": 50000,
+          "upLimit": 30000,
           "unit": "RPM"
         },
         {
@@ -211,7 +203,7 @@
           "text": "EFFICIENCY-1",
           "index": 0,
           "isSelected": false,
-          "lowLimit": -20,
+          "lowLimit": "",
           "upLimit": 20,
           "unit": "g/W"
         },
@@ -228,56 +220,24 @@
           "index": 0,
           "isSelected": false,
           "lowLimit": 0,
-          "upLimit": 1000,
+          "upLimit": 5000,
           "unit": "W"
         },
         {
-          "text": "SPEED",
-          "index": 1,
+          "text": "MECHAPWR",
+          "index": 0,
           "isSelected": false,
           "lowLimit": 0,
-          "upLimit": 50000,
-          "unit": "RPM"
-        },
-        {
-          "text": "TEMP_1",
-          "index": 1,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "C"
-        },
-        {
-          "text": "TEMP_2",
-          "index": 17,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "C"
-        },
-        {
-          "text": "EFFICIENCY-1",
-          "index": 1,
-          "isSelected": false,
-          "lowLimit": -20,
-          "upLimit": 20,
-          "unit": "g/W"
-        },
-        {
-          "text": "EFFICIENCY-2",
-          "index": 17,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "g/A"
-        },
-        {
-          "text": "POWER",
-          "index": 1,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 1000,
+          "upLimit": 1500,
           "unit": "W"
+        },
+        {
+           "text": "MECHAEFFI",
+           "index": 0,
+           "isSelected": false,
+           "lowLimit": 0,
+           "upLimit": 100,
+           "unit": "%"
         }
       ]
     },

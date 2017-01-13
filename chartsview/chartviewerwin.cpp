@@ -553,7 +553,7 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
             cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGDISTANCE)
         {
             quint32 idx = 0;
-            CfgItemMeasBasedE2DataEle actionlist;
+            CfgItemMeasBasedE2WashingOutDataEle actionlist;
             for (CfgMetaElement& ele : actionlist.m_metaEle)
             {
                 quint8 idxMotor = ele.getMotorIdx();

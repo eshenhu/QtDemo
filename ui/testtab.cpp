@@ -117,8 +117,11 @@ TestTab::TestTab(QWidget *parent)
     m_tabWidget = new QTabWidget;
     m_tabWidget->setTabPosition(QTabWidget::West);
 
-    m_disTstTab = new DistanceTstTab();
-    tabList[TestPlanEnum::Distance] = m_disTstTab;
+    if (UniResLocation::getCfgResHdl()->num_of_motor() >= 2)
+    {
+        m_disTstTab = new DistanceTstTab();
+        tabList[TestPlanEnum::Distance] = m_disTstTab;
+    }
 
     m_volTstTab = new VoltageTstTab();
     tabList[TestPlanEnum::Voltage] = m_volTstTab;
@@ -149,9 +152,12 @@ TestTab::TestTab(QWidget *parent)
     connect(m_throTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
             this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
-    m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
-    connect(m_disTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
-            this, SIGNAL(updateUserSelection(UiCompMeasData)));
+    if (m_disTstTab)
+    {
+        m_tabWidget->addTab(tabList[TestPlanEnum::Distance], tr("Distance"));
+        connect(m_disTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
+                this, SIGNAL(updateUserSelection(UiCompMeasData)));
+    }
 
     m_tabWidget->addTab(tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
     connect(m_multiTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),

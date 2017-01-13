@@ -143,7 +143,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
 
     ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
 
-    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+    DataJsonRecElement::DataJsonRecElementFileHelper helper;
     helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
 
     /*
@@ -336,7 +336,7 @@ QModbus2DataUnit::LimitStatusEnum AutomationModelDriverClz::processReceivedMeasD
         qCWarning(DRONE_LOGGING) << "com.comm.state -- MeasDistance-- other than ELECE dont support distance test";
     }
 
-    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
+    DataJsonRecElement& e2 = DataJsonRecElement::DataJsonRecElementGetHelper().getElem(true);
     e2.setPosStatus(static_cast<quint32>(rtn));
 
     return rtn;
@@ -722,7 +722,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                                           << "to State - State::MeasFinishedState";
                     enterFSMResetState(tr("Measurement Finished!"));
 
-                    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+                    DataJsonRecElement::DataJsonRecElementFileHelper helper;
                     helper.closeFile();
                 }
                 else

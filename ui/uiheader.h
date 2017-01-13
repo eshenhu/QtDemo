@@ -22,6 +22,13 @@ const static quint32 MAX_ROW_FILE_SELECTION = 8;
 
 extern std::map<int, QString> TestPlanStringMap;
 
+//class PVStringTransformClz
+//{
+//    PVStringTransformClz() = delete;
+//public:
+//    static QString getString()
+//};
+
 class TestUnitColor
 {
     TestUnitColor() = delete;

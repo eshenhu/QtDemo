@@ -95,7 +95,7 @@ bool AbstractPeriodicalMeasDataUpdate::update()
 {
     bool rtn = this->updateData();
 
-    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem();
+    DataJsonRecElement& e2 = DataJsonRecElement::DataJsonRecElementGetHelper().getElem();
     e2.setMetaData(m_data->getVol(), m_data->getThro_1(), m_data->getThro_2(), m_data->getDis());
 
     return rtn;

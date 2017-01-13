@@ -51,7 +51,8 @@ SOURCES += main.cpp \
     chartsview/qcustomplot.cpp \
     ui/uiheader.cpp \
     util/polyfit.cpp \
-    ui/fileselectdialog.cpp
+    ui/fileselectdialog.cpp \
+    cfg/unireslocation.cpp
 
 HEADERS += \
     actionwidget.h \

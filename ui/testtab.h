@@ -161,7 +161,7 @@ private:
 
     VoltageTstTab* m_volTstTab;
     ThrottleTstTab* m_throTstTab;
-    DistanceTstTab* m_disTstTab;
+    DistanceTstTab* m_disTstTab = nullptr;
     ThrottleTstTab* m_multiTstTab;
 
     AgingTstTab* m_agingTstTab;

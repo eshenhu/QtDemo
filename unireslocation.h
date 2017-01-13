@@ -8,15 +8,25 @@ class UniResLocation{
 
     UniResLocation() = default;
 
+private:
+    static CfgResHandler* cfgHdl;
+    static CfgGUIJsonReader* cfgReader;
+
 public:
     static CfgResHandler* getCfgResHdl(){
-        static CfgResHandler* cfgHdl = new CfgResHandler();
+        if (!cfgHdl)
+            cfgHdl = new CfgResHandler();
         return cfgHdl;
     }
 
-    static CfgJsonReader* getCfgJsonHdl(){
-        static CfgJsonReader* cfgReader = new CfgJsonReader();
-        cfgReader->load("PV11");
+    static CfgGUIJsonReader* getCfgJsonHdl(){
+        if (!cfgReader)
+        {
+            cfgReader = new CfgGUIJsonReader();
+
+            const QString pv = CfgResHandlerInf::getPVString(UniResLocation::getCfgResHdl()->prod_version());
+            cfgReader->load(pv);
+        }
         return cfgReader;
     }
 };

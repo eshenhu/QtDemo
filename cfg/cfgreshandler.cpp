@@ -240,7 +240,7 @@ void CfgProductVersionCfgModel::loadSetting()
 
     // eshenhu : need to be more consideration
     //m_prod = static_cast<CfgResHandlerInf::ProductVersion>(m_set.value("version", (quint8)CfgResHandlerInf::ProductVersion::PV11).toInt());
-    m_prod = CfgResHandlerInf::ProductVersion::PV11;
+    m_prod = CfgResHandlerInf::ProductVersion::PV4;
     if ((quint8)m_prod >= (quint8)CfgResHandlerInf::ProductVersion::MAX)
         m_prod = CfgResHandlerInf::ProductVersion::INVALID;
 

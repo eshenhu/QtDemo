@@ -16,7 +16,7 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-class CfgJsonReader;
+class CfgGUIJsonReader;
 class QHBoxLayout;
 class QVBoxLayout;
 class QGridLayout;
@@ -28,7 +28,7 @@ class CompQChartWidget : public QWidget
 
     static const int MAX_NUM_CHARTS_SUPPORT = 8;
 public:
-    explicit CompQChartWidget(const CfgJsonReader* reader, QWidget *parent = 0);
+    explicit CompQChartWidget(const CfgGUIJsonReader* reader, QWidget *parent = 0);
 
 signals:
 
@@ -50,7 +50,7 @@ private:
     //QVBoxLayout* m_lhsLayout;
     QGridLayout* m_lhsLayout;
     QVBoxLayout* m_rhsLayout;
-    const CfgJsonReader* m_reader;
+    const CfgGUIJsonReader* m_reader;
 };
 
 #endif // COMPQCHARTWIDGET_H

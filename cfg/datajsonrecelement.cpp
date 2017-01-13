@@ -7,6 +7,7 @@
 
 #include "ui/qextcheckbox.h"
 #include "cfg/datajsonrecelement.h"
+#include "cfg/cfgreshandlerinf.h"
 #include "actionwidget.h"
 #include "unireslocation.h"
 
@@ -19,12 +20,34 @@
 //    return g_ele;
 //}
 
-DataJsonRecElementE2::DataJsonRecElementE2():
-    m_data(static_cast<quint32>(ELEMCURSOR::ELEMCURSOR_END))
+DataJsonRecElement::DataJsonRecElement():
+    m_cursorEnd(0),
+    m_data(0)
 {
+    if (UniResLocation::getCfgResHdl()->motor_type() == CfgResHandlerInf::MotorType::PELEC)
+    {
+        quint8 numOfMotor = UniResLocation::getCfgResHdl()->num_of_motor();
+        if (numOfMotor == 1)
+        {
+            m_cursorEnd = static_cast<quint8>(ELEMCURSOR::REC_M1MECHAEFFI) + 1;
+        }
+        else if (numOfMotor == 2)
+        {
+            m_cursorEnd = static_cast<quint8>(ELEMCURSOR::REC_M2MECHAEFFI) + 1;
+        }
+        else
+        {
+            qCritical() << QString("number of motor %1 were beyond the maximum 2").arg(numOfMotor);
+        }
+    }
+    else
+    {
+        qCritical() << "Not support motor type now.";
+    }
+    m_data.resize(m_cursorEnd);
 }
 
-const QString DataJsonRecElementE2::toString() const
+const QString DataJsonRecElement::toString() const
 {
     QStringList list;
     foreach (double v, m_data){
@@ -34,7 +57,7 @@ const QString DataJsonRecElementE2::toString() const
     return list.join(QStringLiteral(","));
 }
 
-bool DataJsonRecElementE2::hardReset()
+bool DataJsonRecElement::hardReset()
 {
     // here start with 0!
     for (int i = 0; i < m_data.size(); ++i) {
@@ -43,7 +66,7 @@ bool DataJsonRecElementE2::hardReset()
     return true;
 }
 
-bool DataJsonRecElementE2::reset()
+bool DataJsonRecElement::reset()
 {
     // here start with 1!
     for (int i = 1; i < m_data.size(); ++i) {
@@ -52,13 +75,13 @@ bool DataJsonRecElementE2::reset()
     return true;
 }
 
-bool DataJsonRecElementE2::incCursor()
+bool DataJsonRecElement::incCursor()
 {
     ++m_data[static_cast<quint32>(ELEMCURSOR::CURSOR_POS)];
     return true;
 }
 
-bool DataJsonRecElementE2::setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis)
+bool DataJsonRecElement::setMetaData(quint32 vol, quint32 thro1, quint32 thro2, quint32 dis)
 {
     m_data[static_cast<quint32>(ELEMCURSOR::VOL_POS)] = static_cast<double>(vol);
     m_data[static_cast<quint32>(ELEMCURSOR::THRO1_POS)] = static_cast<double>(thro1);
@@ -67,13 +90,18 @@ bool DataJsonRecElementE2::setMetaData(quint32 vol, quint32 thro1, quint32 thro2
     return true;
 }
 
-bool DataJsonRecElementE2::setPosStatus(quint32 v)
+bool DataJsonRecElement::setPosStatus(quint32 v)
 {
     m_data[static_cast<quint32>(ELEMCURSOR::REC_POSSTATUS_POS)] = static_cast<double>(v);
     return true;
 }
 
-bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::newFile(const QString &path)
+quint8 DataJsonRecElement::getCursorEnd() const
+{
+    return m_cursorEnd;
+}
+
+bool DataJsonRecElement::DataJsonRecElementFileHelper::newFile(const QString &path)
 {
     if (getFile().exists())
         getFile().close();
@@ -91,14 +119,14 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::newFile(const QString
     return true;
 }
 
-bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::closeFile()
+bool DataJsonRecElement::DataJsonRecElementFileHelper::closeFile()
 {
     if (getFile().exists())
         getFile().close();
     return true;
 }
 
-bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::writeData(const DataJsonRecElementE2& v)
+bool DataJsonRecElement::DataJsonRecElementFileHelper::writeData(const DataJsonRecElement& v)
 {
 //    //m_filename
 //    QFile saveFile(m_filename);
@@ -113,7 +141,7 @@ bool DataJsonRecElementE2::DataJsonRecElementE2FileHelper::writeData(const DataJ
 }
 
 // It should be improved here!  Why there are so many items left to be improved?! fuck me.
-const QString DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
+const QString DataJsonRecElement::DataJsonRecElementFileHelper::getTitle()
 {
     QStringList list;
     list << "#" << "voltage" << "throttle 1" << "throttle 2" << "distance"
@@ -133,9 +161,9 @@ const QString DataJsonRecElementE2::DataJsonRecElementE2FileHelper::getTitle()
     return list.join(",");
 }
 
-DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getElem(bool isNew)
+DataJsonRecElement &DataJsonRecElement::DataJsonRecElementGetHelper::getElem(bool isNew)
 {
-    static DataJsonRecElementE2 g_ele;
+    static DataJsonRecElement g_ele;
     if (isNew){
         g_ele.reset();
         g_ele.incCursor();
@@ -143,13 +171,13 @@ DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getEl
     return g_ele;
 }
 
-DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::DataJsonRecElementE2FileReaderHandler():
+DataJsonRecElement::DataJsonRecElementFileReaderHandler::DataJsonRecElementFileReaderHandler():
     m_data(0)
 {
 
 }
 
-const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::data()
+const QVector<DataJsonRecElement> &DataJsonRecElement::DataJsonRecElementFileReaderHandler::data()
 {
     return m_data;
 }
@@ -157,7 +185,7 @@ const QVector<DataJsonRecElementE2> &DataJsonRecElementE2::DataJsonRecElementE2F
 /*
  * load data from the file named with filename to the m_data;
 */
-void DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::loadData(const QString filename)
+void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QString filename)
 {
     //m_filename
     QFile loadFile(filename);
@@ -182,13 +210,15 @@ void DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler::loadData(const
         }
         /* we are the right way to split number*/
 
-        if (list.size() != (int)ELEMCURSOR::ELEMCURSOR_END){
+        /* I miss the python's method here */
+        DataJsonRecElement element;
+
+        if (list.size() != element.getCursorEnd()){
             qCWarning(TEXT_LOGGING) << "Text not match with the lenght with predefined structure. Expected = "
-                                    << (int)ELEMCURSOR::ELEMCURSOR_END << "received = " << list.size();
+                                    << element.getCursorEnd() << "received = " << list.size();
         }
 
-        /* I miss the python's method here */
-        DataJsonRecElementE2 element;
+
         int idx = 0;
         for (const QString& str : list){
             idx++;

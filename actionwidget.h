@@ -55,7 +55,7 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-class CfgJsonReader;
+class CfgGUIJsonReader;
 class CompQChartWidget;
 class AutomationModelDriverClz;
 class TestTab;

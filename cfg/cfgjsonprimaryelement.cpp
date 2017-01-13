@@ -141,13 +141,13 @@ JsonGUIPrimType JsonGUIElement::lookup(const QString& str)
 }
 
 
-CfgJsonReader::CfgJsonReader()
+CfgGUIJsonReader::CfgGUIJsonReader()
 {
     m_config = new JsonPVConfig();
     m_guiList = new JsonGUIElementList();
 }
 
-CfgJsonReader::~CfgJsonReader()
+CfgGUIJsonReader::~CfgGUIJsonReader()
 {
     if (m_config)
         delete m_config;
@@ -155,7 +155,7 @@ CfgJsonReader::~CfgJsonReader()
         delete m_guiList;
 }
 
-bool CfgJsonReader::read(const QJsonObject &json, const QString& str)
+bool CfgGUIJsonReader::read(const QJsonObject &json, const QString& str)
 {
     QJsonObject pvJsonListObject = json["ProductVersion"].toObject();
     QJsonObject pvJsonObject = pvJsonListObject[str].toObject();
@@ -165,7 +165,7 @@ bool CfgJsonReader::read(const QJsonObject &json, const QString& str)
     return true;
 }
 
-bool CfgJsonReader::load(const QString str)
+bool CfgGUIJsonReader::load(const QString str)
 {
     const QRegExp rx("^PV\\d\\d?$");   // it should be followed by "PV1, PV16"
     if (!str.contains(rx))
@@ -189,12 +189,12 @@ bool CfgJsonReader::load(const QString str)
     return true;
 }
 
-JsonPVConfig *CfgJsonReader::config() const
+JsonPVConfig *CfgGUIJsonReader::config() const
 {
     return m_config;
 }
 
-JsonGUIElementList *CfgJsonReader::guiList() const
+JsonGUIElementList *CfgGUIJsonReader::guiList() const
 {
     return m_guiList;
 }

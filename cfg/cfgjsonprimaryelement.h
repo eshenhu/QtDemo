@@ -83,12 +83,12 @@ private:
     QList<JsonGUIElement> m_elem;
 };
 
-class CfgJsonReader
+class CfgGUIJsonReader
 {
 public:
-    CfgJsonReader();
-    ~CfgJsonReader();
-    CfgJsonReader(const CfgJsonReader& rfs) = delete;
+    CfgGUIJsonReader();
+    ~CfgGUIJsonReader();
+    CfgGUIJsonReader(const CfgGUIJsonReader& rfs) = delete;
 
     bool load(const QString str);
 

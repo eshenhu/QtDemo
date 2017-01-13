@@ -21,7 +21,7 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-CompQChartWidget::CompQChartWidget(const CfgJsonReader* reader, QWidget *parent) :
+CompQChartWidget::CompQChartWidget(const CfgGUIJsonReader* reader, QWidget *parent) :
     QWidget(parent),
     m_reader(reader)
 {
@@ -60,16 +60,16 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data, Phase phase)
     /*
      * Record the log.
      */
-    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem();
+    DataJsonRecElement& e2 = DataJsonRecElement::DataJsonRecElementGetHelper().getElem();
 
-    quint32 startIdx = static_cast<quint32>(DataJsonRecElementE2::ELEMCURSOR::REC_VOL_POS);
+    quint32 startIdx = static_cast<quint32>(DataJsonRecElement::ELEMCURSOR::REC_VOL_POS);
     foreach (QExtCheckBox* box, checkboxList)
     {
         e2.setData(startIdx, box->pushData());
         ++startIdx;
     }
 
-    static DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
+    static DataJsonRecElement::DataJsonRecElementFileHelper helper;
     helper.writeData(e2);
 }
 

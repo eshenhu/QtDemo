@@ -15,7 +15,7 @@ Q_DECLARE_LOGGING_CATEGORY(TEXT_LOGGING)
 /*
  * Drived class dedictated for 2 motor with elec type.
  */
-class DataJsonRecElementE2
+class DataJsonRecElement
 {
 public:
     enum class ELEMCURSOR : quint8
@@ -61,7 +61,7 @@ public:
     };
 
 public:
-    DataJsonRecElementE2();
+    DataJsonRecElement();
 
     const QString toString() const;
 
@@ -85,28 +85,30 @@ public:
     }
 
 private:
+    quint8 m_cursorEnd;
     QVector<double> m_data;
 
 public:
-    class DataJsonRecElementE2GetHelper;
-    class DataJsonRecElementE2FileHelper;
-    class DataJsonRecElementE2FileReaderHandler;
+    class DataJsonRecElementGetHelper;
+    class DataJsonRecElementFileHelper;
+    class DataJsonRecElementFileReaderHandler;
+    quint8 getCursorEnd() const;
 };
 
 
-class DataJsonRecElementE2::DataJsonRecElementE2GetHelper
+class DataJsonRecElement::DataJsonRecElementGetHelper
 {
 public:
-    DataJsonRecElementE2GetHelper() = default;
+    DataJsonRecElementGetHelper() = default;
 
 public:
-     DataJsonRecElementE2& getElem(bool isNew = false);
+     DataJsonRecElement& getElem(bool isNew = false);
 };
 
-class DataJsonRecElementE2::DataJsonRecElementE2FileHelper
+class DataJsonRecElement::DataJsonRecElementFileHelper
 {
 public:
-    DataJsonRecElementE2FileHelper() = default;
+    DataJsonRecElementFileHelper() = default;
 
 private:
     QFile& getFile(){
@@ -117,7 +119,7 @@ private:
 public:
     bool newFile(const QString& path);
     bool closeFile();
-    bool writeData(const DataJsonRecElementE2&);
+    bool writeData(const DataJsonRecElement&);
     //DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
 
     const QString getTitle();
@@ -125,17 +127,17 @@ public:
 
 
 //It should be improved here with iterator methods. -- eshenhu why another "SHOULD"? f*ck.
-class DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler
+class DataJsonRecElement::DataJsonRecElementFileReaderHandler
 {
 public:
-    DataJsonRecElementE2FileReaderHandler();
+    DataJsonRecElementFileReaderHandler();
 
-    const QVector<DataJsonRecElementE2>& data();
+    const QVector<DataJsonRecElement>& data();
     void loadData(const QString filename);
 
 private:
     QString m_filename;
-    QVector<DataJsonRecElementE2> m_data;
+    QVector<DataJsonRecElement> m_data;
 };
 
 #endif // DATAJSONRECELEMENT_H
