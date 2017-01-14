@@ -35,7 +35,54 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
     {
         if (cfgParser.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
         {
-            if (cfgParser.numOfMotor() == 2)
+            if (cfgParser.numOfMotor() == 1)
+            {
+                switch (static_cast<quint32>(cfgParser.plan()))
+                {
+                case (quint32)TestPlanEnum::Throttle:
+                {
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+
+                    m_csvDataHandler = QSharedPointer<CfgThrottleWashingDataE1Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                    break;
+                case (quint32)TestPlanEnum::Voltage:
+                {
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgVolWashingDataE1Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                break;
+
+                case (quint32)TestPlanEnum::Multiplue:
+                {
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgMultiWashingDataE1Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                break;
+
+                case (quint32)TestPlanEnum::Manual:
+                {
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgManualWashingDataE1Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                break;
+
+                default:
+                    qCWarning(TEXT_LOGGING) << "This plan was not supported now, plan = "
+                                            << static_cast<quint32>(cfgParser.plan());
+                    break;
+                }
+            }
+
+            else if (cfgParser.numOfMotor() == 2)
             {
                 switch (static_cast<quint32>(cfgParser.plan()))
                 {
@@ -71,6 +118,15 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
                     DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
                     handler.loadData(csvFullFileName);
                     m_csvDataHandler = QSharedPointer<CfgDistanceWashingDataE2Clz>::create();
+                    m_csvDataHandler->wash(handler.data());
+                }
+                break;
+
+                case (quint32)TestPlanEnum::Manual:
+                {
+                    DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+                    handler.loadData(csvFullFileName);
+                    m_csvDataHandler = QSharedPointer<CfgManualWashingDataE2Clz>::create();
                     m_csvDataHandler->wash(handler.data());
                 }
                 break;
