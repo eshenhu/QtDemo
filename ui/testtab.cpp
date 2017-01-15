@@ -13,7 +13,8 @@
 #include <QPushButton>
 #include <QTabWidget>
 #include <QMessageBox>
-
+#include <QLineEdit>
+#include <QLabel>
 #include <QDebug>
 #include "unireslocation.h"
 
@@ -83,19 +84,81 @@ TestTab::TestTab(QWidget *parent)
     : QWidget(parent)
 {
     m_volLimCheckBox = new QCheckBox();
-    m_currentLimCheckBox = new QCheckBox();
-    m_currentLimCheckBox->setCheckState(Qt::Checked);
+    m_volLimitLineEdit = new QSpinBox();
+    m_volLimitLineEdit->setValue(UniResLocation::getCfgResHdl()->max_vol());
+    m_volLimitLineEdit->setRange(0, UniResLocation::getCfgResHdl()->max_vol());
+    m_volLimitLineEdit->setSingleStep(1);
+    QHBoxLayout* layout_vol = new QHBoxLayout();
+    layout_vol->addWidget(m_volLimCheckBox);
+    layout_vol->addWidget(m_volLimitLineEdit);
 
-    m_legendLimCheckBox = new QCheckBox();
+    m_curLimCheckBox = new QCheckBox();
+    m_curLimitLineEdit = new QSpinBox();
+    m_curLimitLineEdit->setValue(UniResLocation::getCfgResHdl()->max_cur());
+    m_curLimitLineEdit->setRange(0, UniResLocation::getCfgResHdl()->max_cur());
+    m_curLimitLineEdit->setSingleStep(1);
+    //m_currentLimCheckBox->setCheckState(Qt::Checked);
+    QHBoxLayout* layout_cur = new QHBoxLayout();
+    layout_cur->addWidget(m_curLimCheckBox);
+    layout_cur->addWidget(m_curLimitLineEdit);
+
+    m_tempLimCheckBox = new QCheckBox();
+    m_tempLimitLineEdit = new QSpinBox();
+    m_tempLimitLineEdit->setValue(99);
+    m_tempLimitLineEdit->setRange(0, 99);
+    m_tempLimitLineEdit->setSingleStep(1);
+    QHBoxLayout* layout_temp = new QHBoxLayout();
+    layout_temp->addWidget(m_tempLimCheckBox);
+    layout_temp->addWidget(m_tempLimitLineEdit);
 
     QFormLayout *chartSettingsLayout = new QFormLayout();
+    chartSettingsLayout->setVerticalSpacing(1);
     //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
-    chartSettingsLayout->addRow("Vol Limit", m_volLimCheckBox);
-    chartSettingsLayout->addRow("Cur Limit", m_currentLimCheckBox);
-    chartSettingsLayout->addRow("Temp Limit", m_legendLimCheckBox);
+
+    chartSettingsLayout->addRow(tr("Vol Limit"), layout_vol);
+    chartSettingsLayout->addRow(tr("Cur Limit"), layout_cur);
+    chartSettingsLayout->addRow(tr("Temp Limit"), layout_temp);
+    //chartSettingsLayout->addRow(tr("Enable Protect"), m_enableProtecCheckBox);
     m_chartSettings = new QGroupBox("Limit Protection");
     m_chartSettings->setLayout(chartSettingsLayout);
 
+//    QLabel* m_enableProtecLabel = new QLabel(tr("Enable Protection"), this);
+    QCheckBox* m_enableProtecCheckBox = new QCheckBox();
+    connect(m_enableProtecCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
+
+        bool isEnabled = !isChecked;
+        m_volLimCheckBox->setEnabled(isEnabled);
+        m_volLimitLineEdit->setEnabled(isEnabled);
+        m_curLimCheckBox->setEnabled(isEnabled);
+        m_curLimitLineEdit->setEnabled(isEnabled);
+        m_tempLimCheckBox->setEnabled(isEnabled);
+        m_tempLimitLineEdit->setEnabled(isEnabled);
+    });
+
+//    QHBoxLayout* layout_protect = new QHBoxLayout();
+//    layout_protect->addWidget(m_enableProtecLabel);
+//    layout_protect->addWidget(m_enableProtecCheckBox);
+
+//    QLabel* m_sensitiveTuneLabel = new QLabel(tr("Protection Sensitive"), this);
+    QComboBox* m_sensitiveComboBox = new QComboBox(this);
+    m_sensitiveComboBox->addItem(tr("Low"));
+    m_sensitiveComboBox->addItem(tr("Med"));
+    m_sensitiveComboBox->addItem(tr("High"));
+//    QHBoxLayout* layout_sensitive = new QHBoxLayout();
+//    layout_sensitive->addWidget(m_sensitiveTuneLabel);
+//    layout_sensitive->addWidget(m_sensitiveComboBox);
+    QFormLayout *layoutSensitive = new QFormLayout();
+    layoutSensitive->setVerticalSpacing(1);
+    //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
+    layoutSensitive->addRow(tr("Enable Protec"), m_enableProtecCheckBox);
+    layoutSensitive->addRow(tr("Protec Sensiti"), m_sensitiveComboBox);
+
+    QGroupBox* m_sensitiveSettings = new QGroupBox("Limit decision");
+    m_sensitiveSettings->setLayout(layoutSensitive);
+
+
+    m_chartSettings = new QGroupBox("Limit Selection");
+    m_chartSettings->setLayout(chartSettingsLayout);
     //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
 
 
@@ -131,7 +194,7 @@ TestTab::TestTab(QWidget *parent)
 
     //Multipule test can be regarded as Throttle Test.
     //tabList[TestPlanEnum::Multiplue] = new MultipleTstTab();
-    m_multiTstTab = new ThrottleTstTab(TestPlanEnum::Multiplue);
+    m_multiTstTab = new MultiTstTab(TestPlanEnum::Multiplue);
     tabList[TestPlanEnum::Multiplue] = m_multiTstTab;
 
     m_agingTstTab = new AgingTstTab();
@@ -182,6 +245,7 @@ TestTab::TestTab(QWidget *parent)
 //    settingsLayout->setColumnStretch(2, 0);
     QVBoxLayout *settingsLayout = new QVBoxLayout();
     settingsLayout->addWidget(m_chartSettings, 0);
+    settingsLayout->addWidget(m_sensitiveSettings, 0);
     settingsLayout->addWidget(m_tabWidget, 1);
     settingsLayout->addWidget(seriesSettings, 0);
 
@@ -201,8 +265,8 @@ QGroupBox *TestTab::chartSettings() const
 void TestTab::enableLimitCheckBox(bool isEnabled)
 {
     m_volLimCheckBox->setChecked(isEnabled);
-    m_currentLimCheckBox;
-    m_legendLimCheckBox;
+    m_curLimCheckBox;
+    m_tempLimCheckBox;
 }
 
 //void TestTab::updateOptionsSelection(int index)
@@ -527,6 +591,7 @@ ThrottleTstTab::ThrottleTstTab(TestPlanEnum type, QWidget *parent)
 
     connect(m_apply_btn, SIGNAL(clicked(bool)), this, SLOT(validateUserInput(bool)));
 
+
     QFormLayout *seriesSettingsLayout = new QFormLayout();
     seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
     seriesSettingsLayout->addRow(tr("Thr Beg(%)"), m_thro_start);
@@ -701,4 +766,74 @@ ManualTstTab::ManualTstTab(QWidget *parent)
 
         emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
     });
+}
+
+
+MultiTstTab::MultiTstTab(TestPlanEnum type, QWidget *parent)
+    : QWidget(parent),
+     m_type(type)
+{
+    CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
+    // series settings
+    m_voltage = new QDoubleSpinBox();
+    m_voltage->setDecimals(1);
+    m_voltage->setMinimumWidth(70);
+    m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_voltage->setRange(0, pCfgResHdl->max_vol());
+    //m_voltage->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage->setValue(ConstValue::DEFAULT_VOL);
+
+    m_thro_end = new QSpinBox();
+    m_thro_end->setMinimumWidth(70);
+    m_thro_end->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_thro_end->setRange(0, pCfgResHdl->max_throttle());
+    //m_thro_end->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_thro_end->setSingleStep(ConstValue::STEP_THR);
+    m_thro_end->setValue(ConstValue::DEFAULT_THR_HIGH);
+
+    m_duration = new QComboBox();
+    m_duration->setMinimumWidth(70);
+    m_duration->setMaximumWidth(70);
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D05Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D10Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D15Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D20Sec));
+    m_duration->addItem(QString::number(ConstValue::DurationTime::D30Sec));
+    m_duration->setCurrentIndex(1);
+
+    m_apply_btn = new QPushButton(tr("Apply"));
+
+    connect(m_apply_btn, SIGNAL(clicked(bool)), this, SLOT(validateUserInput(bool)));
+
+
+    QFormLayout *seriesSettingsLayout = new QFormLayout();
+    seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
+    seriesSettingsLayout->addRow(tr("Thr End(%)"), m_thro_end);
+    seriesSettingsLayout->addRow(tr("Durs (Sec)"), m_duration);
+    seriesSettingsLayout->addRow(m_apply_btn);
+
+    QFormLayout *outputListLayout = new QFormLayout();
+
+    QHBoxLayout *horizonLayout = new QHBoxLayout();
+    horizonLayout->addLayout(seriesSettingsLayout, 0);
+    horizonLayout->addLayout(outputListLayout, 1);
+
+    setLayout(horizonLayout);
+}
+
+void MultiTstTab::validateUserInput(bool checked)
+{
+    Q_UNUSED(checked)
+
+    UiCompMeasData val;
+    val.type = m_type;
+
+    ThrottleTstData& data = val.data.v;
+    data.vol = m_voltage->value();
+    data.thro_beg = 1;
+    data.thro_end = m_thro_end->value();
+    data.thro_step = 1;
+    data.duration = (quint16)m_duration->currentText().toInt();
+    emit updateUserSelection(val);
 }

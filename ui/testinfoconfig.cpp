@@ -11,11 +11,6 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
     ui->setupUi(this);
 
     const QIntValidator* validator = new QIntValidator(0, 100, this);
-    ui->Thr_Min_LE->setValidator(validator);
-    ui->Thr_Max_LE->setValidator(validator);
-
-    ui->Thr_Min_LE->setText(QString("%1").arg(m_cfg->lowThroLimit()));
-    ui->Thr_Max_LE->setText(QString("%1").arg(m_cfg->highThroLimit()));
 
     int idx = ui->ESCFreq_combox->findText(QString::number(m_cfg->HZ()));
     idx = (idx == -1 ? 0 : idx);
@@ -43,8 +38,6 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
 //    });
 
     connect(ui->Apply, &QPushButton::clicked, [this](){
-        m_cfg->setLowThroLimit(ui->Thr_Min_LE->text().toInt());
-        m_cfg->setHighThroLimit(ui->Thr_Max_LE->text().toInt());
 
         if (ui->ESCFreq_combox->currentIndex() == 0)
             m_cfg->setHZ(DeviceInfoConfig::Freq::B50HZ);

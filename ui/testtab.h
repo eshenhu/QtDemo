@@ -13,6 +13,8 @@ class QPushButton;
 class QTabWidget;
 class CfgResHandlerInf;
 class QGroupBox;
+class QLineEdit;
+class QFormLayout;
 
 class DistanceTstTab : public QWidget
 {
@@ -70,6 +72,28 @@ class ThrottleTstTab : public QWidget
 
 public:
     explicit ThrottleTstTab(TestPlanEnum type, QWidget *parent = 0);
+
+Q_SIGNALS:
+    void updateUserSelection(UiCompMeasData data);
+
+public slots:
+    void validateUserInput(bool checked = false);
+
+private:
+    TestPlanEnum m_type;
+};
+
+class MultiTstTab : public QWidget
+{
+    Q_OBJECT
+public:
+    QDoubleSpinBox* m_voltage;
+    QSpinBox* m_thro_end;
+    QComboBox *m_duration;
+    QPushButton *m_apply_btn;
+    QFormLayout *seriesSettingsLayout;
+public:
+    explicit MultiTstTab(TestPlanEnum type, QWidget *parent = 0);
 
 Q_SIGNALS:
     void updateUserSelection(UiCompMeasData data);
@@ -150,8 +174,11 @@ public:
 private:
     //QComboBox *m_testSeletionComboBox;
     QCheckBox *m_volLimCheckBox;
-    QCheckBox *m_currentLimCheckBox;
-    QCheckBox *m_legendLimCheckBox;
+    QSpinBox* m_volLimitLineEdit;
+    QCheckBox *m_curLimCheckBox;
+    QSpinBox* m_curLimitLineEdit;
+    QCheckBox *m_tempLimCheckBox;
+    QSpinBox* m_tempLimitLineEdit;
     QGroupBox *m_chartSettings;
 
     QDialogButtonBox* m_buttonBox;
@@ -162,7 +189,7 @@ private:
     VoltageTstTab* m_volTstTab;
     ThrottleTstTab* m_throTstTab;
     DistanceTstTab* m_disTstTab = nullptr;
-    ThrottleTstTab* m_multiTstTab;
+    MultiTstTab* m_multiTstTab;
 
     AgingTstTab* m_agingTstTab;
     ManualTstTab* m_manualTstTab;
