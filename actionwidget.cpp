@@ -156,7 +156,7 @@ ActionWidget::ActionWidget(QWidget *parent)
             }while(1);
 
             if (isStatusOK){
-                doEnableWidgetInFront(false);
+                enableWidgetInFront(false);
                 m_subTestTabWidget->start_btn()->setText(QStringLiteral("Stop"));
                 m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
 
@@ -165,13 +165,13 @@ ActionWidget::ActionWidget(QWidget *parent)
                 m_measData.type = TestPlanEnum::Invaild;
             }
             else{
-                doEnableWidgetInFront(true);
+                enableWidgetInFront(true);
                 m_subTestTabWidget->start_btn()->setChecked(false);
             }
         }
         else
         {
-            doEnableWidgetInFront(true);
+            enableWidgetInFront(true);
             m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
             m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
 
@@ -371,12 +371,10 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
  *      false: dim
  *      true : shine
 */
-void ActionWidget::doEnableWidgetInFront(bool doshine)
+void ActionWidget::enableWidgetInFront(bool doshine)
 {
-    for (int idx = 0; idx <= m_tabWidget->count(); ++idx)
-    {
-        m_tabWidget->setTabEnabled(idx, doshine);
-    }
+    m_subConfigTabWidget->setEnabled(doshine);
+    m_subTestTabWidget->enableWidgetInFront(doshine);
 }
 
 //#include "moc_actionwidget.cpp"

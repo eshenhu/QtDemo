@@ -153,7 +153,7 @@ TestTab::TestTab(QWidget *parent)
     layoutSensitive->addRow(tr("Enable Protec"), m_enableProtecCheckBox);
     layoutSensitive->addRow(tr("Protec Sensiti"), m_sensitiveComboBox);
 
-    QGroupBox* m_sensitiveSettings = new QGroupBox("Limit decision");
+    m_sensitiveSettings = new QGroupBox("Limit decision");
     m_sensitiveSettings->setLayout(layoutSensitive);
 
 
@@ -235,6 +235,9 @@ TestTab::TestTab(QWidget *parent)
     connect(m_manualTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
                                 this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
+    connect(m_manualTstTab, SIGNAL(syncDataDuringManual(double,quint32)),
+            this, SIGNAL(syncDataDuringManual(double,quint32)));
+    //syncDataDuringManual
 
 //    QGridLayout *settingsLayout = new QGridLayout();
 //    settingsLayout->addWidget(chartSettings, 0, 0);
@@ -265,8 +268,37 @@ QGroupBox *TestTab::chartSettings() const
 void TestTab::enableLimitCheckBox(bool isEnabled)
 {
     m_volLimCheckBox->setChecked(isEnabled);
-    m_curLimCheckBox;
-    m_tempLimCheckBox;
+    m_curLimCheckBox->setChecked(isEnabled);
+    m_tempLimCheckBox->setChecked(isEnabled);
+}
+
+void TestTab::enableWidgetInFront(bool doshine)
+{
+    m_chartSettings->setEnabled(doshine);
+    m_sensitiveSettings->setEnabled(doshine);
+
+    int activeIdx = m_tabWidget->currentIndex();
+    if (activeIdx == -1 )
+    {
+        qWarning() << "UI getcurrentIndex = -1";
+        return;
+    }
+
+    for (int idx = 0; idx < m_tabWidget->count(); ++idx)
+    {
+        m_tabWidget->setTabEnabled(idx, doshine);
+    }
+
+    /*
+     * Manual Test Tab need special treatment.
+    */
+    if (activeIdx == (m_tabWidget->count() - 1))
+    {
+        m_tabWidget->setTabEnabled(m_tabWidget->count() - 1, true);
+        m_manualTstTab->enableWidgetInFront(doshine);
+    }
+
+    m_tabWidget->setCurrentIndex(activeIdx);
 }
 
 //void TestTab::updateOptionsSelection(int index)
@@ -766,6 +798,14 @@ ManualTstTab::ManualTstTab(QWidget *parent)
 
         emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
     });
+}
+
+void ManualTstTab::enableWidgetInFront(bool doshine)
+{
+    m_throttle->setEnabled(true);
+    m_voltage->setEnabled(true);
+    m_set_btn->setEnabled(true);
+    m_apply_btn->setEnabled(doshine);
 }
 
 
