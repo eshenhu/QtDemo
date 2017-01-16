@@ -143,12 +143,20 @@ private:
 
 public:
     explicit ManualTstTab(QWidget *parent = 0);
+    void enableWidgetInFront(bool doshine);
 
 Q_SIGNALS:
     void updateUserSelection(UiCompMeasData data);
     void syncDataDuringManual(const double vol, const quint32 thro);
 };
 
+/*
+ * Attention: ManualTestTab must be laid on the last tab list in m_tabWidget!!!
+ * with the reason of dim the GUI when test is ongoing.
+ *
+ * It will be preferred use the std::map to store this relationship.
+ *
+*/
 class TestTab : public QWidget
 {
     Q_OBJECT
@@ -159,17 +167,14 @@ public:
 public:
     QTabWidget *m_tabWidget;
     QWidget* tabList[TestPlanEnum::Manual + 1];
-    QWidget* lastActiveWidget;
 
     QPushButton *start_btn() const;
-
     QPushButton *showgraph_btn() const;
-
     QTabWidget *tabWidget() const;
-
     QGroupBox *chartSettings() const;
 
     void enableLimitCheckBox(bool);
+    void enableWidgetInFront(bool doshine);
 
 private:
     //QComboBox *m_testSeletionComboBox;
@@ -179,7 +184,9 @@ private:
     QSpinBox* m_curLimitLineEdit;
     QCheckBox *m_tempLimCheckBox;
     QSpinBox* m_tempLimitLineEdit;
+
     QGroupBox *m_chartSettings;
+    QGroupBox* m_sensitiveSettings;
 
     QDialogButtonBox* m_buttonBox;
 

@@ -258,6 +258,14 @@ CfgCalibrateCfgModel::CfgCalibrateCfgModel(QSettings &set):
     }
 
     loadSetting();
+
+    qDebug() << QString("QSetting: calibrate.divsionOnThrust %1 - %2")
+                .arg(CfgCalibrateCfgPerMotor[0].divisionOnThrust)
+                .arg(CfgCalibrateCfgPerMotor[1].divisionOnThrust);
+
+    qDebug() << QString("QSetting: calibrate.divsionOnTorque %1 - %2")
+                .arg(CfgCalibrateCfgPerMotor[0].divisionOnTorque)
+                .arg(CfgCalibrateCfgPerMotor[1].divisionOnTorque);
 }
 
 double CfgCalibrateCfgModel::getDivisionThrustCaliOnMotor(const quint32 idxMotor){
