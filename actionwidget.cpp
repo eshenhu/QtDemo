@@ -161,6 +161,7 @@ ActionWidget::ActionWidget(QWidget *parent)
                 m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
 
                 m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
+                m_driver->setUserSetSensitive(m_subTestTabWidget->getUserSetSensentive());
                 //reset.
                 m_measData.type = TestPlanEnum::Invaild;
             }

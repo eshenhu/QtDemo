@@ -181,4 +181,20 @@ public:
     UiMeasData data;
 };
 
+class UserSetSensitiveClz
+{
+public:
+    enum class UserSetRankEnum{
+        LOW,
+        MED,
+        HIGH
+    };
+
+    bool isSet = false;
+    UserSetRankEnum rank = UserSetRankEnum::LOW;
+    quint32 volLimit = UINT32_MAX;
+    quint32 curLimit = UINT32_MAX;
+    quint32 tempLimit = UINT32_MAX;
+};
+
 #endif // UITESTBASEDSTRUCT_H

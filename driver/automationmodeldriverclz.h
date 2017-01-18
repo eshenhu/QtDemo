@@ -104,6 +104,7 @@ private:
     QTimer m_sendTimer;
     State state = State::InitState;
     QSerialPortSetting::Settings m_settingDialog;
+    UserSetSensitiveClz m_userSetSensitive;
 
     UiCompMeasData  m_uiCfgData;
     MeasDataFormat* mp_data;
@@ -126,6 +127,10 @@ public slots:
     void syncDataDuringManualTest(const double vol, const quint32 thro);
 
 public:
+    void setUserSetSensitive(UserSetSensitiveClz data){
+        m_userSetSensitive = data;
+    }
+
     void startMeasTest(const UiCompMeasData data, const CfgResHandlerInf* res, const QSerialPortSetting::Settings setting);
 
 public:

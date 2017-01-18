@@ -176,6 +176,8 @@ public:
     void enableLimitCheckBox(bool);
     void enableWidgetInFront(bool doshine);
 
+    UserSetSensitiveClz getUserSetSensentive();
+
 private:
     //QComboBox *m_testSeletionComboBox;
     QCheckBox *m_volLimCheckBox;
@@ -184,6 +186,9 @@ private:
     QSpinBox* m_curLimitLineEdit;
     QCheckBox *m_tempLimCheckBox;
     QSpinBox* m_tempLimitLineEdit;
+
+    QCheckBox* m_enableProtecCheckBox;
+    QComboBox* m_sensitiveComboBox;
 
     QGroupBox *m_chartSettings;
     QGroupBox* m_sensitiveSettings;

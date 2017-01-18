@@ -123,7 +123,7 @@ TestTab::TestTab(QWidget *parent)
     m_chartSettings->setLayout(chartSettingsLayout);
 
 //    QLabel* m_enableProtecLabel = new QLabel(tr("Enable Protection"), this);
-    QCheckBox* m_enableProtecCheckBox = new QCheckBox();
+    m_enableProtecCheckBox = new QCheckBox();
     connect(m_enableProtecCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
 
         bool isEnabled = !isChecked;
@@ -140,7 +140,7 @@ TestTab::TestTab(QWidget *parent)
 //    layout_protect->addWidget(m_enableProtecCheckBox);
 
 //    QLabel* m_sensitiveTuneLabel = new QLabel(tr("Protection Sensitive"), this);
-    QComboBox* m_sensitiveComboBox = new QComboBox(this);
+    m_sensitiveComboBox = new QComboBox(this);
     m_sensitiveComboBox->addItem(tr("Low"));
     m_sensitiveComboBox->addItem(tr("Med"));
     m_sensitiveComboBox->addItem(tr("High"));
@@ -299,6 +299,48 @@ void TestTab::enableWidgetInFront(bool doshine)
     }
 
     m_tabWidget->setCurrentIndex(activeIdx);
+}
+
+UserSetSensitiveClz TestTab::getUserSetSensentive()
+{
+    UserSetSensitiveClz result;
+    do{
+        if (Qt::CheckState::Checked != m_enableProtecCheckBox->checkState())
+        {
+            result.isSet = false;
+            break;
+        }
+        result.isSet = true;
+
+        switch (m_sensitiveComboBox->currentIndex())
+        {
+        case 0:
+        {
+            result.rank = UserSetSensitiveClz::UserSetRankEnum::LOW;
+        }
+            break;
+        case 1:
+        {
+            result.rank = UserSetSensitiveClz::UserSetRankEnum::MED;
+        }
+            break;
+        case 2:
+        {
+            result.rank = UserSetSensitiveClz::UserSetRankEnum::HIGH;
+        }
+            break;
+        default:
+            qWarning() << "Error: not right selection on the sensitive";
+            break;
+        }
+
+        result.volLimit = static_cast<quint32>(m_volLimitLineEdit->value());
+        result.curLimit = static_cast<quint32>(m_curLimitLineEdit->value());
+        result.tempLimit = static_cast<quint32>(m_tempLimitLineEdit->value());
+
+    }while(0);
+
+    return result;
 }
 
 //void TestTab::updateOptionsSelection(int index)
