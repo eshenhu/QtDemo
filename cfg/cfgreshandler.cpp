@@ -5,7 +5,7 @@
 #include <QDebug>
 
 CfgResHandler::CfgResHandler(QObject *parent) : QObject(parent),
-  m_setting(QCoreApplication::applicationDirPath() + QStringLiteral("config.ini"), QSettings::IniFormat)
+  m_setting(QCoreApplication::applicationDirPath() + QStringLiteral("/config.ini"), QSettings::IniFormat)
 {
     qDebug() << "[CONFIG] file save to " << m_setting.fileName();
     m_bootCfg = new CfgMotorBootCfgModel(m_setting);

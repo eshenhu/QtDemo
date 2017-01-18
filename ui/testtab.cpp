@@ -235,6 +235,9 @@ TestTab::TestTab(QWidget *parent)
     connect(m_manualTstTab, SIGNAL(updateUserSelection(UiCompMeasData)),
                                 this, SIGNAL(updateUserSelection(UiCompMeasData)));
 
+    connect(m_manualTstTab, SIGNAL(syncDataDuringManual(double,quint32)),
+            this, SIGNAL(syncDataDuringManual(double,quint32)));
+    //syncDataDuringManual
 
 //    QGridLayout *settingsLayout = new QGridLayout();
 //    settingsLayout->addWidget(chartSettings, 0, 0);
