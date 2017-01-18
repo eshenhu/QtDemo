@@ -128,14 +128,6 @@
       },
       "display": [
         {
-          "text": "ENVTEMP",
-          "index": 255,
-          "isSelected": false,
-          "lowLimit": 0,
-          "upLimit": 100,
-          "unit": "DegC"
-        },
-        {
           "text": "VOLTAGE",
           "index": 255,
           "isSelected": true,

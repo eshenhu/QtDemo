@@ -10,7 +10,7 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    const QIntValidator* validator = new QIntValidator(0, 100, this);
+    //const QIntValidator* validator = new QIntValidator(0, 100, this);
 
     int idx = ui->ESCFreq_combox->findText(QString::number(m_cfg->HZ()));
     idx = (idx == -1 ? 0 : idx);

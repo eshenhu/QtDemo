@@ -104,8 +104,8 @@ TestTab::TestTab(QWidget *parent)
 
     m_tempLimCheckBox = new QCheckBox();
     m_tempLimitLineEdit = new QSpinBox();
-    m_tempLimitLineEdit->setValue(99);
-    m_tempLimitLineEdit->setRange(0, 99);
+    m_tempLimitLineEdit->setValue(150);
+    m_tempLimitLineEdit->setRange(0, 150);
     m_tempLimitLineEdit->setSingleStep(1);
     QHBoxLayout* layout_temp = new QHBoxLayout();
     layout_temp->addWidget(m_tempLimCheckBox);
