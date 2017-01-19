@@ -49,9 +49,10 @@
 #include "ui/configtab.h"
 #include "ui/testtab.h"
 #include "cfg/cfgreshandler.h"
+#include "ui/qextcheckbox.h"
 
 #include "driver/automationmodeldriverclz.h"
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 //#include "cfg/datajsonrecelement.h"
 
 //#include "util/utildatarecordingclz.h"
@@ -111,18 +112,29 @@ ActionWidget::ActionWidget(QWidget *parent)
 //    m_subTestTabWidget->chartSettings()->setCheckable(false);
 //    m_tabWidget->setTabEnabled(1, false);
 
-    connect(m_driver, &AutomationModelDriverClz::updateData, m_chartWidget, &CompQChartWidget::updateData);
+    connect(m_driver, &AutomationModelDriverClz::updateData, this, &ActionWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
             const AutomationModelDriverClz::QModBusState state, QString str){
+        bool isReset = false;
         qDebug() << "ui.actionwidget received statechange signal" << str;
         if(state == AutomationModelDriverClz::QModBusState::FatalErrorException)
         {
+            isReset = true;
             m_msgBox = std::unique_ptr<QMessageBox>(new QMessageBox(QMessageBox::Warning, tr("Going into RESET state"), str));
             m_msgBox->exec();
         }
         else if (state == AutomationModelDriverClz::QModBusState::Disconnected)
         {
+            isReset = true;
             m_msgBox = nullptr;
+        }
+
+        if (isReset)
+        {
+            enableWidgetInFront(true);
+            m_subTestTabWidget->start_btn()->setCheckable(false);
+            m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
+            m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
         }
     });
     connect(m_subTestTabWidget->start_btn(), &QPushButton::clicked, [this](bool checked){
@@ -160,6 +172,7 @@ ActionWidget::ActionWidget(QWidget *parent)
                 m_subTestTabWidget->start_btn()->setText(QStringLiteral("Stop"));
                 m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/pause.png"));
 
+                this->resetProtectionAction(m_subTestTabWidget->getUserSetSensentive());
                 m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
                 m_driver->setUserSetSensitive(m_subTestTabWidget->getUserSetSensentive());
                 //reset.
@@ -201,6 +214,12 @@ ActionWidget::~ActionWidget()
         delete m_chartWidget;
 }
 
+void ActionWidget::updateData(const QModbus2DataUnit *data, Phase phase)
+{
+    m_chartWidget->updateData(data, phase);
+    doProtectionCheck(data, phase);
+}
+
 void ActionWidget::createTabWidget()
 {
     m_tabWidget = new QTabWidget;
@@ -238,30 +257,6 @@ void ActionWidget::createTabWidget()
 //    else
 //        m_chartView->chart()->legend()->hide();
 //}
-
-//void ActionWidget::updateUserInput(UiCompMeasData data)
-//{
-//    m_measData = data;
-//}
-
-//void ActionWidget::updateUserInput(ThrottleTstData data)
-//{
-//    m_measData.type = TestCasePrimType::TCTHROTTLE;
-//    m_measData.data.v = data;
-//}
-
-//void ActionWidget::updateUserInput(DistanceTstData data)
-//{
-//    m_measData.type = TestCasePrimType::TCDISTANCE;
-//    m_measData.data.w = data;
-//}
-
-//void ActionWidget::updateUserInput(MultipuleTstData data)
-//{
-//    m_measData.type = TestCasePrimType::TCMULTIPULE;
-//    m_measData.data.x = data;
-//}
-
 
 QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
 {
@@ -338,7 +333,10 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
                 } else if (serial->error() == QSerialPort::TimeoutError && readData.isEmpty()) {
                     qDebug() << "No data was currently available for reading from port " << p.name;
                     break;
-                } else if (readData.at(6) != 0x06 && readData.at(6) != 0x08 && readData.at(6) != 0x0b){
+                } else if (readData.size() <= 6) {
+                    qDebug() << "No data more then 6 was received ";
+                    break;
+                } else if (readData.size() > 6 && readData.at(6) != 0x06 && readData.at(6) != 0x08 && readData.at(6) != 0x0b){
                     qDebug() << "No matching function code received" << readData.at(6) << "end";
                     break;
                 }
@@ -378,4 +376,167 @@ void ActionWidget::enableWidgetInFront(bool doshine)
     m_subTestTabWidget->enableWidgetInFront(doshine);
 }
 
+void ActionWidget::resetProtectionAction(const UserSetSensitiveClz data)
+{
+    m_volProtection.resetLogic();
+    m_curProtection[0].resetLogic();
+    m_curProtection[1].resetLogic();
+    m_tempProtection[0].resetLogic();
+    m_tempProtection[1].resetLogic();
+
+    bool isDualMotor = UniResLocation::getCfgResHdl()->num_of_motor() == 2;
+
+    if (data.isSet)
+    {
+        quint32 count = static_cast<quint32>(data.rank);
+        if (data.volLimit)
+        {
+            m_volProtection.resetLogic(count, data.volLimit);
+        }
+
+        if (data.curLimit)
+        {
+            m_curProtection[0].resetLogic(count, data.curLimit);
+            if (isDualMotor)
+                m_curProtection[1].resetLogic(count, data.curLimit);
+        }
+
+        if (data.tempLimit)
+        {
+            m_tempProtection[0].resetLogic(count, data.tempLimit);
+            if (isDualMotor)
+                m_tempProtection[1].resetLogic(count, data.tempLimit);
+        }
+    }
+}
+
+void ActionWidget::doProtectionCheck(const QModbus2DataUnit *data, Phase phase)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(phase)
+
+    QString error;
+
+    if (m_volProtection.isEnabled())
+    {
+        quint32 volData = 0;
+        const QExtCheckBox* boxVol = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::VOLTAGE, 0);
+        if (boxVol)
+            volData = static_cast<quint32>(boxVol->pushData());
+
+        if (m_volProtection.doCheckStatus(volData))
+        {
+            error = QStringLiteral("Vol Protection take effect.");
+        }
+    }
+    if (m_curProtection[0].isEnabled())
+    {
+        quint32 curData = 0;
+        const QExtCheckBox* boxCur = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::CURRENT, 0);
+        if (boxCur)
+            curData = static_cast<quint32>(boxCur->pushData());
+
+        if (m_curProtection[0].doCheckStatus(curData))
+        {
+            error = QStringLiteral("Current - 0 Protection take effect.");
+        }
+    }
+
+    if (m_curProtection[1].isEnabled())
+    {
+        quint32 curData = 0;
+        const QExtCheckBox* boxCur = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::CURRENT, 1);
+        if (boxCur)
+            curData = static_cast<quint32>(boxCur->pushData());
+
+        if (m_curProtection[1].doCheckStatus(curData))
+        {
+            error = QStringLiteral("Current - 1 Protection take effect.");
+        }
+    }
+
+    if (m_tempProtection[0].isEnabled())
+    {
+        quint32 tempData = 0;
+        const QExtCheckBox* boxTemp = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TEMP, 0);
+        if (boxTemp)
+            tempData = static_cast<quint32>(boxTemp->pushData());
+
+        if (m_tempProtection[0].doCheckStatus(tempData))
+        {
+            error = QStringLiteral("Temp - 0 Protection take effect.");
+        }
+    }
+
+    if (m_tempProtection[1].isEnabled())
+    {
+        quint32 tempData = 0;
+        const QExtCheckBox* boxTemp = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::TEMP, 1);
+        if (boxTemp)
+            tempData = static_cast<quint32>(boxTemp->pushData());
+
+        if (m_tempProtection[0].doCheckStatus(tempData))
+        {
+            error = QStringLiteral("Temp - 1 Protection take effect.");
+        }
+    }
+
+    if (!error.isEmpty())
+    {
+        enableWidgetInFront(true);
+        m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
+        m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
+
+        m_driver->enterFSMResetState(error);
+    }
+}
+
 //#include "moc_actionwidget.cpp"
+
+FacilityProtectionLogicClz::FacilityProtectionLogicClz():
+    m_isEnabled(false),
+    m_count(UINT32_MAX),
+    m_limit(UINT32_MAX),
+    m_countdown(UINT32_MAX)
+{
+
+}
+
+void FacilityProtectionLogicClz::resetLogic(const bool enabled)
+{
+    m_isEnabled = enabled;
+    m_count = UINT32_MAX;
+    m_limit= UINT32_MAX;
+    m_countdown = m_count;
+}
+
+void FacilityProtectionLogicClz::resetLogic(const quint32 sec, const quint32 limit, const bool enabled)
+{
+    m_isEnabled = enabled;
+    m_count = sec * (1000 / INTERVALS_MS);
+    m_limit= limit;
+    m_countdown = m_count;
+}
+
+bool FacilityProtectionLogicClz::doCheckStatus(const quint32 value)
+{
+    bool result = false;
+
+    if (m_isEnabled)
+    {
+        if (value < m_limit)
+        {
+            m_countdown = m_count;
+        }
+        else
+        {
+            --m_countdown;
+            if (0 == m_countdown)
+            {
+                result = true;
+            }
+        }
+    }
+
+    return result;
+}

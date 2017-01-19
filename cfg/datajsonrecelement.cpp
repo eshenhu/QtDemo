@@ -9,7 +9,7 @@
 #include "cfg/datajsonrecelement.h"
 #include "cfg/cfgreshandlerinf.h"
 #include "actionwidget.h"
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 
 //DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getElem(bool isNew)
 //{

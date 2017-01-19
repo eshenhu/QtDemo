@@ -181,13 +181,15 @@ public:
     UiMeasData data;
 };
 
+const quint32 INTERVALS_MS = 500;
+
 class UserSetSensitiveClz
 {
 public:
-    enum class UserSetRankEnum{
-        LOW,
-        MED,
-        HIGH
+    enum UserSetRankEnum : quint32{
+        LOW = 15,
+        MED = 10,
+        HIGH  = 5
     };
 
     bool isSet = false;

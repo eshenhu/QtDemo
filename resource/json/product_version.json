@@ -128,6 +128,14 @@
       },
       "display": [
         {
+          "text": "ECHODISTANCE",
+          "index": 255,
+          "isSelected": false,
+          "lowLimit": 0,
+          "upLimit": 100,
+          "unit": "mm"
+        },
+        {
           "text": "VOLTAGE",
           "index": 255,
           "isSelected": true,

@@ -29,9 +29,9 @@ public:
 
         REC_POSSTATUS_POS,
 
+        REC_ECHODISTANCE_POS,
         REC_VOL_POS,
         REC_THRO_POS,
-        REC_ECHODISTANCE_POS,
 
         REC_CUR1_POS,
         REC_THU1_POS,

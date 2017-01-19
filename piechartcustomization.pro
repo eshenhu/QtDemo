@@ -101,7 +101,7 @@ HEADERS += \
     ui/uiheader.h \
     chartsview/chartsviewheaders.h \
     ui/qcxtchart.h \
-    unireslocation.h \
+    cfg/unireslocation.h \
     chartsview/chartviewerwin.h \
     chartsview/multichartwidget.h \
     chartsview/customtablemodel.h \
@@ -111,7 +111,8 @@ HEADERS += \
     cfg/datajsoncfgreader.h \
     chartsview/qcustomplot.h \
     util/polyfit.h \
-    ui/fileselectdialog.h
+    ui/fileselectdialog.h \
+    cfg/cfg/unireslocation.h
 
 FORMS += \
     ui/testinfoconfig.ui \

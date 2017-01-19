@@ -16,7 +16,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QDebug>
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 
 class ConstValue
 {

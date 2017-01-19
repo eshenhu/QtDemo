@@ -55,11 +55,32 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
+#include "driver/modelpoctype.h"
+using namespace ModelPOC;
+
 class CfgGUIJsonReader;
 class CompQChartWidget;
 class AutomationModelDriverClz;
 class TestTab;
 class ConfigTab;
+
+class FacilityProtectionLogicClz
+{
+public:
+    FacilityProtectionLogicClz();
+
+    void resetLogic(const bool enabled = false);
+    void resetLogic(const quint32 sec, const quint32 limit, const bool enabled = true);
+
+    bool doCheckStatus(const quint32 value);
+    bool isEnabled(){ return m_isEnabled; }
+public:
+    bool m_isEnabled = false;
+    /* count in mins*/
+    quint32 m_count;
+    quint32 m_limit;
+    quint32 m_countdown;
+};
 
 class ActionWidget : public QWidget
 {
@@ -70,23 +91,16 @@ public:
     ~ActionWidget();
 
 public Q_SLOTS:
-//    void updateChartSettings();
-
-//public:
-//    static CfgResHandler* getCfgResHdl(){
-//        static CfgResHandler* cfgHdl = new CfgResHandler();
-//        return cfgHdl;
-//    }
-
-//    static CfgJsonReader* getCfgJsonHdl(){
-//        static CfgJsonReader* cfgReader = new CfgJsonReader();
-//        cfgReader->load("PV11");
-//        return cfgReader;
-//    }
+    void updateData(const QModbus2DataUnit *data, Phase phase);
 
 private:
     QSerialPortSetting::Settings doAutoSelectSerialPlugInPort();
     void enableWidgetInFront(bool);
+
+
+    void resetProtectionAction(const UserSetSensitiveClz data);
+    void doProtectionCheck(const QModbus2DataUnit *data, Phase phase);
+
 
 private:
     QChartView*       m_chartView;
@@ -96,6 +110,10 @@ private:
     QTabWidget*       m_tabWidget;
     QDialogButtonBox* m_buttonBox;
     QSerialPortSetting*   m_settingDialog;
+
+    FacilityProtectionLogicClz m_volProtection;
+    FacilityProtectionLogicClz m_curProtection[2];
+    FacilityProtectionLogicClz m_tempProtection[2];
 
     //CfgResHandler*    m_cfgHandler;
     //CfgJsonReader*    m_reader;

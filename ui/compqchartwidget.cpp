@@ -62,7 +62,7 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data, Phase phase)
      */
     DataJsonRecElement& e2 = DataJsonRecElement::DataJsonRecElementGetHelper().getElem();
 
-    quint32 startIdx = static_cast<quint32>(DataJsonRecElement::ELEMCURSOR::REC_VOL_POS);
+    quint32 startIdx = static_cast<quint32>(DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS);
     foreach (QExtCheckBox* box, checkboxList)
     {
         e2.setData(startIdx, box->pushData());

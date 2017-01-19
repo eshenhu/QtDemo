@@ -4,7 +4,7 @@
 #include <QDebug>
 #include "cfg/cfgjsonprimaryelement.h"
 #include "comm/qmodbusdataunit.h"
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 
 #include "driver/modelpoctype.h"
 #include "cfg/cfgzerocalibrateclz.h"

@@ -14,7 +14,7 @@
 #include "util/utildatarecordingclz.h"
 #include "cfg/cfgjsonrecelement.h"
 #include "cfg/cfgzerocalibrateclz.h"
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 
 
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :

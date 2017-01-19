@@ -113,7 +113,7 @@ class PeriodicalVolMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalVolMeasDataUpdate(const double start, const double end, const double step, const quint32 thro,
                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+                                const quint32 durationInSec, const quint32 intervalInMSec = INTERVALS_MS);
     ~PeriodicalVolMeasDataUpdate(){}
 
 private:
@@ -133,7 +133,7 @@ class PeriodicalThroMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol,
                                  const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
-                                 const quint32 durationInSec, const quint32 intervalInMSec = 500);
+                                 const quint32 durationInSec, const quint32 intervalInMSec = INTERVALS_MS);
     ~PeriodicalThroMeasDataUpdate(){}
 
 private:
@@ -153,7 +153,7 @@ class PeriodicalDisMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol, const quint32 thro,
                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 durationInSec, const quint32 intervalInMSec = 500);
+                                const quint32 durationInSec, const quint32 intervalInMSec = INTERVALS_MS);
     ~PeriodicalDisMeasDataUpdate(){}
 
 private:
@@ -177,7 +177,7 @@ class OneShotManualMeasDataUpdate : public AbstractPeriodicalMeasDataUpdate
 public:
     OneShotManualMeasDataUpdate(const double vol, const quint32 thro,
                                 const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
-                                const quint32 durationInSec = 5, const quint32 intervalInMSec = 500);
+                                const quint32 durationInSec = 5, const quint32 intervalInMSec = INTERVALS_MS);
     ~OneShotManualMeasDataUpdate(){}
 
 private:

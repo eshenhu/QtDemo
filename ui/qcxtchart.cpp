@@ -3,7 +3,7 @@
 #include <QMenu>
 #include <QValueAxis>
 #include "ui/qrtlineseries.h"
-#include "unireslocation.h"
+#include "cfg/unireslocation.h"
 
 QCxtChart::QCxtChart(QExtCheckBox* box):
     QChart(),
