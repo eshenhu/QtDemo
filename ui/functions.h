@@ -274,19 +274,22 @@ const static functionT functionThrust = [](const QModbus2DataUnit* data, const J
 const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 idxMotor){
     Q_UNUSED(phase)
 
-    double result = (double)v;
+    double result_cali = 0;
+    double result = 0;
 
     qDebug() << "functions.h formulaThrust Motor " << idxMotor <<" Phase = " << (int)phase;
 
     if (phase == Phase::Phase_SoftStart)
     {
         CfgZeroCalibrateClz::setStaticThrustZeroCaliOnMotor(idxMotor, v);
-        result = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
+        result_cali = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
+        result = 0;
     }
     else if (phase == Phase::Phase_PRPDelay)
     {
         CfgZeroCalibrateClz::addStaticThrustZeroCaliOnMotor(idxMotor, v);
-        result = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
+        result_cali = (double)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor);
+        result = 0;
     }
 
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
@@ -300,15 +303,13 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
                     .arg(div);
         qDebug() << str;
 
-
-
         result = (double)((qint32)(v) - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
                  / div;
-
+        result_cali = result;
 
     }
 
-    qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result;
+    qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result_cali;
     return result;
 };
 
@@ -356,15 +357,18 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
 
     qDebug() << "functions.h formulaTorque Motor " << idxMotor << " Phase = " << (int)phase;
 
-    double result = (double)v;
+    double result_cali = 0;
+    double result = 0;
     if (phase == Phase::Phase_SoftStart)
     {
         CfgZeroCalibrateClz::setStaticTorqueZeroCaliOnMotor(idxMotor, v);
-        result = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
+        result_cali = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
+        result = 0;
     }
     else if (phase == Phase::Phase_PRPDelay){
         CfgZeroCalibrateClz::addStaticTorqueZeroCaliOnMotor(idxMotor, v);
-        result = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
+        result_cali = CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor);
+        result = 0;
     }
 
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
@@ -382,9 +386,10 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
 
         result = (double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
                   /div;
+        result_cali= result;
     }
 
-    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result/1000;
+    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result_cali/1000;
 
     return result/1000;
 };

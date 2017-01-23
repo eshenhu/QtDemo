@@ -145,7 +145,7 @@
         },
         {
           "text": "THROTTLE",
-          "index": 255,
+          "index": 0,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
@@ -178,7 +178,7 @@
         {
           "text": "SPEED",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 30000,
           "unit": "RPM"
@@ -186,7 +186,7 @@
         {
           "text": "TEMP_1",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
@@ -194,7 +194,7 @@
         {
           "text": "TEMP_2",
           "index": 16,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "C"
@@ -202,7 +202,7 @@
         {
           "text": "EFFICIENCY-1",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": "",
           "upLimit": 20,
           "unit": "g/W"
@@ -210,7 +210,7 @@
         {
           "text": "EFFICIENCY-2",
           "index": 16,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,
           "unit": "g/A"
@@ -218,7 +218,7 @@
         {
           "text": "POWER",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 5000,
           "unit": "W"
@@ -226,7 +226,7 @@
         {
           "text": "MECHAPWR",
           "index": 0,
-          "isSelected": false,
+          "isSelected": true,
           "lowLimit": 0,
           "upLimit": 1500,
           "unit": "W"
@@ -234,7 +234,7 @@
         {
            "text": "MECHAEFFI",
            "index": 0,
-           "isSelected": false,
+           "isSelected": true,
            "lowLimit": 0,
            "upLimit": 100,
            "unit": "%"
@@ -281,7 +281,7 @@
         },
         {
           "text": "THROTTLE",
-          "index": 255,
+          "index": 0,
           "isSelected": true,
           "lowLimit": 0,
           "upLimit": 100,

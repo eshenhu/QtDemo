@@ -44,45 +44,43 @@ void QCxtChart::updateCharts()
 void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     Q_UNUSED(event)
-    //m_actions.clear();
+
+    QVector<const QExtCheckBox *> availableCheckboxList;
+
+    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+
+    for (const QExtCheckBox* box : checkboxList)
+    {
+        if (box->isSelected())
+        {
+            availableCheckboxList.append(box);
+        }
+    }
 
     QMenu menu;
     int idx = 0;
-    foreach(JsonGUIElement ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
-        //const QString str = QString("%2").arg(ele.str(), 0).arg(ele.unit(), 30);
 
-        int idxMotor = ele.idx().idxMotor();
+    foreach (const QExtCheckBox* box , availableCheckboxList)
+    {
+        int idxMotor = box->idx().idxMotor();
         QString motorString(" ");
         if (idxMotor == 0 || idxMotor == 1)
             motorString = QString::number(idxMotor + 1);
 
         const QString str = QString::asprintf("%-3s%-15s\t%8s",
                         motorString.toLatin1().constData(),
-                        ele.str().toLatin1().constData(),
-                        ele.unit().toLatin1().constData());
+                        box->str().toLatin1().constData(),
+                        box->unit().toLatin1().constData());
         QAction* action = menu.addAction(str);
         //const QCxtAction* action = new QCxtAction(ele, ele.str());
         action->setCheckable(true);
         action->setData(QVariant(idx++));
-
-//        connect(action, &triggered, [this](bool checked){
-//            const JsonGUIElement& type =
-//                    static_cast<QCxtAction*>(QObject::sender())->type();
-//            this->m_dataSrc = QExtCheckBox::searchExtCheckBox(type);
-
-//            /* invalid the data in charts*/
-//            foreach (QAbstractSeries* series, this->series())
-//            {
-//                static_cast<QRTLineSeries*>(series)->clear();
-//            }
-//        });
-        //m_actions.append(action);
     }
 
     QAction *selectedAction = menu.exec(QCursor::pos());
     if (selectedAction){
-        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-        m_dataSrc = checkboxList[selectedAction->data().toInt()];
+//        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+        m_dataSrc = const_cast<QExtCheckBox*>(availableCheckboxList[selectedAction->data().toInt()]);
 
         /* invalid the data in charts*/
         foreach (QAbstractSeries* series, this->series())

@@ -108,47 +108,48 @@ void CompQChartWidget::createChartsView()
     const int div = 2;
     int row = 0;
     int col = 0;
-    for (quint32 idx = 0; idx < MAX_NUM_CHARTS_SUPPORT; ++idx)
-    {     
-        const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-        const quint32 sizeOfCheckBox = checkboxList.size();
 
-        QExtCheckBox* box;
 
-        if (idx < sizeOfCheckBox){
-           box = checkboxList[idx];
+    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
+
+    quint32 idxOfChart = 0;
+    for (QExtCheckBox* box : checkboxList)
+    {
+        if (box->isSelected())
+        {
+            do {
+                QChartView* chartView = CompQChartWidget::makeNewChart(box);
+
+                QChart* chart = chartView->chart();
+                QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
+
+                const char* titleFormat = "%-15s";
+                const char* unitFormat = "%-5s";
+
+                static char buffer[100];
+                sprintf(buffer, "%s( %s )", titleFormat, unitFormat);
+
+                QString titleComp = QString::asprintf(buffer,
+                                                      box->str().toLatin1().constData(),
+                                                      box->unit().toLatin1().constData());
+
+                chart->setTitle(titleComp);
+                //yaxis->setTitleText(box->unit());
+                yaxis->setLabelFormat(QStringLiteral("%d"));
+                yaxis->setTickCount(5);
+                yaxis->setRange(box->lowLimit(), box->upLimit());
+
+                chartView->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
+
+                //m_lhsLayout->addWidget(chartView, 0, Qt::AlignTop);
+                row = idxOfChart/div;
+                col = idxOfChart%div;
+                m_lhsLayout->addWidget(chartView, row, col);
+            }while(0);
+
+            if (++idxOfChart >= MAX_NUM_CHARTS_SUPPORT)
+                break;
         }
-        else{
-            qDebug() << "compQChartWidget:: more than checked box options";
-            break;
-        }
-        QChartView* chartView = CompQChartWidget::makeNewChart(box);
-
-        QChart* chart = chartView->chart();
-        QValueAxis* yaxis = static_cast<QValueAxis*>(chart->axisY());
-
-        const char* titleFormat = "%-15s";
-        const char* unitFormat = "%-5s";
-
-        static char buffer[100];
-        sprintf(buffer, "%s( %s )", titleFormat, unitFormat);
-
-        QString titleComp = QString::asprintf(buffer,
-                          box->str().toLatin1().constData(),
-                          box->unit().toLatin1().constData());
-
-        chart->setTitle(titleComp);
-        //yaxis->setTitleText(box->unit());
-        yaxis->setLabelFormat(QStringLiteral("%d"));
-        yaxis->setTickCount(5);
-        yaxis->setRange(box->lowLimit(), box->upLimit());
-
-        chartView->setSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
-
-        //m_lhsLayout->addWidget(chartView, 0, Qt::AlignTop);
-        row = idx/div;
-        col = idx%div;
-        m_lhsLayout->addWidget(chartView, row, col);
     }
 }
 

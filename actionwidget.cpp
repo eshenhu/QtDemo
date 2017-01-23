@@ -132,7 +132,7 @@ ActionWidget::ActionWidget(QWidget *parent)
         if (isReset)
         {
             enableWidgetInFront(true);
-            m_subTestTabWidget->start_btn()->setCheckable(false);
+            m_subTestTabWidget->start_btn()->setChecked(false);
             m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));
             m_subTestTabWidget->start_btn()->setIcon(QIcon(":/ui/ui/play.png"));
         }

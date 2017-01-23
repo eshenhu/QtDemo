@@ -111,8 +111,7 @@ HEADERS += \
     cfg/datajsoncfgreader.h \
     chartsview/qcustomplot.h \
     util/polyfit.h \
-    ui/fileselectdialog.h \
-    cfg/cfg/unireslocation.h
+    ui/fileselectdialog.h
 
 FORMS += \
     ui/testinfoconfig.ui \

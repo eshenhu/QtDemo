@@ -20,6 +20,7 @@ public:
     virtual qint16 lowLimit() const = 0;
     virtual qint16 upLimit() const = 0;
     virtual QString unit() const = 0;
+    virtual bool isSelected() const = 0;
 
     virtual void update(const QModbus2DataUnit* data, Phase phase) = 0;
 };
