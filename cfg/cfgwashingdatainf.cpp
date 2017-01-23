@@ -13,7 +13,8 @@ CfgManualWashingDataE1Clz::CfgManualWashingDataE1Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGTIME_E1),
     m_data(0)
 {
-
+    CfgItemMeasBasedE1WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgManualWashingDataE1Clz::wash(const QVector<DataJsonRecElement> &rawdata)
@@ -72,7 +73,8 @@ CfgManualWashingDataE2Clz::CfgManualWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGTIME_E2),
     m_data(0)
 {
-
+    CfgItemMeasBasedE2WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgManualWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
@@ -142,7 +144,8 @@ CfgVolWashingDataE1Clz::CfgVolWashingDataE1Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E1),
     m_data(0)
 {
-
+    CfgItemMeasBasedE1WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgVolWashingDataE1Clz::wash(const QVector<DataJsonRecElement> &rawdata)
@@ -224,7 +227,8 @@ CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGVOL_E2),
     m_data(0)
 {
-
+    CfgItemMeasBasedE2WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgVolWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
@@ -320,7 +324,8 @@ CfgDistanceWashingDataE2Clz::CfgDistanceWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGDISTANCE),
     m_data(0)
 {
-
+    CfgItemMeasBasedE2WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgDistanceWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
@@ -418,6 +423,8 @@ CfgThrottleWashingDataE1Clz::CfgThrottleWashingDataE1Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E1),
     m_data(0)
 {
+    CfgItemMeasBasedE1WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgThrottleWashingDataE1Clz::wash(const QVector<DataJsonRecElement> & rawdata)
@@ -501,6 +508,8 @@ CfgThrottleWashingDataE2Clz::CfgThrottleWashingDataE2Clz():
     CfgWashingDataInf(CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2),
     m_data(0)
 {
+    CfgItemMeasBasedE2WashingOutDataEle ele;
+    m_guiList =  ele.m_metaEle;
 }
 
 void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElement> & rawdata)
@@ -1122,9 +1131,15 @@ CfgMultiWashingDataE1Clz::CfgMultiWashingDataE1Clz():
     {
         for (const CfgMultiWashingDataItem& item : itemList)
         {
-            QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
+            //QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
             //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
-            m_guiList[idxItemList].append(list.join(':'));
+            //m_guiList[idxItemList].append(list.join(':'));
+
+            QStringList axislist({item.XKey.str, item.YValue.str});
+            //QStringList list({axislist.join('-'), QString::number(item.motorIdx)});
+            //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
+            //m_guiList[idxItemList].append(list.join(':'));
+            m_guiList[idxItemList].append(CfgMetaElement(axislist.join('-'), item.motorIdx));
         }
         idxItemList++;
     }
@@ -2292,13 +2307,17 @@ CfgMultiWashingDataE2Clz::CfgMultiWashingDataE2Clz():
     for (const QVector<CfgMultiWashingDataItem>& itemList : m_data)
     {
         for (const CfgMultiWashingDataItem& item : itemList)
-        {
-            QStringList list({item.XKey.str, item.YValue.str, QString::number(item.motorIdx)});
+        {          
+            QStringList axislist({item.XKey.str, item.YValue.str});
+            //QStringList list({axislist.join('-'), QString::number(item.motorIdx)});
             //list << item.XKey.str << item.YValue.str << QString::number(item.motorIdx);
-            m_guiList[idxItemList].append(list.join(':'));
+            //m_guiList[idxItemList].append(list.join(':'));
+            m_guiList[idxItemList].append(CfgMetaElement(axislist.join('-'), item.motorIdx));
         }
         idxItemList++;
     }
+
+
 }
 
 void CfgMultiWashingDataE2Clz::wash(const QVector<DataJsonRecElement> & rawdata)
