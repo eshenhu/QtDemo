@@ -153,17 +153,7 @@ void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, 
 {
     if (cfgRawData)
     {
-        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGDISTANCE)
-        {
-            cfgRawData->generateData(idx, pairs, name, motorIdx);
-        }
-        else
-        {
-            qWarning() << "not support json type!";
-        }
+        cfgRawData->generateData(idx, pairs, name, motorIdx);
     }
 }
 
@@ -309,15 +299,13 @@ void ChartViewerWin::setupSignalAndSlot()
     connect(this, &ChartViewerWin::testPlanChanged, [this](TestPlanEnum plan){
         curveAction->setEnabled(false);
 
-        if (plan == TestPlanEnum::Voltage ||
-            plan == TestPlanEnum::Throttle ||
-            plan == TestPlanEnum::Distance    )
-        {
-            itemListIdx = 0;
-        }
-        else if (plan == TestPlanEnum::Multiplue)
+        if (plan == TestPlanEnum::Multiplue)
         {
             curveAction->setEnabled(true);
+            itemListIdx = 0;
+        }
+        else
+        {
             itemListIdx = 0;
         }
     });
@@ -548,13 +536,29 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
     menu->addSeparator();
     if (cfgRawData)
     {
-        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGTHROTTLE_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGVOL_E2 ||
-            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGDISTANCE)
+        if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2 ||
+            cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E1)
+        {
+            QVector<CfgMetaElement>& guiList = cfgRawData->getGUIActionList(itemListIdx);
+
+            quint32 idx = 0;
+            for (const CfgMetaElement& ele : guiList)
+            {
+                QString cxtHeader("   ");
+                const QStringList list({ele.getName(), QString::number(ele.getMotorIdx())});
+                const QString fullName = list.join(':');
+                if (fullLabelName == fullName)
+                    cxtHeader = QStringLiteral("[*]");
+
+                action = menu->addAction(cxtHeader + fullName);
+                action->setCheckable(true);
+                action->setData(QVariant(idx++));
+            }
+        }
+        else
         {
             quint32 idx = 0;
-            CfgItemMeasBasedE2WashingOutDataEle actionlist;
-            for (CfgMetaElement& ele : actionlist.m_metaEle)
+            for (const CfgMetaElement& ele : cfgRawData->getGUIActionList(itemListIdx))
             {
                 quint8 idxMotor = ele.getMotorIdx();
                 QString motorString(" ");
@@ -580,22 +584,6 @@ void ChartViewerWin::contextMenuRequest(QCPAxisRect* rect)
                 if (false == (!matchWord.isEmpty() && ele.getName() == matchWord))
                     action = menu->addAction(cxtHeader + str);
 
-                action->setCheckable(true);
-                action->setData(QVariant(idx++));
-            }
-        }
-        else if (cfgRawData->type() == CfgWashingTypeEnum::CFGWASHINGMULTI_E2)
-        {
-            QList<QString>& guiList = cfgRawData->getGUIActionList(itemListIdx);
-
-            quint32 idx = 0;
-            for (const QString& str : guiList)
-            {
-                QString cxtHeader("   ");
-                if (fullLabelName == str)
-                    cxtHeader = QStringLiteral("[*]");
-
-                action = menu->addAction(cxtHeader + str);
                 action->setCheckable(true);
                 action->setData(QVariant(idx++));
             }
