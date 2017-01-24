@@ -4,6 +4,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include "ui/testinfoconfig.h"
+
 CfgResHandler::CfgResHandler(QObject *parent) : QObject(parent),
   m_setting(QCoreApplication::applicationDirPath() + QStringLiteral("/config.ini"), QSettings::IniFormat)
 {
@@ -143,7 +145,7 @@ void CfgDeviceCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/device");
     m_vane = m_set.value("vanes", 1).toInt();
-    m_HZ  = m_set.value("HZ", 50).toInt();
+    m_HZ  = m_set.value("HZ", DeviceInfoConfig::Freq::B50HZ).toInt();
     m_lowThroLimit = m_set.value("ThroLowLimit", 0).toInt();
     m_highThroLimit = m_set.value("ThroHighLimit", 90).toInt();
     m_SerialNumber = m_set.value("SN").toString();

@@ -18,8 +18,8 @@ class DeviceInfoConfig : public QFrame
 
 public:
     enum Freq {
-        B50HZ = 50,
-        B400HZ = 400
+        B50HZ = 0,
+        B400HZ = 1
     };
     Q_ENUMS(Freq)
 
