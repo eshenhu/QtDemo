@@ -191,7 +191,6 @@ private:
     QComboBox* m_sensitiveComboBox;
 
     QGroupBox *m_chartSettings;
-    QGroupBox* m_sensitiveSettings;
 
     QDialogButtonBox* m_buttonBox;
 

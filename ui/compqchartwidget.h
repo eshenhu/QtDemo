@@ -34,6 +34,7 @@ signals:
 
 public slots:
     void updateData(const QModbus2DataUnit* data, Phase phase);
+    void resetChartWidget();
 
 private:
     QChartView* makeNewChart(QExtCheckBox*);

@@ -67,31 +67,6 @@ ActionWidget::ActionWidget(QWidget *parent)
       m_msgBox(nullptr)
 {
     m_measData.type = TestPlanEnum::Invaild;
-    //m_cfgHandler = new CfgResHandler();
-    //m_reader = new CfgJsonReader();
-    //m_reader->load("PV11");
-
-    //---------------------------------------------
-//    UtilDataRecordingClz::getInstance().newRec();
-
-//    qWarning() << "UtilDataRecordingClz.getInstance().getCfgName" << UtilDataRecordingClz::getInstance().getCfgFileName();
-//    qWarning() << "UtilDataRecordingClz.getInstance().getRecName" << UtilDataRecordingClz::getInstance().getRecFileName();
-
-//    CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder().build();
-//    ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
-
-//    DataJsonRecElementE2::DataJsonRecElementE2FileHelper helper;
-//    helper.newFile(UtilDataRecordingClz::getInstance().getRecFileName());
-//    DataJsonRecElementE2& e2 = DataJsonRecElementE2::DataJsonRecElementE2GetHelper().getElem(true);
-
-//    helper.writeData(e2);
-//    e2.incCursor();
-//    helper.writeData(e2);
-//    helper.closeFile();
-
-    //------------------------------------------------
-
-
     m_driver = new AutomationModelDriverClz(this);
 
     createTabWidget();
@@ -101,16 +76,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     QHBoxLayout *baseLayout = new QHBoxLayout();
     baseLayout->addWidget(m_tabWidget, 0);
     baseLayout->addWidget(m_chartWidget, 1);
-    //baseLayout->addWidget(m_chartView, 1);
     setLayout(baseLayout);
-
-
-//    for (int idx = 0; idx <= m_subTestTabWidget->tabWidget()->count(); ++idx)
-//    {
-//        m_subTestTabWidget->tabWidget()->setTabEnabled(idx, false);
-//    }
-//    m_subTestTabWidget->chartSettings()->setCheckable(false);
-//    m_tabWidget->setTabEnabled(1, false);
 
     connect(m_driver, &AutomationModelDriverClz::updateData, this, &ActionWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](
@@ -210,8 +176,8 @@ ActionWidget::~ActionWidget()
 //        delete m_cfgHandler;
 //    if (m_reader)
 //        delete m_reader;
-    if (m_chartWidget)
-        delete m_chartWidget;
+//    if (m_chartWidget)
+//        delete m_chartWidget;
 }
 
 void ActionWidget::updateData(const QModbus2DataUnit *data, Phase phase)
@@ -372,6 +338,7 @@ QSerialPortSetting::Settings ActionWidget::doAutoSelectSerialPlugInPort()
 */
 void ActionWidget::enableWidgetInFront(bool doshine)
 {
+    m_chartWidget->resetChartWidget();
     m_subConfigTabWidget->setEnabled(doshine);
     m_subTestTabWidget->enableWidgetInFront(doshine);
 }

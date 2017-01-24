@@ -18,6 +18,7 @@ public:
 
 public:
     void updateCharts();
+    void resetCharts();
 
 //private:
 //    void createContextMenu(QGraphicsSceneContextMenuEvent *event);

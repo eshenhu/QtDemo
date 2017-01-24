@@ -163,8 +163,8 @@
           "text": "THRUST",
           "index": 0,
           "isSelected": true,
-          "lowLimit": -1500,
-          "upLimit": 1500,
+          "lowLimit": -15000,
+          "upLimit": 15000,
           "unit": "g"
         },
         {
@@ -188,7 +188,7 @@
           "index": 0,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 100,
+          "upLimit": 260,
           "unit": "C"
         },
         {
@@ -196,31 +196,31 @@
           "index": 16,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 100,
+          "upLimit": 260,
           "unit": "C"
         },
         {
           "text": "EFFICIENCY-1",
           "index": 0,
           "isSelected": true,
-          "lowLimit": "",
-          "upLimit": 20,
+          "lowLimit": -30,
+          "upLimit": 30,
           "unit": "g/W"
         },
         {
           "text": "EFFICIENCY-2",
           "index": 16,
           "isSelected": true,
-          "lowLimit": 0,
-          "upLimit": 100,
+          "lowLimit": -600,
+          "upLimit": 600,
           "unit": "g/A"
         },
         {
           "text": "POWER",
           "index": 0,
           "isSelected": true,
-          "lowLimit": 0,
-          "upLimit": 5000,
+          "lowLimit": -2000,
+          "upLimit": 2000,
           "unit": "W"
         },
         {
@@ -228,7 +228,7 @@
           "index": 0,
           "isSelected": true,
           "lowLimit": 0,
-          "upLimit": 1500,
+          "upLimit": 2000,
           "unit": "W"
         },
         {

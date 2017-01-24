@@ -41,6 +41,14 @@ void QCxtChart::updateCharts()
     }
 }
 
+void QCxtChart::resetCharts()
+{
+    foreach (QAbstractSeries* series, this->series())
+    {
+        static_cast<QRTLineSeries*>(series)->clear();
+    }
+}
+
 void QCxtChart::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     Q_UNUSED(event)

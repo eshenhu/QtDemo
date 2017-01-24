@@ -73,6 +73,15 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data, Phase phase)
     helper.writeData(e2);
 }
 
+void CompQChartWidget::resetChartWidget()
+{
+    for (QChartView* chartView : m_chartsViewVector)
+    {
+        QCxtChart* chart = dynamic_cast<QCxtChart *>(chartView->chart());
+        chart->resetCharts();
+    }
+}
+
 QChartView* CompQChartWidget::makeNewChart(QExtCheckBox* box)
 {
     QRTLineSeries *series = new QRTLineSeries();

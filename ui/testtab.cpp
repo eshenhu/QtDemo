@@ -91,6 +91,9 @@ TestTab::TestTab(QWidget *parent)
     QHBoxLayout* layout_vol = new QHBoxLayout();
     layout_vol->addWidget(m_volLimCheckBox);
     layout_vol->addWidget(m_volLimitLineEdit);
+    connect(m_volLimCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
+        m_volLimitLineEdit->setEnabled(!isChecked);
+    });
 
     m_curLimCheckBox = new QCheckBox();
     m_curLimitLineEdit = new QSpinBox();
@@ -101,6 +104,9 @@ TestTab::TestTab(QWidget *parent)
     QHBoxLayout* layout_cur = new QHBoxLayout();
     layout_cur->addWidget(m_curLimCheckBox);
     layout_cur->addWidget(m_curLimitLineEdit);
+    connect(m_curLimCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
+        m_curLimitLineEdit->setEnabled(!isChecked);
+    });
 
     m_tempLimCheckBox = new QCheckBox();
     m_tempLimitLineEdit = new QSpinBox();
@@ -110,6 +116,14 @@ TestTab::TestTab(QWidget *parent)
     QHBoxLayout* layout_temp = new QHBoxLayout();
     layout_temp->addWidget(m_tempLimCheckBox);
     layout_temp->addWidget(m_tempLimitLineEdit);
+    connect(m_tempLimCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
+        m_tempLimitLineEdit->setEnabled(!isChecked);
+    });
+
+    m_sensitiveComboBox = new QComboBox(this);
+    m_sensitiveComboBox->addItem(tr("Low"));
+    m_sensitiveComboBox->addItem(tr("Med"));
+    m_sensitiveComboBox->addItem(tr("High"));
 
     QFormLayout *chartSettingsLayout = new QFormLayout();
     chartSettingsLayout->setVerticalSpacing(1);
@@ -118,49 +132,24 @@ TestTab::TestTab(QWidget *parent)
     chartSettingsLayout->addRow(tr("Vol Limit"), layout_vol);
     chartSettingsLayout->addRow(tr("Cur Limit"), layout_cur);
     chartSettingsLayout->addRow(tr("Temp Limit"), layout_temp);
+    chartSettingsLayout->addRow(tr("Sensitive"), m_sensitiveComboBox);
+
     //chartSettingsLayout->addRow(tr("Enable Protect"), m_enableProtecCheckBox);
-    m_chartSettings = new QGroupBox("Limit Protection");
+    m_chartSettings = new QGroupBox(this);
     m_chartSettings->setLayout(chartSettingsLayout);
 
-//    QLabel* m_enableProtecLabel = new QLabel(tr("Enable Protection"), this);
-    m_enableProtecCheckBox = new QCheckBox();
-    connect(m_enableProtecCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
+////    QLabel* m_enableProtecLabel = new QLabel(tr("Enable Protection"), this);
+//    m_enableProtecCheckBox = new QCheckBox();
+//    connect(m_enableProtecCheckBox, &QCheckBox::stateChanged, [this](bool isChecked){
 
-        bool isEnabled = !isChecked;
-        m_volLimCheckBox->setEnabled(isEnabled);
-        m_volLimitLineEdit->setEnabled(isEnabled);
-        m_curLimCheckBox->setEnabled(isEnabled);
-        m_curLimitLineEdit->setEnabled(isEnabled);
-        m_tempLimCheckBox->setEnabled(isEnabled);
-        m_tempLimitLineEdit->setEnabled(isEnabled);
-    });
-
-//    QHBoxLayout* layout_protect = new QHBoxLayout();
-//    layout_protect->addWidget(m_enableProtecLabel);
-//    layout_protect->addWidget(m_enableProtecCheckBox);
-
-//    QLabel* m_sensitiveTuneLabel = new QLabel(tr("Protection Sensitive"), this);
-    m_sensitiveComboBox = new QComboBox(this);
-    m_sensitiveComboBox->addItem(tr("Low"));
-    m_sensitiveComboBox->addItem(tr("Med"));
-    m_sensitiveComboBox->addItem(tr("High"));
-//    QHBoxLayout* layout_sensitive = new QHBoxLayout();
-//    layout_sensitive->addWidget(m_sensitiveTuneLabel);
-//    layout_sensitive->addWidget(m_sensitiveComboBox);
-    QFormLayout *layoutSensitive = new QFormLayout();
-    layoutSensitive->setVerticalSpacing(1);
-    //chartSettingsLayout->addRow("Test Plan", m_testSeletionComboBox);
-    layoutSensitive->addRow(tr("Enable Protec"), m_enableProtecCheckBox);
-    layoutSensitive->addRow(tr("Protec Sensiti"), m_sensitiveComboBox);
-
-    m_sensitiveSettings = new QGroupBox("Limit decision");
-    m_sensitiveSettings->setLayout(layoutSensitive);
-
-
-    m_chartSettings = new QGroupBox("Limit Selection");
-    m_chartSettings->setLayout(chartSettingsLayout);
-    //connect(m_testSeletionComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateOptionsSelection(int)));
-
+//        bool isEnabled = !isChecked;
+//        m_volLimCheckBox->setEnabled(isEnabled);
+//        m_volLimitLineEdit->setEnabled(isEnabled);
+//        m_curLimCheckBox->setEnabled(isEnabled);
+//        m_curLimitLineEdit->setEnabled(isEnabled);
+//        m_tempLimCheckBox->setEnabled(isEnabled);
+//        m_tempLimitLineEdit->setEnabled(isEnabled);
+//    });
 
     m_start_btn = new QPushButton(QIcon(":/ui/ui/play.png"), tr("Start"));
     m_start_btn->setStyleSheet("QPushButton { text-align:left; padding:12px}");
@@ -248,7 +237,6 @@ TestTab::TestTab(QWidget *parent)
 //    settingsLayout->setColumnStretch(2, 0);
     QVBoxLayout *settingsLayout = new QVBoxLayout();
     settingsLayout->addWidget(m_chartSettings, 0);
-    settingsLayout->addWidget(m_sensitiveSettings, 0);
     settingsLayout->addWidget(m_tabWidget, 1);
     settingsLayout->addWidget(seriesSettings, 0);
 
@@ -275,7 +263,6 @@ void TestTab::enableLimitCheckBox(bool isEnabled)
 void TestTab::enableWidgetInFront(bool doshine)
 {
     m_chartSettings->setEnabled(doshine);
-    m_sensitiveSettings->setEnabled(doshine);
 
     int activeIdx = m_tabWidget->currentIndex();
     if (activeIdx == -1 )
@@ -792,7 +779,7 @@ ManualTstTab::ManualTstTab(QWidget *parent)
     m_throttle = new QSpinBox();
     m_throttle->setMinimumWidth(70);
     m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_throttle->setRange(5, pCfgResHdl->max_throttle());
+    m_throttle->setRange(0, pCfgResHdl->max_throttle());
     //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
     m_throttle->setSingleStep(ConstValue::STEP_THR);
     m_throttle->setValue(ConstValue::DEFAULT_THR);
