@@ -187,7 +187,6 @@ private:
     QCheckBox *m_tempLimCheckBox;
     QSpinBox* m_tempLimitLineEdit;
 
-    QCheckBox* m_enableProtecCheckBox;
     QComboBox* m_sensitiveComboBox;
 
     QGroupBox *m_chartSettings;

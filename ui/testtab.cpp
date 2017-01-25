@@ -291,41 +291,43 @@ void TestTab::enableWidgetInFront(bool doshine)
 UserSetSensitiveClz TestTab::getUserSetSensentive()
 {
     UserSetSensitiveClz result;
-    do{
-        if (Qt::CheckState::Checked != m_enableProtecCheckBox->checkState())
-        {
-            result.isSet = false;
-            break;
-        }
-        result.isSet = true;
 
-        switch (m_sensitiveComboBox->currentIndex())
-        {
-        case 0:
-        {
-            result.rank = UserSetSensitiveClz::UserSetRankEnum::LOW;
-        }
-            break;
-        case 1:
-        {
-            result.rank = UserSetSensitiveClz::UserSetRankEnum::MED;
-        }
-            break;
-        case 2:
-        {
-            result.rank = UserSetSensitiveClz::UserSetRankEnum::HIGH;
-        }
-            break;
-        default:
-            qWarning() << "Error: not right selection on the sensitive";
-            break;
-        }
+    switch (m_sensitiveComboBox->currentIndex())
+    {
+    case 0:
+    {
+        result.rank = UserSetSensitiveClz::UserSetRankEnum::LOW;
+    }
+        break;
+    case 1:
+    {
+        result.rank = UserSetSensitiveClz::UserSetRankEnum::MED;
+    }
+        break;
+    case 2:
+    {
+        result.rank = UserSetSensitiveClz::UserSetRankEnum::HIGH;
+    }
+        break;
+    default:
+        qWarning() << "Error: not right selection on the sensitive";
+        break;
+    }
 
+    if (m_volLimCheckBox->isChecked())
         result.volLimit = static_cast<quint32>(m_volLimitLineEdit->value());
-        result.curLimit = static_cast<quint32>(m_curLimitLineEdit->value());
-        result.tempLimit = static_cast<quint32>(m_tempLimitLineEdit->value());
+    else
+        result.volLimit = UINT32_MAX;
 
-    }while(0);
+    if (m_curLimCheckBox->isChecked())
+        result.curLimit = static_cast<quint32>(m_curLimitLineEdit->value());
+    else
+        result.curLimit = UINT32_MAX;
+
+    if (m_tempLimCheckBox->isChecked())
+        result.tempLimit = static_cast<quint32>(m_tempLimitLineEdit->value());
+    else
+        result.tempLimit = UINT32_MAX;
 
     return result;
 }

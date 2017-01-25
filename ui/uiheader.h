@@ -191,8 +191,6 @@ public:
         MED = 10,
         HIGH  = 5
     };
-
-    bool isSet = false;
     UserSetRankEnum rank = UserSetRankEnum::LOW;
     quint32 volLimit = UINT32_MAX;
     quint32 curLimit = UINT32_MAX;

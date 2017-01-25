@@ -140,7 +140,6 @@ ActionWidget::ActionWidget(QWidget *parent)
 
                 this->resetProtectionAction(m_subTestTabWidget->getUserSetSensentive());
                 m_driver->startMeasTest(m_measData, UniResLocation::getCfgResHdl(), setting);
-                m_driver->setUserSetSensitive(m_subTestTabWidget->getUserSetSensentive());
                 //reset.
                 m_measData.type = TestPlanEnum::Invaild;
             }
@@ -353,27 +352,24 @@ void ActionWidget::resetProtectionAction(const UserSetSensitiveClz data)
 
     bool isDualMotor = UniResLocation::getCfgResHdl()->num_of_motor() == 2;
 
-    if (data.isSet)
+    quint32 count = static_cast<quint32>(data.rank);
+    if (data.volLimit != UINT32_MAX)
     {
-        quint32 count = static_cast<quint32>(data.rank);
-        if (data.volLimit)
-        {
-            m_volProtection.resetLogic(count, data.volLimit);
-        }
+        m_volProtection.resetLogic(count, data.volLimit);
+    }
 
-        if (data.curLimit)
-        {
-            m_curProtection[0].resetLogic(count, data.curLimit);
-            if (isDualMotor)
-                m_curProtection[1].resetLogic(count, data.curLimit);
-        }
+    if (data.curLimit != UINT32_MAX)
+    {
+        m_curProtection[0].resetLogic(count, data.curLimit);
+        if (isDualMotor)
+            m_curProtection[1].resetLogic(count, data.curLimit);
+    }
 
-        if (data.tempLimit)
-        {
-            m_tempProtection[0].resetLogic(count, data.tempLimit);
-            if (isDualMotor)
-                m_tempProtection[1].resetLogic(count, data.tempLimit);
-        }
+    if (data.tempLimit != UINT32_MAX)
+    {
+        m_tempProtection[0].resetLogic(count, data.tempLimit);
+        if (isDualMotor)
+            m_tempProtection[1].resetLogic(count, data.tempLimit);
     }
 }
 
