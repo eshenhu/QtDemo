@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QFile>
 #include <QtCore/qloggingcategory.h>
-
+#include <QTemporaryFile>
 
 
 Q_DECLARE_LOGGING_CATEGORY(TEXT_LOGGING)
@@ -111,8 +111,8 @@ public:
     DataJsonRecElementFileHelper() = default;
 
 private:
-    QFile& getFile(){
-        static QFile m_fileHandler;
+     QTemporaryFile& getFile(){
+        static QTemporaryFile m_fileHandler;
         return m_fileHandler;
     }
 
@@ -123,6 +123,8 @@ public:
     //DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
 
     const QString getTitle();
+private:
+    QString m_path;
 };
 
 

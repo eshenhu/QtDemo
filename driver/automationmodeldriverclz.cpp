@@ -489,6 +489,11 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                     modbusDevice->disconnectDevice();
                 }
                 qCInfo(DRONE_LOGGING) << "com.automationModel Enter into the Idle Mode";
+
+                DataJsonRecElement::DataJsonRecElementFileHelper helper;
+                helper.closeFile();
+
+                state = State::MeasFinishedState;
                 emit stateChanged(Disconnected, "Disconnected");
             }
         }
@@ -722,8 +727,8 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                                           << "to State - State::MeasFinishedState";
                     enterFSMResetState(tr("Measurement Finished!"));
 
-                    DataJsonRecElement::DataJsonRecElementFileHelper helper;
-                    helper.closeFile();
+//                    DataJsonRecElement::DataJsonRecElementFileHelper helper;
+//                    helper.closeFile();
                 }
                 else
                 {

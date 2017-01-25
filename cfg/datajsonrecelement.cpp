@@ -10,6 +10,7 @@
 #include "cfg/cfgreshandlerinf.h"
 #include "actionwidget.h"
 #include "cfg/unireslocation.h"
+#include "util/simplecrypt.h"
 
 //DataJsonRecElementE2 &DataJsonRecElementE2::DataJsonRecElementE2GetHelper::getElem(bool isNew)
 //{
@@ -103,17 +104,21 @@ quint8 DataJsonRecElement::getCursorEnd() const
 
 bool DataJsonRecElement::DataJsonRecElementFileHelper::newFile(const QString &path)
 {
-    if (getFile().exists())
-        getFile().close();
+    QTemporaryFile& file = getFile();
+    if (file.exists())
+        file.remove();
 
-    getFile().setFileName(path);
-    if (!getFile().open(QIODevice::Append | QIODevice::Text)){
-        qWarning() << QString("cfg.dataJsonRecElementE2 Failed to open file %1 for writing. ")
+    //getFile().setFileName(path);
+    m_path = path;
+
+    //if (!getFile().open(QIODevice::Append | QIODevice::Text)){
+    if (!file.open()){
+        qCWarning(TEXT_LOGGING) << QString("cfg.dataJsonRecElementE2 Failed to open file %1 for writing. ")
                       .arg(path);
         return false;
     }
 
-    QTextStream out(&getFile());
+    QTextStream out(&file);
     out << this->getTitle() << "\n";
 
     return true;
@@ -121,18 +126,41 @@ bool DataJsonRecElement::DataJsonRecElementFileHelper::newFile(const QString &pa
 
 bool DataJsonRecElement::DataJsonRecElementFileHelper::closeFile()
 {
-    if (getFile().exists())
-        getFile().close();
+    QTemporaryFile& file = getFile();
+    if (file.isOpen() && file.isReadable())
+    {
+        file.reset();
+        QByteArray byteArray = file.readAll();
+
+        SimpleCrypt crypto(Q_UINT64_C(0xb07d7fc8cf3708c7)); //some random number
+        crypto.setCompressionMode(SimpleCrypt::CompressionAlways); //always compress the data, see section below
+        crypto.setIntegrityProtectionMode(SimpleCrypt::ProtectionHash); //properly protect the integrity of the data
+
+        QByteArray myCypherText = crypto.encryptToByteArray(byteArray);
+        if (!crypto.lastError() == SimpleCrypt::ErrorNoError) {
+          // do something relevant with the cyphertext, such as storing it or sending it over a socket to another machine.
+            qCWarning(TEXT_LOGGING) << "Cryper failed with reason of Error";
+        }
+
+        QFile writeTo(m_path);
+        if (!writeTo.open(QIODevice::WriteOnly)) {
+            qCWarning(TEXT_LOGGING) << "Couldn't open csv file to write new record data!";
+            return false;
+        }
+
+        writeTo.write(myCypherText);
+        writeTo.flush();
+        writeTo.close();
+
+        if (file.exists())
+            file.remove();
+    }
+
     return true;
 }
 
 bool DataJsonRecElement::DataJsonRecElementFileHelper::writeData(const DataJsonRecElement& v)
 {
-//    //m_filename
-//    QFile saveFile(m_filename);
-//    if (!saveFile.open(QIODevice::Append | QIODevice::Text))
-//        return;
-
     QFile& file = getFile();
     QTextStream out(&file);
     out << v.toString() << '\n';
@@ -147,13 +175,6 @@ const QString DataJsonRecElement::DataJsonRecElementFileHelper::getTitle()
     list << "#" << "voltage" << "throttle 1" << "throttle 2" << "distance"
          << "position";
 
-//    const QVector<QExtCheckBox *>& checkboxList = QExtCheckBox::qExtSpinBoxList();
-//    foreach (const QExtCheckBox* box, checkboxList)
-//    {
-//        list << box->str();
-//    }
-
-//    QStringList list;
     foreach (const JsonGUIElement& ele, UniResLocation::getCfgJsonHdl()->guiList()->elem()){
         list << ele.str();
     }
@@ -187,10 +208,30 @@ const QVector<DataJsonRecElement> &DataJsonRecElement::DataJsonRecElementFileRea
 */
 void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QString filename)
 {
-    //m_filename
-    QFile loadFile(filename);
-    if (!loadFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    QFile file(filename);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(TEXT_LOGGING) << "Couldn't open csv file!";
         return;
+    }
+
+    QByteArray readByteArray = file.readAll();
+
+    SimpleCrypt crypto(Q_UINT64_C(0xb07d7fc8cf3708c7)); //same random number: key should match encryption key
+    QByteArray plaintext = crypto.decryptToByteArray(readByteArray);
+    if (!crypto.lastError() == SimpleCrypt::ErrorNoError) {
+      // check why we have an error, use the error code from crypto.lastError() for that
+        qCCritical(TEXT_LOGGING) << "Error: Decrypt failed";
+        return;
+    }
+
+    QTemporaryFile loadFile;
+    if (!loadFile.open())
+        return;
+
+    loadFile.write(plaintext);
+    loadFile.flush();
+    loadFile.reset();
 
     QTextStream out(&loadFile);
 
@@ -233,6 +274,8 @@ void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QSt
         }
         m_data.append(element);
     }
+
+    loadFile.remove();
 }
 
 Q_LOGGING_CATEGORY(TEXT_LOGGING, "datajson.text", QtDebugMsg)

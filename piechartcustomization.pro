@@ -52,7 +52,8 @@ SOURCES += main.cpp \
     ui/uiheader.cpp \
     util/polyfit.cpp \
     ui/fileselectdialog.cpp \
-    cfg/unireslocation.cpp
+    cfg/unireslocation.cpp \
+    util/simplecrypt.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -111,7 +112,8 @@ HEADERS += \
     cfg/datajsoncfgreader.h \
     chartsview/qcustomplot.h \
     util/polyfit.h \
-    ui/fileselectdialog.h
+    ui/fileselectdialog.h \
+    util/simplecrypt.h
 
 FORMS += \
     ui/testinfoconfig.ui \
