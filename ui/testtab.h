@@ -163,6 +163,10 @@ class TestTab : public QWidget
 
 public:
     explicit TestTab(QWidget *parent = 0);
+    static TestTab* getTestTabInstance() {
+        static TestTab* tab = new TestTab();
+        return tab;
+    }
 
 public:
     QTabWidget *m_tabWidget;
@@ -177,6 +181,7 @@ public:
     void enableWidgetInFront(bool doshine);
 
     UserSetSensitiveClz getUserSetSensentive();
+    quint32 getGUIVolProtectionData() const;
 
 private:
     //QComboBox *m_testSeletionComboBox;

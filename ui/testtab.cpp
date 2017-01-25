@@ -332,6 +332,17 @@ UserSetSensitiveClz TestTab::getUserSetSensentive()
     return result;
 }
 
+quint32 TestTab::getGUIVolProtectionData() const
+{
+    quint32 result = 0;
+    if (m_volLimCheckBox->isChecked())
+        result = static_cast<quint32>(m_volLimitLineEdit->value());
+    else
+        result = UINT32_MAX;
+
+    return result;
+}
+
 //void TestTab::updateOptionsSelection(int index)
 //{
 //    m_tabWidget->removeTab(0);
@@ -475,12 +486,28 @@ void DistanceTstTab::validateUserInput(bool checked)
 {
     Q_UNUSED(checked)
 
+    bool isLegal = true;
+    QString illegalReason;
+
+    quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
     if(m_disStart->value() >= m_disEnd->value())
     {
+        isLegal = false;
+        illegalReason = tr("The START value must be larger than END value");
+    }
+
+    if (m_voltage->value() > volProtectionValue)
+    {
+        isLegal = false;
+        illegalReason = tr("Input value must less than the vol Protection Value");
+    }
+
+    if (!isLegal)
+    {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The END value must be larger than START value"),
-                             QMessageBox::Close);
+                             illegalReason, QMessageBox::Close);
         warningBox.exec();
+        return;
     }
 
     //DistanceTstData
@@ -581,14 +608,31 @@ VoltageTstTab::VoltageTstTab(QWidget *parent)
 void VoltageTstTab::validateUserInput(bool checked)
 {
     Q_UNUSED(checked)
-    if(m_voltage_start->value() >= m_voltage_end->value())
+
+    bool isLegal = true;
+    QString illegalReason;
+
+    quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
+    if (m_voltage_start->value() >= m_voltage_end->value())
+    {
+        isLegal = false;
+        illegalReason = tr("The START value must be larger than END value");
+    }
+
+    if (m_voltage_end->value() > volProtectionValue)
+    {
+        isLegal = false;
+        illegalReason = tr("Input value must less than the vol Protection Value");
+    }
+
+    if (!isLegal)
     {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The END value must be larger than START value"),
-                             QMessageBox::Close);
+                             illegalReason, QMessageBox::Close);
         warningBox.exec();
         return;
     }
+
 
     UiCompMeasData val;
     val.type = TestPlanEnum::Voltage;
@@ -675,11 +719,27 @@ ThrottleTstTab::ThrottleTstTab(TestPlanEnum type, QWidget *parent)
 void ThrottleTstTab::validateUserInput(bool checked)
 {
     Q_UNUSED(checked)
+
+    bool isLegal = true;
+    QString illegalReason;
+
+    quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
     if(m_thro_start->value() >= m_thro_end->value())
     {
+        isLegal = false;
+        illegalReason = tr("The START value must be larger than END value");
+    }
+
+    if (m_voltage->value() > volProtectionValue)
+    {
+        isLegal = false;
+        illegalReason = tr("Input value must less than the vol Protection Value");
+    }
+
+    if (!isLegal)
+    {
         QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
-                             tr("The START value must be larger than END value"),
-                             QMessageBox::Close);
+                             illegalReason, QMessageBox::Close);
         warningBox.exec();
         return;
     }
@@ -755,6 +815,25 @@ void AgingTstTab::validateUserInput(bool checked)
 {
     Q_UNUSED(checked)
 
+    bool isLegal = true;
+    QString illegalReason;
+
+    quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
+
+    if (m_voltage->value() > volProtectionValue)
+    {
+        isLegal = false;
+        illegalReason = tr("Input value must less than the vol Protection Value");
+    }
+
+    if (!isLegal)
+    {
+        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                             illegalReason, QMessageBox::Close);
+        warningBox.exec();
+        return;
+    }
+
     UiCompMeasData val;
     val.type = TestPlanEnum::Voltage;
     VoltageTstData& data = val.data.u;
@@ -814,6 +893,24 @@ ManualTstTab::ManualTstTab(QWidget *parent)
 
     QObject::connect(m_apply_btn, &QPushButton::clicked, [this](bool checked){
         Q_UNUSED(checked)
+
+        bool isLegal = true;
+        QString illegalReason;
+
+        quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
+        if (m_voltage->value() > volProtectionValue)
+        {
+            isLegal = false;
+            illegalReason = tr("Input value must less than the vol Protection Value");
+        }
+
+        if (!isLegal)
+        {
+            QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                                 illegalReason, QMessageBox::Close);
+            warningBox.exec();
+            return;
+        }
 
         UiCompMeasData val;
         val.type = TestPlanEnum::Manual;
@@ -896,6 +993,25 @@ MultiTstTab::MultiTstTab(TestPlanEnum type, QWidget *parent)
 void MultiTstTab::validateUserInput(bool checked)
 {
     Q_UNUSED(checked)
+
+    bool isLegal = true;
+    QString illegalReason;
+
+    quint32 volProtectionValue = TestTab::getTestTabInstance()->getGUIVolProtectionData();
+
+    if (m_voltage->value() > volProtectionValue)
+    {
+        isLegal = false;
+        illegalReason = tr("Input value must less than the vol Protection Value");
+    }
+
+    if (!isLegal)
+    {
+        QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
+                             illegalReason, QMessageBox::Close);
+        warningBox.exec();
+        return;
+    }
 
     UiCompMeasData val;
     val.type = m_type;

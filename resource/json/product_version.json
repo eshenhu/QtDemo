@@ -219,7 +219,7 @@
           "text": "POWER",
           "index": 0,
           "isSelected": true,
-          "lowLimit": -2000,
+          "lowLimit": 0,
           "upLimit": 2000,
           "unit": "W"
         },
@@ -227,7 +227,7 @@
           "text": "MECHAPWR",
           "index": 0,
           "isSelected": true,
-          "lowLimit": 0,
+          "lowLimit": -2000,
           "upLimit": 2000,
           "unit": "W"
         },

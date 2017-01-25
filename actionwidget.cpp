@@ -191,7 +191,7 @@ void ActionWidget::createTabWidget()
     m_tabWidget->setTabPosition(QTabWidget::North);
     m_tabWidget->setTabBarAutoHide(true);
 
-    m_subTestTabWidget = new TestTab();
+    m_subTestTabWidget = TestTab::getTestTabInstance();
 
     connect(m_subTestTabWidget, &TestTab::updateUserSelection, [this](UiCompMeasData data){
         m_measData = data;
