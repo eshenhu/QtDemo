@@ -17,15 +17,15 @@ bool UtilDataRecordingClz::newRec()
     QString path = QCoreApplication::applicationDirPath();
 
     QDateTime now = QDateTime::currentDateTime();
-    const QString timestamp = now.toString(QLatin1String("yyyyMMdd-hhmmsszzz"));
+    m_timeStamp = now.toString(QLatin1String("yyyyMMdd-hhmmsszzz"));
     // create a subfolder named with timestamp;
     QDir dir(path);
-    if (!dir.mkdir(timestamp))
+    if (!dir.mkdir(m_timeStamp))
         qWarning() << "UtilDataRecordingClz failed to create folder "
-                   << path << timestamp;
+                   << path << m_timeStamp;
 
-    m_cfgFile = path + QString("/%1/data.json").arg(timestamp);
-    m_recFile = path + QString("/%1/data.csv").arg(timestamp);
+    m_cfgFile = path + QString("/%1/data.json").arg(m_timeStamp);
+    m_recFile = path + QString("/%1/data.csv").arg(m_timeStamp);
     return true;
 }
 
@@ -37,4 +37,9 @@ const QString& UtilDataRecordingClz::getCfgFileName() const
 const QString& UtilDataRecordingClz::getRecFileName() const
 {
     return m_recFile;
+}
+
+QString UtilDataRecordingClz::getTimeStamp() const
+{
+    return m_timeStamp;
 }

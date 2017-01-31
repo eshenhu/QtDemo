@@ -108,9 +108,6 @@ bool DataJsonRecElement::DataJsonRecElementFileHelper::newFile(const QString &pa
     if (file.exists())
         file.remove();
 
-    //getFile().setFileName(path);
-    m_path = path;
-
     //if (!getFile().open(QIODevice::Append | QIODevice::Text)){
     if (!file.open()){
         qCWarning(TEXT_LOGGING) << QString("cfg.dataJsonRecElementE2 Failed to open file %1 for writing. ")
@@ -124,10 +121,10 @@ bool DataJsonRecElement::DataJsonRecElementFileHelper::newFile(const QString &pa
     return true;
 }
 
-bool DataJsonRecElement::DataJsonRecElementFileHelper::closeFile()
+bool DataJsonRecElement::DataJsonRecElementFileHelper::closeFile(const QString &path)
 {
     QTemporaryFile& file = getFile();
-    if (file.isOpen() && file.isReadable())
+    if (file.isOpen())
     {
         file.reset();
         QByteArray byteArray = file.readAll();
@@ -137,13 +134,14 @@ bool DataJsonRecElement::DataJsonRecElementFileHelper::closeFile()
         crypto.setIntegrityProtectionMode(SimpleCrypt::ProtectionHash); //properly protect the integrity of the data
 
         QByteArray myCypherText = crypto.encryptToByteArray(byteArray);
-        if (!crypto.lastError() == SimpleCrypt::ErrorNoError) {
+        if (crypto.lastError() != SimpleCrypt::ErrorNoError) {
           // do something relevant with the cyphertext, such as storing it or sending it over a socket to another machine.
             qCWarning(TEXT_LOGGING) << "Cryper failed with reason of Error";
         }
 
-        QFile writeTo(m_path);
-        if (!writeTo.open(QIODevice::WriteOnly)) {
+        QFile writeTo(path);
+
+        if (!writeTo.open(QIODevice::WriteOnly | QIODevice::Append)) {
             qCWarning(TEXT_LOGGING) << "Couldn't open csv file to write new record data!";
             return false;
         }
@@ -219,7 +217,7 @@ void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QSt
 
     SimpleCrypt crypto(Q_UINT64_C(0xb07d7fc8cf3708c7)); //same random number: key should match encryption key
     QByteArray plaintext = crypto.decryptToByteArray(readByteArray);
-    if (!crypto.lastError() == SimpleCrypt::ErrorNoError) {
+    if (crypto.lastError() != SimpleCrypt::ErrorNoError) {
       // check why we have an error, use the error code from crypto.lastError() for that
         qCCritical(TEXT_LOGGING) << "Error: Decrypt failed";
         return;

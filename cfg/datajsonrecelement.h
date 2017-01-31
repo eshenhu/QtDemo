@@ -118,13 +118,11 @@ private:
 
 public:
     bool newFile(const QString& path);
-    bool closeFile();
+    bool closeFile(const QString& path);
     bool writeData(const DataJsonRecElement&);
     //DataJsonRecElementE2::DataJsonRecElementE2FileReaderHandler loadData(const QString& filename);
 
     const QString getTitle();
-private:
-    QString m_path;
 };
 
 

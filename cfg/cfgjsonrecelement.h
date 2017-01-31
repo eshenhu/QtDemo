@@ -17,7 +17,7 @@ public:
     bool saveCfg(const QString&);
 
 private:
-    void read(const QJsonObject &json);
+    bool read(const QJsonObject &json);
     void write(QJsonObject &json) const;
 
 public:
@@ -41,6 +41,7 @@ private:
     TestPlanEnum m_plan = TestPlanEnum::Invaild;
     quint8  m_numOfMotor = 0;
     QModbus2DataUnit::MotorTypeEnum m_motorType;
+    QString m_timeStamp;
 };
 
 class CfgJsonRecElement::CfgJsonRecElementBuilder
@@ -92,6 +93,12 @@ public:
         return *this;
     }
 
+    CfgJsonRecElementBuilder& timeStamp(const QString& v)
+    {
+        m_timeStamp = v;
+        return *this;
+    }
+
 public:
     CfgJsonRecElement build(){
         return CfgJsonRecElement(*this);
@@ -104,5 +111,6 @@ public:
     quint8  m_vanes = 2;
     quint8  m_numOfMotor = 0;
     QModbus2DataUnit::MotorTypeEnum m_motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;
+    QString m_timeStamp;
 };
 #endif // CFGJSONRECELEMENT_H

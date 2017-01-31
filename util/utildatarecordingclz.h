@@ -21,9 +21,13 @@ public:
     const QString& getCfgFileName() const;
     const QString& getRecFileName() const;
 
+    QString getTimeStamp() const;
+
 private:
     QString m_cfgFile;
     QString m_recFile;
+
+    QString m_timeStamp;
 };
 
 #endif // UTILDATARECORDINGCLZ_H

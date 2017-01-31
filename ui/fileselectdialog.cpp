@@ -252,7 +252,8 @@ bool FileSelectDialog::openJsonFile(const QString& jsonFileName, quint32 locatio
             QMessageBox warningBox(QMessageBox::Warning, tr("Warning"),
                                    tr("This file can't be read with reason of either \n"
                                       " - json file format was corrupted. \n"
-                                      " - data file was corrupted"),
+                                      " - data file was corrupted. \n"
+                                      " - checksum was not right"),
                                    QMessageBox::Close);
             warningBox.exec();
             RETURN_WITH_NOK

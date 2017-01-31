@@ -1,6 +1,7 @@
 #include "cfgjsonrecelement.h"
 #include <QFile>
 #include <QJsonDocument>
+#include <QCryptographicHash>
 
 bool CfgJsonRecElement::loadCfg(const QString& str)
 {
@@ -13,9 +14,7 @@ bool CfgJsonRecElement::loadCfg(const QString& str)
 
     QByteArray saveData = loadFile.readAll();
     QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
-    read(loadDoc.object());
-
-    return true;
+    return read(loadDoc.object());
 }
 
 bool CfgJsonRecElement::saveCfg(const QString& str)
@@ -35,14 +34,46 @@ bool CfgJsonRecElement::saveCfg(const QString& str)
     return true;
 }
 
-void CfgJsonRecElement::read(const QJsonObject &json)
+bool CfgJsonRecElement::read(const QJsonObject &json)
 {
+    bool result = false;
+
     m_plan = static_cast<TestPlanEnum>(json["plan"].toInt());
     m_pv = static_cast<CfgResHandlerInf::ProductVersion>(json["pv"].toInt());
     m_manufacture = json["manufacture"].toString();
     m_vanes = json["vanes"].toInt();
     m_motorType = static_cast<QModbus2DataUnit::MotorTypeEnum>(json["motor_type"].toInt());
     m_numOfMotor = json["numOfMotor"].toInt();
+    m_timeStamp = json["timeStamp"].toString();
+
+    QString md5CheckSum(json["checksum"].toString());
+
+    // Write MD5 Code in the end
+    QByteArray md5Data;
+    md5Data.append(QByteArray::number((int)m_plan));
+    md5Data.append(QByteArray::number((int)m_pv));
+    md5Data.append(m_manufacture);
+    md5Data.append((int)m_vanes);
+    md5Data.append(QByteArray::number((int)m_motorType));
+    md5Data.append(QByteArray::number((int)m_numOfMotor));
+    md5Data.append(m_timeStamp);
+
+    QCryptographicHash MD5HashMethod(QCryptographicHash::Md5);
+    MD5HashMethod.addData(md5Data);
+    QByteArray MD5Result = MD5HashMethod.result().toHex();
+    QString toStr(MD5Result);
+
+    if (md5CheckSum == toStr)
+    {
+        result = true;
+    }
+    else
+    {
+        result = false;
+        qWarning("Warning: No matched checksum with the data in this file!");
+    }
+
+    return result;
 }
 
 void CfgJsonRecElement::write(QJsonObject &json) const
@@ -53,6 +84,24 @@ void CfgJsonRecElement::write(QJsonObject &json) const
     json["vanes"] = m_vanes;
     json["motor_type"] = static_cast<quint8>(m_motorType);
     json["numOfMotor"] = m_numOfMotor;
+    json["timeStamp"] = m_timeStamp;
+
+    // Write MD5 Code in the end
+    QByteArray md5Data;
+    md5Data.append(QByteArray::number((int)m_plan));
+    md5Data.append(QByteArray::number((int)m_pv));
+    md5Data.append(m_manufacture);
+    md5Data.append((int)m_vanes);
+    md5Data.append(QByteArray::number((int)m_motorType));
+    md5Data.append(QByteArray::number((int)m_numOfMotor));
+    md5Data.append(m_timeStamp);
+
+    QCryptographicHash MD5HashMethod(QCryptographicHash::Md5);
+    MD5HashMethod.addData(md5Data);
+    QByteArray MD5Result = MD5HashMethod.result().toHex();
+    QString toStr(MD5Result);
+
+    json["checksum"] = toStr;
 }
 
 CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementBuilder &builder)
@@ -63,6 +112,7 @@ CfgJsonRecElement::CfgJsonRecElement(const CfgJsonRecElement::CfgJsonRecElementB
     m_vanes = builder.m_vanes;
     m_numOfMotor = builder.m_numOfMotor;
     m_motorType = builder.m_motorType;
+    m_timeStamp = builder.m_timeStamp;
 }
 
 CfgResHandlerInf::ProductVersion CfgJsonRecElement::pv() const

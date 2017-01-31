@@ -133,12 +133,13 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
     }
 
     CfgJsonRecElement ele = CfgJsonRecElement::CfgJsonRecElementBuilder()
-            .manufacture(QStringLiteral("TongYi"))
+            .manufacture(QStringLiteral("UDAT"))
             .PV(res->prod_version())
             .vanes(res->vane())
             .motorType(motorType)
             .numOfMotor(res->num_of_motor())
             .plans(data.type)
+            .timeStamp(UtilDataRecordingClz::getInstance().getTimeStamp())
             .build();
 
     ele.saveCfg(UtilDataRecordingClz::getInstance().getCfgFileName());
@@ -491,7 +492,7 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
                 qCInfo(DRONE_LOGGING) << "com.automationModel Enter into the Idle Mode";
 
                 DataJsonRecElement::DataJsonRecElementFileHelper helper;
-                helper.closeFile();
+                helper.closeFile(UtilDataRecordingClz::getInstance().getRecFileName());
 
                 state = State::MeasFinishedState;
                 emit stateChanged(Disconnected, "Disconnected");
