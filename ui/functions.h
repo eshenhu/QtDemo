@@ -151,28 +151,28 @@ const static functionT functionVol = [](const QModbus2DataUnit* data, const Json
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
     if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
     {
-        qDebug() << "ui.function.functionVol update Vol value with : humidity" << (qint32)data->uvalues().r.s.humidity
-                 << "envtemp" <<  (qint32)data->uvalues().r.s.envtemp
-                 << "pressure" <<  (qint32)data->uvalues().r.s.pressure
-                 << "thro_1" <<  (qint32)data->uvalues().r.s.thro_1
-                 << "thro_2" <<  (qint32)data->uvalues().r.s.thro_2
-                 << "motorType" <<  (qint32)data->uvalues().r.s.motorType
-                 << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
-                 << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
-                 << "distancePos" << data->uvalues().r.s.motorInfo.elec.distancePos
-                 << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
-                 << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
-                 << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
-                 << "torque [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].torque
-                 << "speed [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].speed
-                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
-                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2
-                 << "current [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].current
-                 << "lift [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].lift
-                 << "torque [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].torque
-                 << "speed [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].speed
-                 << "temp_1 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_1
-                 << "temp_2 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_2;
+//        qDebug() << "ui.function.functionVol update Vol value with : humidity" << (qint32)data->uvalues().r.s.humidity
+//                 << "envtemp" <<  (qint32)data->uvalues().r.s.envtemp
+//                 << "pressure" <<  (qint32)data->uvalues().r.s.pressure
+//                 << "thro_1" <<  (qint32)data->uvalues().r.s.thro_1
+//                 << "thro_2" <<  (qint32)data->uvalues().r.s.thro_2
+//                 << "motorType" <<  (qint32)data->uvalues().r.s.motorType
+//                 << "numOfMotor" <<  (qint32)data->uvalues().r.s.numOfMotor
+//                 << "limitStatus" << data->uvalues().r.s.motorInfo.elec.limitStatus
+//                 << "distancePos" << data->uvalues().r.s.motorInfo.elec.distancePos
+//                 << "voltage" << data->uvalues().r.s.motorInfo.elec.voltage
+//                 << "current [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].current
+//                 << "lift [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].lift
+//                 << "torque [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].torque
+//                 << "speed [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].speed
+//                 << "temp_1 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_1
+//                 << "temp_2 [0]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[0].temp_2
+//                 << "current [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].current
+//                 << "lift [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].lift
+//                 << "torque [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].torque
+//                 << "speed [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].speed
+//                 << "temp_1 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_1
+//                 << "temp_2 [1]" << data->uvalues().r.s.motorInfo.elec.elecMotorStruct[1].temp_2;
 
 //        qDebug() << "ui.function.functionVol update Vol value with :" << data->uvalues().r.s.motorInfo.elec.voltage;
 
@@ -252,7 +252,7 @@ const static functionT functionThrust = [](const QModbus2DataUnit* data, const J
         if ((idx.idxMotor()+1) <= config.numOfMotor())
         {     
             rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].lift);
-            qDebug() << "com.ui.function.functionForce update Force value with :" << rtn;
+            //qDebug() << "com.ui.function.functionForce update Force value with :" << rtn;
         }
         else
         {
@@ -301,7 +301,7 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
                     .arg(v)
                     .arg(CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
                     .arg(div);
-        qDebug() << str;
+        //qDebug() << str;
 
         result = (double)((qint32)(v) - (qint32)CfgZeroCalibrateClz::getStaticThrustZeroCaliOnMotor(idxMotor))
                  / div;
@@ -309,7 +309,7 @@ const static formulaT formulaThrust = [](const qint32 v, Phase phase, quint32 id
 
     }
 
-    qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result_cali;
+    //qDebug() << "functions.h formulaThrust  Motor " << idxMotor << " result = " << result_cali;
     return result;
 };
 
@@ -355,7 +355,7 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
     Q_UNUSED(phase)
     Q_UNUSED(idxMotor)
 
-    qDebug() << "functions.h formulaTorque Motor " << idxMotor << " Phase = " << (int)phase;
+    //qDebug() << "functions.h formulaTorque Motor " << idxMotor << " Phase = " << (int)phase;
 
     double result_cali = 0;
     double result = 0;
@@ -381,7 +381,7 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
                     .arg(v)
                     .arg(CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
                     .arg(div);
-        qDebug() << str;
+        //qDebug() << str;
 
 
         result = (double)((qint32)v - (qint32)CfgZeroCalibrateClz::getStaticTorqueZeroCaliOnMotor(idxMotor))
@@ -389,7 +389,7 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
         result_cali= result;
     }
 
-    qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result_cali/1000;
+    //qDebug() << "functions.h formulaTorque Motor " << idxMotor << "  result = " << result_cali/1000;
 
     return result/1000;
 };

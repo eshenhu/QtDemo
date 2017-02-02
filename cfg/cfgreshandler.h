@@ -92,10 +92,19 @@ public:
     QString SerialNumber() const;
     void setSerialNumber(const QString &SerialNumber);
 
+    QString key() const;
+    void setKey(const QString &key);
+
+    QString path() const;
+    void setPath(const QString &path);
+
 private:
     void loadSetting();
 
 private:
+    QString m_key;
+    QString m_path;
+
     quint32 m_vane;
     quint32 m_HZ;
 
@@ -210,6 +219,12 @@ public:
 //        Q_ASSERT(m_bootCfg != nullptr);
 //        return m_bootCfg->bootVol();
 //    }
+    inline QString key() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->key();
+    }
+
     inline quint32 vane() const
     {
         Q_ASSERT(m_deviceCfg != nullptr);
@@ -290,7 +305,6 @@ public:
         Q_ASSERT(idxMotor <= MAX_SUPPORT_MOTOR);
         return m_calibrateCfg->getDivisionTorqueCaliOnMotor(idxMotor);
     }
-
 };
 
 #endif // CFGRESHANDLER_H

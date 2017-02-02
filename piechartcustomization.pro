@@ -53,7 +53,8 @@ SOURCES += main.cpp \
     util/polyfit.cpp \
     ui/fileselectdialog.cpp \
     cfg/unireslocation.cpp \
-    util/simplecrypt.cpp
+    util/simplecrypt.cpp \
+    ui/productversion.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -113,13 +114,15 @@ HEADERS += \
     chartsview/qcustomplot.h \
     util/polyfit.h \
     ui/fileselectdialog.h \
-    util/simplecrypt.h
+    util/simplecrypt.h \
+    ui/productversion.h
 
 FORMS += \
     ui/testinfoconfig.ui \
     ui/optionsframe.ui \
     chartsview/chartviewerwin.ui \
-    ui/fileselectdialog.ui
+    ui/fileselectdialog.ui \
+    ui/productversion.ui
 
 SUBDIRS += \
     comm/doc/snippets/snippets.pro \

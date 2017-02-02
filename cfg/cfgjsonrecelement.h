@@ -107,7 +107,7 @@ public:
 public:
     TestPlanEnum m_plan = TestPlanEnum::Invaild;
     CfgResHandlerInf::ProductVersion m_pv;
-    QString m_manufacture = QStringLiteral("tongyi");
+    QString m_manufacture = QStringLiteral("shilu");
     quint8  m_vanes = 2;
     quint8  m_numOfMotor = 0;
     QModbus2DataUnit::MotorTypeEnum m_motorType = QModbus2DataUnit::MotorTypeEnum::ELECE;

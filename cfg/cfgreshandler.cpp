@@ -144,12 +144,34 @@ void CfgDeviceCfgModel::setHZ(const quint32 &HZ)
 void CfgDeviceCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/device");
+    m_path = m_set.value("licensePath", "").toString();
     m_vane = m_set.value("vanes", 1).toInt();
     m_HZ  = m_set.value("HZ", DeviceInfoConfig::Freq::B50HZ).toInt();
     m_lowThroLimit = m_set.value("ThroLowLimit", 0).toInt();
     m_highThroLimit = m_set.value("ThroHighLimit", 90).toInt();
     m_SerialNumber = m_set.value("SN").toString();
     m_set.endGroup();
+}
+
+QString CfgDeviceCfgModel::path() const
+{
+    return m_path;
+}
+
+void CfgDeviceCfgModel::setPath(const QString &path)
+{
+    m_path = path;
+    m_set.setValue("cfg/device/licensePath", path);
+}
+
+void CfgDeviceCfgModel::setKey(const QString &key)
+{
+    m_key = key;
+}
+
+QString CfgDeviceCfgModel::key() const
+{
+    return m_key;
 }
 
 QString CfgDeviceCfgModel::SerialNumber() const

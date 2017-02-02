@@ -6,6 +6,7 @@
 class DeviceInfoConfig;
 class OptionsFrame;
 class CfgResHandler;
+class ProductVersion;
 
 class ConfigTab : public QWidget
 {
@@ -22,6 +23,7 @@ public slots:
 public:
    DeviceInfoConfig* m_deviceInfoWidget;
    OptionsFrame* m_optionsWidget;
+   ProductVersion* m_versionWidget;
    CfgResHandler* m_hdl;
 };
 

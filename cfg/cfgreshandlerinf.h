@@ -45,6 +45,8 @@ public:
     virtual quint32 boot_PRP() const = 0;
 //    virtual quint32 bootVol() const = 0;
 
+    virtual QString key() const = 0;
+
     virtual quint32 vane() const = 0;
     virtual quint32 HZ() const = 0;
     virtual quint32 lowThroLimit() const = 0;
@@ -60,6 +62,7 @@ public:
     virtual quint32 max_throttle() const = 0;
     virtual quint32 max_distance() const = 0;
     virtual ProductVersion prod_version() const = 0;
+
 
     virtual double getDivisionThrustCaliOnMotor(const quint32 idxMotor) const = 0;
     virtual double getDivisionTorqueCaliOnMotor(const quint32 idxMotor) const = 0;

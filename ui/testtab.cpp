@@ -343,37 +343,6 @@ quint32 TestTab::getGUIVolProtectionData() const
     return result;
 }
 
-//void TestTab::updateOptionsSelection(int index)
-//{
-//    m_tabWidget->removeTab(0);
-//    switch (index) {
-//    case Distance:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Distance], tr("Distance"));
-//        break;
-//    case Voltage:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Voltage], tr("Voltage"));
-//        break;
-//    case Throttle:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Throttle], tr("Throttle"));
-//        break;
-//    case Multiplue:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Multiplue], tr("Multiplue"));
-//        break;
-//    case Aging:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Aging], tr("Aging"));
-//        break;
-//    case Calibrate:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Calibrate], tr("Calibrate"));
-//        break;
-//    case Manual:
-//        m_tabWidget->insertTab(0, tabList[TestPlanEnum::Manual], tr("Manual"));
-//        break;
-//    default:
-//        qWarning("Unsupport tab");
-//        break;
-//    }
-//}
-
 QPushButton *TestTab::start_btn() const
 {
     return m_start_btn;
