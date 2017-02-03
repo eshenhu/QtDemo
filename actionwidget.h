@@ -122,7 +122,6 @@ private:
 
     AutomationModelDriverClz* m_driver;
 
-    std::unique_ptr<QMessageBox> m_msgBox;
     void createTabWidget();
 };
 

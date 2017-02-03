@@ -36,8 +36,16 @@ void ProductVersion::setupVersionInformation()
         }
         else
         {
-            ui->import_LE->setText(m_key);
-            m_cfg->setKey(m_key);
+            const QRegExp rx("^[0-9a-fA-F]{12,12}$");
+            if (!m_key.contains(rx))
+            {
+                qWarning() << "Invalid License number!";
+            }
+            else
+            {
+                ui->import_LE->setText(m_key);
+                m_cfg->setKey(m_key);
+            }
         }
     }
 }
@@ -62,7 +70,7 @@ void ProductVersion::setupSignalAndSlot()
             }
             else
             {
-                const QRegExp rx("^[0-9a-fA-F]{32,32}$");
+                const QRegExp rx("^[0-9a-fA-F]{12,12}$");
                 if (!m_key.contains(rx))
                 {
                     errorMsg = QStringLiteral("Invalid License number!");

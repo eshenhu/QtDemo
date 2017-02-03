@@ -164,9 +164,13 @@ void CfgDeviceCfgModel::setPath(const QString &path)
     m_set.setValue("cfg/device/licensePath", path);
 }
 
+
+/*
+ *  creep changes 12bit + head (4bit) = 16 bit
+ */
 void CfgDeviceCfgModel::setKey(const QString &key)
 {
-    m_key = key;
+    m_key = key + key.left(4);
 }
 
 QString CfgDeviceCfgModel::key() const

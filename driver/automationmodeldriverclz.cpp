@@ -17,12 +17,15 @@
 #include "cfg/unireslocation.h"
 
 
+#include <random>
+
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
     state(State::InitState),
     mp_data(new MeasDataFormat()),
     mp_refresh(nullptr),
-    m_monitorError(new FatalErrorDrvClz)
+    m_monitorError(new FatalErrorDrvClz),
+    m_randomNum(4, 'f')
 {
     mp_cfgRes = UniResLocation::getCfgResHdl();
     m_sendTimer.setSingleShot(true);
@@ -297,13 +300,15 @@ void AutomationModelDriverClz::processReceivedDataUnit(const QModbus2DataUnit &d
 
 bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2DataUnit* data)
 {
-    qCWarning(DRONE_LOGGING) << "it should be got improved here -- eshenhu";
+    //qCWarning(DRONE_LOGGING) << "it should be got improved here -- eshenhu";
     //if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
+
+    QString key(UniResLocation::getCfgResHdl()->key());
+
     if (0)
     {
         qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
-        emit stateChanged(HandShakeException, QString::number(data->uvalues().r.q.productRev));
         return false;
     }
 
@@ -357,6 +362,18 @@ bool AutomationModelDriverClz::processReceivedMeasDataUnit(const QModbus2DataUni
 void AutomationModelDriverClz::doLaterReceivedMeasDataUnit(const QModbus2DataUnit * const data)
 {
     Q_UNUSED(data)
+}
+
+void AutomationModelDriverClz::generateRandomNumber()
+{
+    std::random_device dev;
+
+    // choose a random number between 0 and 0xFFFFFFFF;
+    std::default_random_engine e1(dev());
+    std::uniform_int_distribution<int> uniform_dist(0, std::numeric_limits<int>::max());
+
+    int mean = uniform_dist(e1);
+    m_randomNum = QByteArray::number(mean);
 }
 
 void AutomationModelDriverClz::processSendTimeout()
@@ -527,6 +544,11 @@ void AutomationModelDriverClz::processDataHandlerSingleShot(const SignalOverLine
             {
                 qCWarning(DRONE_LOGGING) << "unexpected signal was received during state " << (quint32)state
                            << "  with signal name " << (quint32)signal.m_type;
+
+//                emit stateChanged(HandShakeException,
+//                                  QString::number(signal.m_info.mp_dataUnit->uvalues().r.q.productRev));
+                enterFSMResetState(tr("HandShake Failure!"));
+//                state = State::MeasFinishedState;
             }
         }
         else
@@ -783,10 +805,10 @@ void AutomationModelDriverClz::sendResetCmd()
 void AutomationModelDriverClz::sendHandShakeCmd()
 {
     QModbus2DataUnit::HandShakeStruct v;
-    v.randomNum_1 = 0;
-    v.randomNum_2 = 0;
-    v.randomNum_3 = 0;
-    v.randomNum_4 = 0;
+    v.randomNum_1 = m_randomNum.at(0);
+    v.randomNum_2 = m_randomNum.at(1);
+    v.randomNum_3 = m_randomNum.at(2);
+    v.randomNum_4 = m_randomNum.at(3);
 
     QModbus2DataUnit data(QModbus2DataUnit::HandShakeCode, v);
     sendRequestCmd(data);

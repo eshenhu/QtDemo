@@ -63,8 +63,7 @@
 QT_CHARTS_USE_NAMESPACE
 
 ActionWidget::ActionWidget(QWidget *parent)
-    : QWidget(parent),
-      m_msgBox(nullptr)
+    : QWidget(parent)
 {
     m_measData.type = TestPlanEnum::Invaild;
     m_driver = new AutomationModelDriverClz(this);
@@ -83,20 +82,31 @@ ActionWidget::ActionWidget(QWidget *parent)
             const AutomationModelDriverClz::QModBusState state, QString str){
         bool isReset = false;
         qDebug() << "ui.actionwidget received statechange signal" << str;
+
+        QString errorMsg;
         if(state == AutomationModelDriverClz::QModBusState::FatalErrorException)
         {
             isReset = true;
-            m_msgBox = std::unique_ptr<QMessageBox>(new QMessageBox(QMessageBox::Warning, tr("Going into RESET state"), str));
-            m_msgBox->exec();
+            errorMsg = tr("Going into RESET state");
         }
         else if (state == AutomationModelDriverClz::QModBusState::Disconnected)
         {
             isReset = true;
-            m_msgBox = nullptr;
+            errorMsg = "";
+        }
+        else if (state == AutomationModelDriverClz::QModBusState::HandShakeException)
+        {
+            isReset = true;
+            errorMsg = tr("HandShake failed, Please check the license");
         }
 
         if (isReset)
         {
+            if (!errorMsg.isEmpty())
+            {
+                QMessageBox::warning(this, tr("Warning"), str, QMessageBox::Ok);
+            }
+
             enableWidgetInFront(true);
             m_subTestTabWidget->start_btn()->setChecked(false);
             m_subTestTabWidget->start_btn()->setText(QStringLiteral("Start"));

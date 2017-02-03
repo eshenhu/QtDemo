@@ -116,6 +116,9 @@ private:
 
     std::unique_ptr<FatalErrorDrvClz> m_monitorError;
 
+    // Radom number
+    QByteArray m_randomNum;
+
 signals:
     void statusBarChanged(const QString&, int timeDuration);
     void stateChanged(const QModBusState, QString);
@@ -158,6 +161,12 @@ private:
 
     bool processReceivedMeasDataUnit(const QModbus2DataUnit* const data);
     void doLaterReceivedMeasDataUnit(const QModbus2DataUnit* const data);
+
+    void generateRandomNumber();
+
+    QByteArray& getRandomNumber(){
+        return m_randomNum;
+    }
 };
 
 #endif // AUTOMATIONMODELDRIVERCLZ_H
