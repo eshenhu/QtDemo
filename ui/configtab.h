@@ -11,10 +11,13 @@ class ProductVersion;
 class ConfigTab : public QWidget
 {
     Q_OBJECT
-    void createSubPanel();
+
 public:
     explicit ConfigTab(CfgResHandler* hdl, QWidget *parent = 0);
     ~ConfigTab();
+
+private:
+    void createSubPanel();
 
 signals:
 

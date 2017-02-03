@@ -21,7 +21,7 @@ public:
     ~ProductVersion();
 
 public:
-    const QString VERSION = QStringLiteral("v0.30");
+    const QString VERSION = QStringLiteral("v0.32");
 
     QString key() const;
 

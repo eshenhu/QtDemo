@@ -2,7 +2,7 @@
 #include "optionsframe.h"
 #include "testinfoconfig.h"
 #include "cfg/cfgreshandler.h"
-#include "productversion.h"
+#include "ui/productversion.h"
 #include <QVBoxLayout>
 
 ConfigTab::ConfigTab(CfgResHandler* hdl, QWidget *parent) : QWidget(parent),
