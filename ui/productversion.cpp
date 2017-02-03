@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QJsonDocument>
+#include <QMessageBox>
 #include "ui_productversion.h"
 #include "cfg/cfgreshandler.h"
 
@@ -49,19 +50,43 @@ void ProductVersion::setupSignalAndSlot()
         QString fileName = QFileDialog::getOpenFileName(this,
                                                         tr("Open license key file"), "./", tr("Key Files (*.json)"));
 
+        bool isError = true;
+        QString errorMsg;
         //        QString key = QStringLiteral("Invalid");
         if (!fileName.isNull())
         {
             if (!loadCfg(fileName))
             {
-                qWarning() << "Failed to open key file!";
+                errorMsg = QStringLiteral("Failed to open key file!");
+                qWarning() << errorMsg;
             }
             else
             {
-                ui->import_LE->setText(m_key);
-                m_cfg->setKey(m_key);
-                m_cfg->setPath(fileName);
+                const QRegExp rx("^[0-9a-fA-F]{32,32}$");
+                if (!m_key.contains(rx))
+                {
+                    errorMsg = QStringLiteral("Invalid License number!");
+                    qWarning() << errorMsg;
+                }
+                else
+                {
+                    isError = false;
+                    ui->import_LE->setText(m_key);
+                    m_cfg->setKey(m_key);
+                    m_cfg->setPath(fileName);
+                }
             }
+        }
+        else
+        {
+            errorMsg = QStringLiteral("Filename is Null");
+            qWarning() << errorMsg;
+        }
+
+        if (isError)
+        {
+            int ret = QMessageBox::warning(this, tr("Import License File"), errorMsg,
+                                             QMessageBox::Ok);
         }
     });
 }
