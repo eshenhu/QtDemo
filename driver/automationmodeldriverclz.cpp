@@ -25,7 +25,7 @@ AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     mp_data(new MeasDataFormat()),
     mp_refresh(nullptr),
     m_monitorError(new FatalErrorDrvClz),
-    m_randomNum(4, 'f')
+    m_randomNum(16, 'f')
 {
     mp_cfgRes = UniResLocation::getCfgResHdl();
     m_sendTimer.setSingleShot(true);
@@ -239,6 +239,47 @@ void AutomationModelDriverClz::enterFSMResetState(const QString& str)
     emit stateChanged(QModBusState::FatalErrorException, str);
 }
 
+void AutomationModelDriverClz::doTest()
+{
+    QByteArray cryptoText(16, ' ');
+    generateRandomNumber();
+    //QByteArray plainText = getRandomNumber();
+    const char rawInput[] = { 0x00, 0x01, 0x02, 0x03,
+                              0x04, 0x05, 0x06, 0x07,
+                              0x08, 0x09, 0x0A, 0x0B,
+                              0x0C, 0x0D, 0x0E, 0x0F};
+
+    QByteArray plainText = QByteArray::fromRawData(rawInput, sizeof(rawInput));
+    QModbus2DataUnit::HandShakeStruct v;
+
+    char* rawdata = (char*)&v;
+
+    for (int i = 0; i < 16; i++)
+    {
+        *(rawdata + i) = m_randomNum.at(i);
+    }
+
+    QByteArray keyArray(UniResLocation::getCfgResHdl()->key());
+
+    crypto_aes_ctx ctx;
+    crypto_aes_expand_key(&ctx, (const unsigned char*)(keyArray.constData()), AES_KEYSIZE_128);
+    aes_encrypt(&ctx, (unsigned char*)cryptoText.data(), (const unsigned char*)plainText.constData());
+
+    qCWarning(DRONE_LOGGING) << "CryperTest: plainText" << plainText.toHex() << "key " << keyArray.toHex() << "encrypt" << cryptoText.toHex();
+
+//    const char* rawDataSrc = (char*)&(data->uvalues().r.q.secrectKeyMain_1);
+//    QByteArray recCryptoText(rawDataSrc, AES_KEYSIZE_128);
+
+//    /* compare the crypt one from main board with the calculate one*/
+//    if (recCryptoText != cryptoText)
+//    {
+//        qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
+//                   << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
+//        return false;
+//    }
+
+}
+
 void AutomationModelDriverClz::readReady()
 {
     auto reply = qobject_cast<QModbus2Reply *>(sender());
@@ -307,8 +348,7 @@ bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2Da
 
     QByteArray plainText = getRandomNumber();
 
-    QString key(UniResLocation::getCfgResHdl()->key());
-    QByteArray keyArray = key.toLatin1();
+    QByteArray keyArray(UniResLocation::getCfgResHdl()->key());
 
     crypto_aes_ctx ctx;
     crypto_aes_expand_key(&ctx, (const unsigned char*)(keyArray.constData()), AES_KEYSIZE_128);
@@ -320,6 +360,10 @@ bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2Da
     /* compare the crypt one from main board with the calculate one*/
     if (recCryptoText != cryptoText)
     {
+        qCWarning(DRONE_LOGGING) << "CryperTest: plainText" << plainText.toHex()
+                                 << "key " << keyArray.toHex()
+                                 << "encrypt" << cryptoText.toHex();
+
         qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
         return false;
@@ -384,10 +428,10 @@ void AutomationModelDriverClz::generateRandomNumber()
     // choose a random number between 0 and 0xFFFFFFFF;
     std::default_random_engine e1(dev());
 
-    std::uniform_int_distribution<unsigned int> uniform_dist(0, UINT_MAX);
+    std::uniform_int_distribution<long long> uniform_dist(0, std::numeric_limits<long long>::max());
 
-    unsigned int mean = uniform_dist(e1);
-    m_randomNum = QByteArray::number(mean);
+    long long mean = uniform_dist(e1);
+    m_randomNum = QByteArray::number(mean, 16);
 }
 
 void AutomationModelDriverClz::processSendTimeout()
@@ -818,11 +862,19 @@ void AutomationModelDriverClz::sendResetCmd()
 
 void AutomationModelDriverClz::sendHandShakeCmd()
 {
+    generateRandomNumber();
     QModbus2DataUnit::HandShakeStruct v;
-    v.randomNum_1 = m_randomNum.at(0);
-    v.randomNum_2 = m_randomNum.at(1);
-    v.randomNum_3 = m_randomNum.at(2);
-    v.randomNum_4 = m_randomNum.at(3);
+
+    char* rawdata = (char*)&v;
+
+    for (int i = 0; i < 16; i++)
+    {
+        *(rawdata + i) = m_randomNum.at(i);
+    }
+//    v.randomNum_1 = m_randomNum.at(0);
+//    v.randomNum_2 = m_randomNum.at(1);
+//    v.randomNum_3 = m_randomNum.at(2);
+//    v.randomNum_4 = m_randomNum.at(3);
 
     QModbus2DataUnit data(QModbus2DataUnit::HandShakeCode, v);
     sendRequestCmd(data);

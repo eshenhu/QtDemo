@@ -21,9 +21,9 @@ public:
     ~ProductVersion();
 
 public:
-    const QString VERSION = QStringLiteral("v0.32");
+    const QString VERSION = QStringLiteral("v4.7");
 
-    QString key() const;
+    QByteArray key() const;
 
 private:
     void setupVersionInformation();
@@ -32,7 +32,7 @@ private:
     bool read(const QJsonObject &json);
 private:
     Ui::ProductVersion *ui;
-    QString m_key;
+    QByteArray m_key;
     CfgDeviceCfgModel* m_cfg;
 };
 

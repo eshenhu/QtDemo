@@ -134,8 +134,9 @@ public:
 public:
     void enterFSMInitState();
     void enterFSMResetState(const QString&);
-
+    void doTest();
 private:
+
     void connect();
 
     void resetMeasDataUnit();

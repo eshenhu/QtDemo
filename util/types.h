@@ -6,8 +6,11 @@ typedef ULONGLONG u64;
 typedef unsigned int __u32;
 typedef unsigned int __le32;	
 #else	//	#ifdef WIN32
-#include <asm/byteorder.h>
+//#include <asm/byteorder.h>
+
 typedef unsigned long long u64;	
+typedef unsigned int __u32;
+typedef unsigned int __le32;
 #endif	//	#ifdef WIN32
 typedef unsigned int u32;
 typedef unsigned short u16;

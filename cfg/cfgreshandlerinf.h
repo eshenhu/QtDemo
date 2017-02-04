@@ -45,7 +45,7 @@ public:
     virtual quint32 boot_PRP() const = 0;
 //    virtual quint32 bootVol() const = 0;
 
-    virtual QString key() const = 0;
+    virtual QByteArray key() const = 0;
 
     virtual quint32 vane() const = 0;
     virtual quint32 HZ() const = 0;

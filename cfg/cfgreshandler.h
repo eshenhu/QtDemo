@@ -92,8 +92,8 @@ public:
     QString SerialNumber() const;
     void setSerialNumber(const QString &SerialNumber);
 
-    QString key() const;
-    void setKey(const QString &key);
+    QByteArray key() const;
+    void setKey(const QByteArray &key);
 
     QString path() const;
     void setPath(const QString &path);
@@ -102,7 +102,7 @@ private:
     void loadSetting();
 
 private:
-    QString m_key;
+    QByteArray m_key;
     QString m_path;
 
     quint32 m_vane;
@@ -219,7 +219,7 @@ public:
 //        Q_ASSERT(m_bootCfg != nullptr);
 //        return m_bootCfg->bootVol();
 //    }
-    inline QString key() const
+    inline QByteArray key() const
     {
         Q_ASSERT(m_deviceCfg != nullptr);
         return m_deviceCfg->key();

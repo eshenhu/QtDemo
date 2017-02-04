@@ -9,7 +9,7 @@
 ProductVersion::ProductVersion(CfgDeviceCfgModel* cfg, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::ProductVersion),
-    m_key("0"),
+    m_key(16, ' '),
     m_cfg(cfg)
 {
     ui->setupUi(this);
@@ -36,14 +36,13 @@ void ProductVersion::setupVersionInformation()
         }
         else
         {
-            const QRegExp rx("^[0-9a-fA-F]{12,12}$");
-            if (!m_key.contains(rx))
+            if (m_key.size() != 12)
             {
                 qWarning() << "Invalid License number!";
             }
             else
             {
-                ui->import_LE->setText(m_key);
+                ui->import_LE->setText(m_key.toHex());
                 m_cfg->setKey(m_key);
             }
         }
@@ -70,8 +69,7 @@ void ProductVersion::setupSignalAndSlot()
             }
             else
             {
-                const QRegExp rx("^[0-9a-fA-F]{12,12}$");
-                if (!m_key.contains(rx))
+                if (m_key.size() != 12)
                 {
                     errorMsg = QStringLiteral("Invalid License number!");
                     qWarning() << errorMsg;
@@ -79,7 +77,7 @@ void ProductVersion::setupSignalAndSlot()
                 else
                 {
                     isError = false;
-                    ui->import_LE->setText(m_key);
+                    ui->import_LE->setText(m_key.toHex());
                     m_cfg->setKey(m_key);
                     m_cfg->setPath(fileName);
                 }
@@ -116,11 +114,11 @@ bool ProductVersion::loadCfg(const QString& str)
 bool ProductVersion::read(const QJsonObject &json)
 {
     bool result = true;
-    m_key = json["key"].toString();
+    m_key = QByteArray::fromHex(json["key"].toString().toLatin1());
     return result;
 }
 
-QString ProductVersion::key() const
+QByteArray ProductVersion::key() const
 {
     return m_key;
 }

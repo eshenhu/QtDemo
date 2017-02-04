@@ -67,7 +67,6 @@ ActionWidget::ActionWidget(QWidget *parent)
 {
     m_measData.type = TestPlanEnum::Invaild;
     m_driver = new AutomationModelDriverClz(this);
-
     createTabWidget();
     //createChartView();
     m_chartWidget = new CompQChartWidget(UniResLocation::getCfgJsonHdl(), this);
@@ -76,6 +75,8 @@ ActionWidget::ActionWidget(QWidget *parent)
     baseLayout->addWidget(m_tabWidget, 0);
     baseLayout->addWidget(m_chartWidget, 1);
     setLayout(baseLayout);
+
+    //m_driver->doTest();
 
     connect(m_driver, &AutomationModelDriverClz::updateData, this, &ActionWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](

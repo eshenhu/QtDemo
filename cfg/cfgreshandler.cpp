@@ -168,12 +168,12 @@ void CfgDeviceCfgModel::setPath(const QString &path)
 /*
  *  creep changes 12bit + head (4bit) = 16 bit
  */
-void CfgDeviceCfgModel::setKey(const QString &key)
+void CfgDeviceCfgModel::setKey(const QByteArray &key)
 {
     m_key = key + key.left(4);
 }
 
-QString CfgDeviceCfgModel::key() const
+QByteArray CfgDeviceCfgModel::key() const
 {
     return m_key;
 }
