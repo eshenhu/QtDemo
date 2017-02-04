@@ -15,7 +15,7 @@
 #include "cfg/cfgjsonrecelement.h"
 #include "cfg/cfgzerocalibrateclz.h"
 #include "cfg/unireslocation.h"
-
+#include "util/aes.h"
 
 #include <random>
 
@@ -303,9 +303,22 @@ bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2Da
     //qCWarning(DRONE_LOGGING) << "it should be got improved here -- eshenhu";
     //if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
 
-    QString key(UniResLocation::getCfgResHdl()->key());
+    QByteArray cryptoText(16, ' ');
 
-    if (0)
+    QByteArray plainText = getRandomNumber();
+
+    QString key(UniResLocation::getCfgResHdl()->key());
+    QByteArray keyArray = key.toLatin1();
+
+    crypto_aes_ctx ctx;
+    crypto_aes_expand_key(&ctx, (const unsigned char*)(keyArray.constData()), AES_KEYSIZE_128);
+    aes_encrypt(&ctx, (unsigned char*)cryptoText.data(), (const unsigned char*)plainText.constData());
+
+    const char* rawDataSrc = (char*)&(data->uvalues().r.q.secrectKeyMain_1);
+    QByteArray recCryptoText(rawDataSrc, AES_KEYSIZE_128);
+
+    /* compare the crypt one from main board with the calculate one*/
+    if (recCryptoText != cryptoText)
     {
         qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
@@ -370,9 +383,10 @@ void AutomationModelDriverClz::generateRandomNumber()
 
     // choose a random number between 0 and 0xFFFFFFFF;
     std::default_random_engine e1(dev());
-    std::uniform_int_distribution<int> uniform_dist(0, std::numeric_limits<int>::max());
 
-    int mean = uniform_dist(e1);
+    std::uniform_int_distribution<unsigned int> uniform_dist(0, UINT_MAX);
+
+    unsigned int mean = uniform_dist(e1);
     m_randomNum = QByteArray::number(mean);
 }
 

@@ -54,7 +54,8 @@ SOURCES += main.cpp \
     ui/fileselectdialog.cpp \
     cfg/unireslocation.cpp \
     util/simplecrypt.cpp \
-    ui/productversion.cpp
+    ui/productversion.cpp \
+    util/aes.c
 
 HEADERS += \
     actionwidget.h \
@@ -115,7 +116,9 @@ HEADERS += \
     util/polyfit.h \
     ui/fileselectdialog.h \
     util/simplecrypt.h \
-    ui/productversion.h
+    ui/productversion.h \
+    util/aes.h \
+    util/types.h
 
 FORMS += \
     ui/testinfoconfig.ui \
