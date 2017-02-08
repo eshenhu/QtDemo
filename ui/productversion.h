@@ -21,7 +21,7 @@ public:
 
 
 public:
-    const QString VERSION = QStringLiteral("v4.7");
+    const QString VERSION = QStringLiteral("v4.9");
 
     QByteArray key() const;
 
@@ -30,13 +30,6 @@ private:
     void setupSignalAndSlot();
     bool loadCfg(const QString& str);
     bool read(const QJsonObject &json);
-
-/*
- * key : 0000 1111 1111 1111
- * MD5:  MD5(key)
- * AES128 (key + MD5)
-*/
-    bool decrypto(const QByteArray&, QByteArray&);
 
 private:
     Ui::ProductVersion *ui;
