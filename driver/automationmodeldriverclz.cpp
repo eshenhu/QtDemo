@@ -246,9 +246,9 @@ void AutomationModelDriverClz::doTest()
     /*--------------------------------------------------------------*/
 
     //51 FF 67 06 50 66 55 56 45 57 02 87
-    const char keyRawInput[] = { 0x51, 0xFF, 0x67, 0x06,
+    const char keyRawInput[] = { 0x51, 0xFF, 0x68, 0x06,
                                  0x50, 0x66, 0x55, 0x56,
-                                 0x45, 0x57, 0x02, 0x87};
+                                 0x47, 0x28, 0x02, 0x87};
 
     QByteArray in = QByteArray::fromRawData(keyRawInput, sizeof(keyRawInput));
     QByteArray out;
