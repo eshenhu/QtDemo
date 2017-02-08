@@ -170,7 +170,7 @@ void CfgDeviceCfgModel::setPath(const QString &path)
  */
 void CfgDeviceCfgModel::setKey(const QByteArray &key)
 {
-    m_key = key + key.left(4);
+    m_key = key.right(12) + key.mid(4,4);
 }
 
 QByteArray CfgDeviceCfgModel::key() const

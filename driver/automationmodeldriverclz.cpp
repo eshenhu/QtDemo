@@ -360,9 +360,11 @@ bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2Da
     /* compare the crypt one from main board with the calculate one*/
     if (recCryptoText != cryptoText)
     {
-        qCWarning(DRONE_LOGGING) << "CryperTest: plainText" << plainText.toHex()
+        qCWarning(DRONE_LOGGING) << "CryperTest: send Text on wire" << m_randomNum.toHex()
+                                 << "in use text" << plainText.toHex()
                                  << "key " << keyArray.toHex()
-                                 << "encrypt" << cryptoText.toHex();
+                                 << "encrypt" << cryptoText.toHex()
+                                 << "rec" << recCryptoText.toHex();
 
         qCWarning(DRONE_LOGGING) << "com.comm.state --HandShake-- received product version " << data->uvalues().r.q.productRev
                    << "was not matched with the software installed " << static_cast<quint8>(mp_cfgRes->prod_version());
