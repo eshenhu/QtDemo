@@ -397,22 +397,36 @@ const static formulaT formulaTorque = [](const qint32 v, Phase phase, quint32 id
 const static functionT functionSpeed = [](const QModbus2DataUnit* data, const JsonPVConfig& config, const indexOnMotor idx){
     qint32 rtn = 0;
     //if (config.motorType() == QModbus2DataUnit::MotorTypeEnum::ELECE)
-    if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
+
+    double currentData = 0.00;
+    const QExtCheckBox* boxCurrent = QExtCheckBox::searchExtCheckBox(JsonGUIPrimType::CURRENT, idx.idxMotor());
+    if (boxCurrent)
+        currentData = boxCurrent->pushData();
+
+    /* As said by Jet, sometimes the FAN speed will chop to a unresonable value, so we decide ignore this value
+      when the current was less than 150mA.
+     */
+    if (currentData <= 0.15)
+        rtn = 0;
+    else
     {
-        // idx 0 ->1st one 1-> 2nd one
-        if ((idx.idxMotor()+1) <= config.numOfMotor())
+        if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::ELECE)
         {
-            rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].speed);
-            qDebug() << "ui.function.functionForce update Speed value with :" << rtn;
+            // idx 0 ->1st one 1-> 2nd one
+            if ((idx.idxMotor()+1) <= config.numOfMotor())
+            {
+                rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.elec.elecMotorStruct[idx.idxMotor()].speed);
+                qDebug() << "ui.function.functionForce update Speed value with :" << rtn;
+            }
+            else
+            {
+                qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            }
         }
-        else
+        else if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::OILE)
         {
-            qCritical() << "com.ui.functions Current idx was not legal(0 or 1) one value == " << idx.idxMotor();
+            rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.speed);
         }
-    }
-    else if (data->uvalues().r.s.motorType == (quint8)QModbus2DataUnit::MotorTypeEnum::OILE)
-    {
-        rtn = static_cast<qint32>(data->uvalues().r.s.motorInfo.oil.speed);
     }
 
     return rtn;

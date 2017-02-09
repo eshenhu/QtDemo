@@ -48,7 +48,7 @@ public:
             ++m_cntUpFrameError;
     }
 
-    inline bool resetFrameError() {
+    inline void resetFrameError() {
         if (m_cntUpFrameError > 0)
             --m_cntUpFrameError;
     }

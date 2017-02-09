@@ -69,8 +69,11 @@ void CompQChartWidget::updateData(const QModbus2DataUnit *data, Phase phase)
         ++startIdx;
     }
 
-    static DataJsonRecElement::DataJsonRecElementFileHelper helper;
-    helper.writeData(e2);
+    if (phase == Phase::Phase_NomalRunning)
+    {
+        static DataJsonRecElement::DataJsonRecElementFileHelper helper;
+        helper.writeData(e2);
+    }
 }
 
 void CompQChartWidget::resetChartWidget()
