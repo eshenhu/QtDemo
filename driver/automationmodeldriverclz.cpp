@@ -246,11 +246,11 @@ void AutomationModelDriverClz::doTest()
     /*--------------------------------------------------------------*/
 
     //51 FF 67 06 50 66 55 56 45 57 02 87
-    const char keyRawInput[] = { 0x51, 0xFF, 0x68, 0x06,
+    const unsigned char keyRawInput[] = { 0x51, 0xFF, 0x68, 0x06,
                                  0x50, 0x66, 0x55, 0x56,
                                  0x47, 0x28, 0x02, 0x87};
 
-    QByteArray in = QByteArray::fromRawData(keyRawInput, sizeof(keyRawInput));
+    QByteArray in = QByteArray::fromRawData((const char*)keyRawInput, sizeof(keyRawInput));
     QByteArray out;
     SimpleCrypt_helper::encrypto(in, out);
 
@@ -452,7 +452,7 @@ void AutomationModelDriverClz::generateRandomNumber()
     // choose a random number between 0 and 0xFFFFFFFF;
     std::default_random_engine e1(dev());
 
-    std::uniform_int_distribution<long long> uniform_dist(LLONG_MIN, LLONG_MAX);
+    std::uniform_int_distribution<long long> uniform_dist(std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max());
 
     long long mean = uniform_dist(e1);
     m_randomNum = QByteArray::number(mean, 16);

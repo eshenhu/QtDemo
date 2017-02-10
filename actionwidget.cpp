@@ -76,7 +76,7 @@ ActionWidget::ActionWidget(QWidget *parent)
     baseLayout->addWidget(m_chartWidget, 1);
     setLayout(baseLayout);
 
-    m_driver->doTest();
+    //m_driver->doTest();
 
     connect(m_driver, &AutomationModelDriverClz::updateData, this, &ActionWidget::updateData);
     connect(m_driver, &AutomationModelDriverClz::stateChanged, [this](

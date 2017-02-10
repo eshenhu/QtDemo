@@ -21,7 +21,7 @@ public:
 
 
 public:
-    const QString VERSION = QStringLiteral("v4.9");
+    const QString VERSION = QStringLiteral("v5.0");
 
     QByteArray key() const;
 
