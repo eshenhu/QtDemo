@@ -55,7 +55,8 @@ SOURCES += main.cpp \
     cfg/unireslocation.cpp \
     util/simplecrypt.cpp \
     ui/productversion.cpp \
-    util/aes.c
+    util/aes.c \
+    util/simplecrypt_helper.cpp
 
 HEADERS += \
     actionwidget.h \
@@ -118,7 +119,8 @@ HEADERS += \
     util/simplecrypt.h \
     ui/productversion.h \
     util/aes.h \
-    util/types.h
+    util/types.h \
+    util/simplecrypt_helper.h
 
 FORMS += \
     ui/testinfoconfig.ui \

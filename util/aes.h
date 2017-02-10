@@ -22,7 +22,7 @@ extern "C" {
 #define AES_MAX_KEYLENGTH_U32	(AES_MAX_KEYLENGTH / sizeof(u32))
 
 /*
- * Please ensure that the first two fields are 16-byte aligned
+ * Please ensure that the fihao rst two fields are 16-byte aligned
  * relative to the start of the structure, i.e., don't move them!
  */
 struct crypto_aes_ctx {

@@ -166,7 +166,8 @@ private:
     void generateRandomNumber();
 
     QByteArray getRandomNumber(){
-        return m_randomNum.mid(8, 4) + m_randomNum.left(12);
+        //return m_randomNum.mid(8, 4) + m_randomNum.left(12);
+        return m_randomNum;
     }
 };
 

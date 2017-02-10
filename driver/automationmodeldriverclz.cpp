@@ -16,6 +16,7 @@
 #include "cfg/cfgzerocalibrateclz.h"
 #include "cfg/unireslocation.h"
 #include "util/aes.h"
+#include "util/simplecrypt_helper.h"
 
 #include <random>
 
@@ -241,6 +242,27 @@ void AutomationModelDriverClz::enterFSMResetState(const QString& str)
 
 void AutomationModelDriverClz::doTest()
 {
+
+    /*--------------------------------------------------------------*/
+
+    //51 FF 67 06 50 66 55 56 45 57 02 87
+    const char keyRawInput[] = { 0x51, 0xFF, 0x68, 0x06,
+                                 0x50, 0x66, 0x55, 0x56,
+                                 0x47, 0x28, 0x02, 0x87};
+
+    QByteArray in = QByteArray::fromRawData(keyRawInput, sizeof(keyRawInput));
+    QByteArray out;
+    SimpleCrypt_helper::encrypto(in, out);
+
+    QByteArray out_decry_key;
+    SimpleCrypt_helper::decrypto(out,out_decry_key);
+
+    qCWarning(DRONE_LOGGING) << "CryperKeyTest: plainText"
+                             << out.toHex()
+                             << "decrypto"
+                             << out_decry_key.toHex();
+
+    /*--------------------------------------------------------------*/
     QByteArray cryptoText(16, ' ');
     generateRandomNumber();
     //QByteArray plainText = getRandomNumber();
@@ -430,7 +452,7 @@ void AutomationModelDriverClz::generateRandomNumber()
     // choose a random number between 0 and 0xFFFFFFFF;
     std::default_random_engine e1(dev());
 
-    std::uniform_int_distribution<long long> uniform_dist(0, std::numeric_limits<long long>::max());
+    std::uniform_int_distribution<long long> uniform_dist(LLONG_MIN, LLONG_MAX);
 
     long long mean = uniform_dist(e1);
     m_randomNum = QByteArray::number(mean, 16);
