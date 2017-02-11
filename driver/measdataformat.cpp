@@ -24,13 +24,13 @@ quint32 MeasDataFormat::getVol() const
  *       f.g. in PV11 version, the max vol is 55V, then 0xFFFF represet
  *            55V.
  */
-void MeasDataFormat::setVol(const quint32 &value)
-{
-//    CfgResHandlerInf* cfgHandler = ActionWidget::getCfgResHdl();
-//    quint32 max_value = cfgHandler->max_vol();
-//    vol = (65535 / max_value) * value;
-    vol = 100 * value;
-}
+//void MeasDataFormat::setVol(const quint32 &value)
+//{
+////    CfgResHandlerInf* cfgHandler = ActionWidget::getCfgResHdl();
+////    quint32 max_value = cfgHandler->max_vol();
+////    vol = (65535 / max_value) * value;
+//    vol = 100 * value;
+//}
 
 void MeasDataFormat::setVol(const double &value)
 {
@@ -73,7 +73,7 @@ void MeasDataFormat::reset()
     dis = 0xFFFFFFFF;
 }
 
-AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+AbstractPeriodicalMeasDataUpdate::AbstractPeriodicalMeasDataUpdate(const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const double boot_voltage,
                                                                    const quint32 boot_thro, const quint32 durationInSec, const quint32 intervalInMSec):
     m_tick(0),
     m_delay_start(delay_start),
@@ -129,7 +129,7 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
             m_data->setThro_2(0);
 
             static quint32 step = 1000 * m_delay_start / m_intervalInMSec;
-            quint32 vol = m_boot_voltage * m_tick / step;
+            double vol = m_boot_voltage * m_tick / step;
             m_data->setVol(vol);
         }
         else if (m_tick <= 1000 * (m_delay_start + m_PRP_delay)/m_intervalInMSec)
@@ -170,7 +170,7 @@ bool AbstractPeriodicalMeasDataUpdate::updateData()
 }
 
 PeriodicalVolMeasDataUpdate::PeriodicalVolMeasDataUpdate(const double start, const double end, const double step, const quint32 thro,
-                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const double boot_voltage,
                                                          const quint32 durationInSec, const quint32 intervalInMSec):
     AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay, soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
     m_start_vol(start),
@@ -214,7 +214,7 @@ bool PeriodicalVolMeasDataUpdate::updateValue()
 }
 
 PeriodicalThroMeasDataUpdate::PeriodicalThroMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol,
-                                                           const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                                           const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const double boot_voltage,
                                                            const quint32 durationInSec, const quint32 intervalInMSec)
     :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, start, durationInSec, intervalInMSec),
       m_start_thro(start),
@@ -257,7 +257,7 @@ bool PeriodicalThroMeasDataUpdate::updateValue()
 }
 
 PeriodicalDisMeasDataUpdate::PeriodicalDisMeasDataUpdate(const quint32 start, const quint32 end, const quint32 step, const double vol, const quint32 thro,
-                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const quint32 boot_voltage,
+                                                         const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay, const double boot_voltage,
                                                          const quint32 durationInSec, const quint32 intervalInMSec)
     :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
       m_step(step),
@@ -295,7 +295,7 @@ bool PeriodicalDisMeasDataUpdate::updateValue()
 
 OneShotManualMeasDataUpdate::OneShotManualMeasDataUpdate(const double vol, const quint32 thro,
                                                          const quint32 delay_start, const quint32 PRP_delay, const quint32 soft_delay,
-                                                         const quint32 boot_voltage, const quint32 durationInSec, const quint32 intervalInMSec)
+                                                         const double boot_voltage, const quint32 durationInSec, const quint32 intervalInMSec)
      :AbstractPeriodicalMeasDataUpdate(delay_start, PRP_delay,soft_delay, boot_voltage, thro, durationInSec, intervalInMSec),
       m_vol(vol),
       m_thro(thro)
