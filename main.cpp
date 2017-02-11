@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("ShiLu");
     QCoreApplication::setOrganizationDomain("shilu.com");
     QCoreApplication::setApplicationName("UDAT");
-    QCoreApplication::setApplicationVersion("5.0");
+    QCoreApplication::setApplicationVersion("5.1");
 
     QFont f;
     int defaultFontSize = f.pointSize();

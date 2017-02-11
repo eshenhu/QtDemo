@@ -49,7 +49,7 @@ CfgItemMeasBasedE1WashingOutDataEle CfgManualWashingDataE1Clz::deserialize(const
     CfgItemMeasBasedE1WashingOutDataEle ele;
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_VOL_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::VOL_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THRO_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::THRO1_POS));
-    ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
+    //ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
 
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_CUR1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_CUR1_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THU1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_THU1_POS));
@@ -200,7 +200,7 @@ CfgItemMeasBasedE1WashingOutDataEle CfgVolWashingDataE1Clz::deserialize(const Da
     CfgItemMeasBasedE1WashingOutDataEle ele;
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_VOL_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::VOL_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THRO_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::THRO1_POS));
-    ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
+    //ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
 
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_CUR1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_CUR1_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THU1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_THU1_POS));
@@ -493,7 +493,7 @@ CfgItemMeasBasedE1WashingOutDataEle CfgThrottleWashingDataE1Clz::deserialize(con
     CfgItemMeasBasedE1WashingOutDataEle ele;
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_VOL_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::VOL_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THRO_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::THRO1_POS));
-    ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
+    //ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_DISTANCE_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_ECHODISTANCE_POS));
 
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_CUR1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_CUR1_POS));
     ele.setData( (quint8)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THU1_POS, in.getData((quint32)DataJsonRecElement::ELEMCURSOR::REC_THU1_POS));
@@ -2520,7 +2520,7 @@ CfgItemMeasBasedE1WashingOutDataEle::CfgItemMeasBasedE1WashingOutDataEle():
     quint32 idx = 0;
     m_metaEle[idx] = CfgMetaElement(TestUnitName::VOL(), 0xFF);
     m_metaEle[++idx] = CfgMetaElement(TestUnitName::THROTTLE(), 0xFF);
-    m_metaEle[++idx] = CfgMetaElement(TestUnitName::DISTANCE(), 0);
+    //m_metaEle[++idx] = CfgMetaElement(TestUnitName::DISTANCE(), 0);
 
     m_metaEle[++idx] = CfgMetaElement(TestUnitName::CURRENT(), 0);
     m_metaEle[++idx] = CfgMetaElement(TestUnitName::THRUST(), 0);

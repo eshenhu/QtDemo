@@ -82,7 +82,7 @@ public:
     {
         REC_VOL_POS = 0,
         REC_THRO_POS,
-        REC_DISTANCE_POS,
+//        REC_DISTANCE_POS,
 
         REC_CUR1_POS,
         REC_THU1_POS,
