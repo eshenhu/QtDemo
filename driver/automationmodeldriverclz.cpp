@@ -119,7 +119,7 @@ void AutomationModelDriverClz::startMeasTest(const UiCompMeasData data,const Cfg
     /*
      * Data recording
     */
-    UtilDataRecordingClz::getInstance().newRec();
+    UtilDataRecordingClz::getInstance().newRec(data.type);
 
     qInfo() << "com.automationModeDriver -> UtilDataRecordingClz.getInstance().getCfgName"
                << UtilDataRecordingClz::getInstance().getCfgFileName();

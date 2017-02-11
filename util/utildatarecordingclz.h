@@ -2,6 +2,7 @@
 #define UTILDATARECORDINGCLZ_H
 
 #include <QString>
+#include "ui/uiheader.h"
 
 class UtilDataRecordingClz
 {
@@ -15,7 +16,7 @@ public:
         return v;
     }
 
-    bool newRec();
+    bool newRec(TestPlanEnum plan);
     //bool closeRec();
 
     const QString& getCfgFileName() const;

@@ -5,14 +5,14 @@
 
 std::map<int, QString> TestPlanStringMap =
 {
-    { (int)TestPlanEnum::Invaild,    QStringLiteral("Invalid Test") },
-    { (int)TestPlanEnum::Voltage,    QStringLiteral("Voltage Test") },
-    { (int)TestPlanEnum::Throttle,   QStringLiteral("Throttle Test")},
-    { (int)TestPlanEnum::Distance,   QStringLiteral("Distance Test") },
-    { (int)TestPlanEnum::Multiplue,  QStringLiteral("Multiplue Test")},
-    { (int)TestPlanEnum::Aging,      QStringLiteral("Aging Test") },
-    { (int)TestPlanEnum::Calibrate,  QStringLiteral("Calibrate Test") },
-    { (int)TestPlanEnum::Manual,     QStringLiteral("Manual Test") }
+    { (int)TestPlanEnum::Invaild,    QStringLiteral("Invalid") },
+    { (int)TestPlanEnum::Voltage,    QStringLiteral("Voltage") },
+    { (int)TestPlanEnum::Throttle,   QStringLiteral("Throttle")},
+    { (int)TestPlanEnum::Distance,   QStringLiteral("Distance") },
+    { (int)TestPlanEnum::Multiplue,  QStringLiteral("Multipule")},
+    { (int)TestPlanEnum::Aging,      QStringLiteral("Aging") },
+    { (int)TestPlanEnum::Calibrate,  QStringLiteral("Calibrate") },
+    { (int)TestPlanEnum::Manual,     QStringLiteral("Manual") }
 };
 
 std::map<QString, QColor> TestUnitColor::colorPerTestElement =

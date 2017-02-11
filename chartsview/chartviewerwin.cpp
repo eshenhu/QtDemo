@@ -621,7 +621,7 @@ void ChartViewerWin::initAxesAndView(QCustomPlot *customPlot)
     statusBar()->clearMessage();
 
     // first we create and prepare a text layout element:
-    QString text = TestPlanStringMap[(int)cfgMetaData.plan()];
+    QString text = TestPlanStringMap[(int)cfgMetaData.plan()] + QStringLiteral(" Test");
     setWindowTitle(text);
 }
 

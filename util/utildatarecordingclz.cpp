@@ -12,8 +12,10 @@ UtilDataRecordingClz::UtilDataRecordingClz()
 /*
  *  create data.json & data.csv file where the executable file located.
  */
-bool UtilDataRecordingClz::newRec()
+bool UtilDataRecordingClz::newRec(TestPlanEnum plan)
 {
+    QString text = TestPlanStringMap[(int)plan];
+
     QString path = QCoreApplication::applicationDirPath();
 
     QDateTime now = QDateTime::currentDateTime();
@@ -24,8 +26,8 @@ bool UtilDataRecordingClz::newRec()
         qWarning() << "UtilDataRecordingClz failed to create folder "
                    << path << m_timeStamp;
 
-    m_cfgFile = path + QString("/%1/data.json").arg(m_timeStamp);
-    m_recFile = path + QString("/%1/data.csv").arg(m_timeStamp);
+    m_cfgFile = path + QString("/%1/data-%1-%2.json").arg(m_timeStamp).arg(text);
+    m_recFile = path + QString("/%1/data-%1-%2.csv").arg(m_timeStamp).arg(text);
     return true;
 }
 
