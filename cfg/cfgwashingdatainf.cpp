@@ -150,7 +150,7 @@ CfgVolWashingDataE1Clz::CfgVolWashingDataE1Clz():
 
 void CfgVolWashingDataE1Clz::wash(const QVector<DataJsonRecElement> &rawdata)
 {
-    quint32 cursor = 0;
+    quint32 cursor = std::numeric_limits<unsigned int>::min();
 
     quint32 dataInLine = 0;
     CfgItemMeasBasedE1WashingOutDataEle accuData;
@@ -159,6 +159,11 @@ void CfgVolWashingDataE1Clz::wash(const QVector<DataJsonRecElement> &rawdata)
     {
         CfgItemMeasBasedE1WashingOutDataEle ele = deserialize(data);
         dataInLine = (quint32)ele.getData((quint32)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_VOL_POS);
+
+        if (cursor == std::numeric_limits<unsigned int>::min())
+        {
+            cursor = dataInLine;
+        }
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);
@@ -233,7 +238,7 @@ CfgVolWashingDataE2Clz::CfgVolWashingDataE2Clz():
 
 void CfgVolWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
 {
-    quint32 cursor = 0;
+    quint32 cursor = std::numeric_limits<unsigned int>::min();
 
     quint32 dataInLine = 0;
     CfgItemMeasBasedE2WashingOutDataEle accuData;
@@ -242,6 +247,11 @@ void CfgVolWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
     {
         CfgItemMeasBasedE2WashingOutDataEle ele = deserialize(data);
         dataInLine = (quint32)ele.getData((quint32)CfgItemMeasBasedE2WashingOutDataEle::ELEMEASCURSOR::REC_VOL_POS);
+
+        if (cursor == std::numeric_limits<unsigned int>::min())
+        {
+            cursor = dataInLine;
+        }
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);
@@ -330,7 +340,7 @@ CfgDistanceWashingDataE2Clz::CfgDistanceWashingDataE2Clz():
 
 void CfgDistanceWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdata)
 {
-    quint32 cursor = 0;
+    quint32 cursor = std::numeric_limits<unsigned int>::min();
 
     quint32 dataInLine = 0;
     CfgItemMeasBasedE2WashingOutDataEle accuData;
@@ -342,6 +352,11 @@ void CfgDistanceWashingDataE2Clz::wash(const QVector<DataJsonRecElement> &rawdat
         if (dataInLine == 0)
             accuData = ele;
         dataInLine = (quint32)ele.getData((quint32)CfgItemMeasBasedE2WashingOutDataEle::ELEMEASCURSOR::REC_DISTANCE_POS);
+
+        if (cursor == std::numeric_limits<unsigned int>::min())
+        {
+            cursor = dataInLine;
+        }
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);
@@ -429,8 +444,7 @@ CfgThrottleWashingDataE1Clz::CfgThrottleWashingDataE1Clz():
 
 void CfgThrottleWashingDataE1Clz::wash(const QVector<DataJsonRecElement> & rawdata)
 {
-    quint32 cursor = 0;
-
+    quint32 cursor = std::numeric_limits<unsigned int>::min();
     quint32 dataInLine = 0;
     CfgItemMeasBasedE1WashingOutDataEle accuData;
 
@@ -438,6 +452,11 @@ void CfgThrottleWashingDataE1Clz::wash(const QVector<DataJsonRecElement> & rawda
     {
         CfgItemMeasBasedE1WashingOutDataEle ele = deserialize(data);
         dataInLine = (quint32)ele.getData((quint32)CfgItemMeasBasedE1WashingOutDataEle::ELEMEASE1CURSOR::REC_THRO_POS);
+
+        if (cursor == std::numeric_limits<unsigned int>::min())
+        {
+            cursor = dataInLine;
+        }
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);
@@ -514,8 +533,7 @@ CfgThrottleWashingDataE2Clz::CfgThrottleWashingDataE2Clz():
 
 void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElement> & rawdata)
 {
-    quint32 cursor = 0;
-
+    quint32 cursor = std::numeric_limits<unsigned int>::min();
     quint32 dataInLine = 0;
     CfgItemMeasBasedE2WashingOutDataEle accuData;
 
@@ -523,6 +541,11 @@ void CfgThrottleWashingDataE2Clz::wash(const QVector<DataJsonRecElement> & rawda
     {
         CfgItemMeasBasedE2WashingOutDataEle ele = deserialize(data);
         dataInLine = (quint32)ele.getData((quint32)CfgItemMeasBasedE2WashingOutDataEle::ELEMEASCURSOR::REC_THRO_POS);
+
+        if (cursor == std::numeric_limits<unsigned int>::min())
+        {
+            cursor = dataInLine;
+        }
 
         if (cursor == dataInLine){
             accumulate(ele, accuData);

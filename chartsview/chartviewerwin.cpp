@@ -195,7 +195,7 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
 */
 void ChartViewerWin::rescalePlot()
 {
-    double lowest = 0;
+    double lowest = std::numeric_limits<double>::max();
     double highest = 1;
 
     for (const QCPAxisRect* rect : ui->customPlot->axisRects())
