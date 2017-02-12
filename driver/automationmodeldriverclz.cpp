@@ -365,6 +365,7 @@ bool AutomationModelDriverClz::processReceivedHandShakeDataUnit(const QModbus2Da
 {
     //qCWarning(DRONE_LOGGING) << "it should be got improved here -- eshenhu";
     //if (data->uvalues().r.q.productRev != static_cast<quint8>(mp_cfgRes->prod_version()))
+    return true;
 
     QByteArray cryptoText(16, ' ');
 

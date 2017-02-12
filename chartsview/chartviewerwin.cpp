@@ -407,8 +407,8 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
 {
     if (!ui->customPlot->xAxis || !ui->customPlot->yAxis)
         return;
-    int x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
-    int y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
+    double x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+    double y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
     double closeX = (double)x;
     double closeXX = (double)x;
     static double lastCloseX;
@@ -437,7 +437,7 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
 
         static char buffer[100];
         sprintf(buffer, "%s : %s",
-                "<small>%-15s</small> ", "<b><big><i> %10.1f </i></big></b> ");
+                "<small>%-15s</small> ", "<b><big><i> %10.2f </i></big></b> ");
 
         QString textTitle = QString::asprintf(buffer,
             ui->customPlot->axisRect(0)->axis(QCPAxis::atBottom)->label().toLatin1().constData(),

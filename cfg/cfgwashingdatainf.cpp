@@ -1240,8 +1240,15 @@ void CfgMultiWashingDataE1Clz::generateData(quint32 composeIdx, QVector<QCPGraph
             const quint32 order = 5;
             double coefficients[order+1]; // y = ax*x + bx + c;
 
-            qint32 xAsixFloor = qFloor(itemList[idx].data.first().key);
-            qint32 xAsixCeil = qCeil(itemList[idx].data.last().key);
+            double xAsixFloor = itemList[idx].data.first().key;
+            double xAsixCeil = itemList[idx].data.last().key;
+
+            if (xAsixFloor > xAsixCeil)
+            {
+                double temp = xAsixFloor;
+                xAsixFloor = xAsixCeil;
+                xAsixCeil = temp;
+            }
 
             quint32 eleIdx = 0;
             for (const KV& ele : itemList[idx].data)
@@ -1265,9 +1272,9 @@ void CfgMultiWashingDataE1Clz::generateData(quint32 composeIdx, QVector<QCPGraph
             PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, &coefficients[0]);
 
             const quint32 trimSize = size < MAX_POINT_XASIX ? size : MAX_POINT_XASIX;
-            qint32 step = (xAsixCeil - xAsixFloor)/trimSize;
-            step = (step == 0 ? 1 : step);
-            for (qint32 x = xAsixFloor; x < xAsixCeil; x+=step)
+            double step = (xAsixCeil - xAsixFloor)/trimSize;
+            //step = (step == 0 ? 1 : step);
+            for (double x = xAsixFloor; x < xAsixCeil; x+=step)
             {
                 double y = coefficients[5] * x * x * x * x * x
                          + coefficients[4] * x * x * x * x
