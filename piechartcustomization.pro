@@ -139,8 +139,8 @@ DISTFILES +=
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -lqtcsv.1.0.0
 #else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/ -lqtcsv.1.0.0
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/release/ -L$$PWD
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -L$$PWD
 else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/
 
 #INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv

@@ -77,12 +77,21 @@ public:
     ~CfgDeviceCfgModel(){}
 
 public:
+    QString manufacture() const;
+    void setManufacture(const QString &manufacture);
+
+    QString motorType() const;
+    void setMotorType(const QString &motorType);
+
+    QString ESCType() const;
+    void setESCType(const QString &ESCType);
 
     quint32 vane() const;
     void setVane(const quint32 &vane);
 
     quint32 HZ() const;
     void setHZ(const quint32 &HZ);
+
     quint32 lowThroLimit() const;
     void setLowThroLimit(const quint32 &lowThroLimit);
 
@@ -105,6 +114,9 @@ private:
     QByteArray m_key;
     QString m_path;
 
+    QString m_manufacture;
+    QString m_motorType;
+    QString m_ESCType;
     quint32 m_vane;
     quint32 m_HZ;
 
@@ -224,7 +236,26 @@ public:
         Q_ASSERT(m_deviceCfg != nullptr);
         return m_deviceCfg->key();
     }
-
+    inline QString manufacture() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->manufacture();
+    }
+    inline QString motorType() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->motorType();
+    }
+    inline QString ESCType() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->ESCType();
+    }
+    inline QString SerialNumber() const
+    {
+        Q_ASSERT(m_deviceCfg != nullptr);
+        return m_deviceCfg->SerialNumber();
+    }
     inline quint32 vane() const
     {
         Q_ASSERT(m_deviceCfg != nullptr);
@@ -245,6 +276,7 @@ public:
         Q_ASSERT(m_deviceCfg != nullptr);
         return m_deviceCfg->highThroLimit();
     }
+
 
     MotorType motor_type() const
     {
@@ -305,6 +337,7 @@ public:
         Q_ASSERT(idxMotor <= MAX_SUPPORT_MOTOR);
         return m_calibrateCfg->getDivisionTorqueCaliOnMotor(idxMotor);
     }
+
 };
 
 #endif // CFGRESHANDLER_H

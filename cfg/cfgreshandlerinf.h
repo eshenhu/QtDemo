@@ -47,6 +47,10 @@ public:
 
     virtual QByteArray key() const = 0;
 
+    virtual QString manufacture() const = 0;
+    virtual QString motorType() const = 0;
+    virtual QString ESCType() const = 0;
+    virtual QString SerialNumber() const = 0;
     virtual quint32 vane() const = 0;
     virtual quint32 HZ() const = 0;
     virtual quint32 lowThroLimit() const = 0;

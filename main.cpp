@@ -80,10 +80,12 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext& context, const Q
 
 int main(int argc, char *argv[])
 {
-    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=true\n"
-                                                    "driver.usb.debug=true\n"
-                                                    "driver.usb.low=true\n"
-                                                    "drone.engine.debug=true"));
+//    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false\n"
+//                                                    "driver.usb.debug=true\n"
+//                                                    "driver.usb.low=true\n"
+//                                                    "drone.engine.debug=true"));
+
+//    QLoggingCategory::setFilterRules(QStringLiteral("*.debug=false"));
     qSetMessagePattern(QStringLiteral("[%{type}] %{time} %{appname} (%{file}:%{line}) - %{message}"));
     qInstallMessageHandler(myMessageHandler);
 
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("ShiLu");
     QCoreApplication::setOrganizationDomain("shilu.com");
     QCoreApplication::setApplicationName("UDAT");
-    QCoreApplication::setApplicationVersion("5.1");
+    QCoreApplication::setApplicationVersion("5.3");
 
     QFont f;
     int defaultFontSize = f.pointSize();

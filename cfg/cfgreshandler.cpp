@@ -113,10 +113,43 @@ quint32 CfgMotorBootCfgModel::boot_rape() const
 
 CfgDeviceCfgModel::CfgDeviceCfgModel(QSettings &set):
     m_vane(1),
-    m_HZ(50),
+    m_HZ(0),
     m_set(set)
 {
     loadSetting();
+}
+
+QString CfgDeviceCfgModel::manufacture() const
+{
+    return m_manufacture;
+}
+
+void CfgDeviceCfgModel::setManufacture(const QString &manufacture)
+{
+    m_manufacture = manufacture;
+    m_set.setValue("cfg/device/manufacture", manufacture);
+}
+
+QString CfgDeviceCfgModel::motorType() const
+{
+    return m_motorType;
+}
+
+void CfgDeviceCfgModel::setMotorType(const QString &motorType)
+{
+    m_motorType = motorType;
+    m_set.setValue("cfg/device/motorType", motorType);
+}
+
+QString CfgDeviceCfgModel::ESCType() const
+{
+    return m_ESCType;
+}
+
+void CfgDeviceCfgModel::setESCType(const QString &ESCType)
+{
+    m_ESCType = ESCType;
+    m_set.setValue("cfg/device/ESCType", ESCType);
 }
 
 quint32 CfgDeviceCfgModel::vane() const
@@ -145,6 +178,10 @@ void CfgDeviceCfgModel::loadSetting()
 {
     m_set.beginGroup("cfg/device");
     m_path = m_set.value("licensePath", "").toString();
+    m_manufacture = m_set.value("manufacture", "ShiLu").toString();
+    m_motorType = m_set.value("motorType", "M_001").toString();
+    m_ESCType = m_set.value("ESCType", "ESC_001").toString();
+
     m_vane = m_set.value("vanes", 1).toInt();
     m_HZ  = m_set.value("HZ", DeviceInfoConfig::Freq::B50HZ).toInt();
     m_lowThroLimit = m_set.value("ThroLowLimit", 0).toInt();

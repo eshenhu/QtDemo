@@ -17,9 +17,9 @@
 #include "cfg/unireslocation.h"
 #include "util/aes.h"
 #include "util/simplecrypt_helper.h"
-
+#include <climits>
 #include <random>
-
+#include <QStandardPaths>
 AutomationModelDriverClz::AutomationModelDriverClz(QObject *parent) :
     BasedModelDriverClz(parent),
     state(State::InitState),
@@ -243,6 +243,13 @@ void AutomationModelDriverClz::enterFSMResetState(const QString& str)
 void AutomationModelDriverClz::doTest()
 {
 
+    qDebug() << "doTest -- " << QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation);
+
+    TestPlanEnum data = TestPlanEnum::Voltage;
+    UtilDataRecordingClz::getInstance().newRec(data);
+
+    qDebug() << "doTest -- " << UtilDataRecordingClz::getInstance().getCfgFileName()
+             << UtilDataRecordingClz::getInstance().getRecFileName();
     /*--------------------------------------------------------------*/
 
     //51 FF 67 06 50 66 55 56 45 57 02 87
@@ -453,7 +460,7 @@ void AutomationModelDriverClz::generateRandomNumber()
     // choose a random number between 0 and 0xFFFFFFFF;
     std::default_random_engine e1(dev());
 
-    std::uniform_int_distribution<long long> uniform_dist(std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max());
+    std::uniform_int_distribution<long long> uniform_dist(LLONG_MIN, LLONG_MAX);
 
     long long mean = uniform_dist(e1);
     m_randomNum = QByteArray::number(mean, 16);

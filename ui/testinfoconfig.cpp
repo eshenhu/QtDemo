@@ -10,13 +10,17 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->menufacture_LE->setText(m_cfg->manufacture());
+    ui->motorModel_LE->setText(m_cfg->motorType());
+    ui->ESCModel_LE->setText(m_cfg->ESCType());
+
     //const QIntValidator* validator = new QIntValidator(0, 100, this);
 
-    int idx = ui->ESCFreq_combox->findText(QString::number(m_cfg->HZ()));
-    idx = (idx == -1 ? 0 : idx);
-    ui->ESCFreq_combox->setCurrentIndex(idx);
+//    int idx = ui->ESCFreq_combox->findText(QString::number(m_cfg->HZ()));
+//    idx = (idx == -1 ? 0 : idx);
+    ui->ESCFreq_combox->setCurrentIndex(m_cfg->HZ());
 
-    idx = ui->propVanes_combox->findText(QString::number(m_cfg->vane()));
+    int idx = ui->propVanes_combox->findText(QString::number(m_cfg->vane()));
     idx = (idx == -1 ? 0 : idx);
     ui->propVanes_combox->setCurrentIndex(idx);
 
@@ -45,7 +49,10 @@ DeviceInfoConfig::DeviceInfoConfig(CfgDeviceCfgModel* cfg, QWidget *parent) :
             m_cfg->setHZ(DeviceInfoConfig::Freq::B400HZ);
 
         m_cfg->setVane(ui->propVanes_combox->currentText().toInt());
-        //m_cfg->setSerialNumber(ui->SN_LE->text());
+        m_cfg->setSerialNumber(ui->SN_LE->text());
+        m_cfg->setManufacture(ui->menufacture_LE->text());
+        m_cfg->setESCType(ui->ESCModel_LE->text());
+        m_cfg->setMotorType(ui->motorModel_LE->text());
     });
 
 }

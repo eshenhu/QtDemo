@@ -42,7 +42,7 @@ public:
         DeviceInfoConfig::Freq freq = B50HZ;
         QString propModel = "PRP_";
         DeviceInfoConfig::Vanes propIndex = V1;
-        QString remark = tr("SH Tongyi DZT");
+        QString remark = tr("SH ShiLu");
     };
 
 public:
