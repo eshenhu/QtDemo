@@ -39,7 +39,7 @@ ChartViewerWin::~ChartViewerWin()
     delete ui;
 }
 
-void ChartViewerWin::open_and_compare()
+void ChartViewerWin::callbackActionOpen2Cmp()
 {
     std::unique_ptr<FileSelectDialog> fileSelection(new FileSelectDialog(this));
     fileSelection->exec();
@@ -73,6 +73,28 @@ void ChartViewerWin::open_and_compare()
     ui->customPlot->replot();
 }
 
+void ChartViewerWin::callbackOnActionExportPDF()
+{
+    QString savePDFFileName = QFileDialog::getSaveFileName(
+                this, tr("Save File"), "/home/", tr("PDF (*.pdf)"));
+
+    if (savePDFFileName.isNull())
+        return;
+
+    ui->customPlot->savePdf(savePDFFileName);
+}
+
+void ChartViewerWin::callbackOnActionExportCSV()
+{
+    QString saveCSVFileName = QFileDialog::getSaveFileName(
+                this, tr("Save File"), "/home/", tr("CSV (*.csv)"));
+
+    if (saveCSVFileName.isNull())
+        return;
+
+    saveCSV(saveCSVFileName);
+}
+
 bool ChartViewerWin::loadDefault2Plot()
 {
     QCPAxisRect* rect;
@@ -89,63 +111,96 @@ bool ChartViewerWin::loadDefault2Plot()
 void ChartViewerWin::createActions()
 {
     /*------ add openAct -------*/
-    QToolBar *fileToolBar = addToolBar(tr("File_A"));
+    {
+        QToolBar *fileToolBar = addToolBar(tr("File_A"));
 
-    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-    openAct = new QAction(openIcon, tr("&Open..."), this);
-    //openAct->setShortcuts(QKeySequence::Open);
-    openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, &QAction::triggered, this, &ChartViewerWin::open_and_compare);
-    fileToolBar->addAction(openAct);
+        const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+        actionOpen = new QAction(openIcon, tr("&Open..."), this);
+        //openAct->setShortcuts(QKeySequence::Open);
+        actionOpen->setStatusTip(tr("Open an existing file"));
+        connect(actionOpen, &QAction::triggered, this, &ChartViewerWin::callbackActionOpen2Cmp);
+        fileToolBar->addAction(actionOpen);
 
-    openAct->setEnabled(true);
+        actionOpen->setEnabled(true);
+    }
 
+    /* add OPEN */
+    {
+        /*------ add open -------*/
+        QToolBar *curveToolBar = addToolBar(tr("Curve"));
+        curveToolBar->addSeparator();
 
-    /*------ add open -------*/
-    QToolBar *curveToolBar = addToolBar(tr("Curve"));
-    curveToolBar->addSeparator();
+        QComboBox* curveComBox = new QComboBox();
+        curveComBox->addItem(tr("throttle character curve"));
+        curveComBox->addItem(tr("current character curve"));
+        curveComBox->addItem(tr("thrust character curve"));
+        curveComBox->addItem(tr("torque character curve"));
+        curveComBox->addItem(tr("speed character curve"));
+        curveComBox->setCurrentIndex(0);
 
-    QComboBox* curveComBox = new QComboBox();
-    curveComBox->addItem(tr("throttle character curve"));
-    curveComBox->addItem(tr("current character curve"));
-    curveComBox->addItem(tr("thrust character curve"));
-    curveComBox->addItem(tr("torque character curve"));
-    curveComBox->addItem(tr("speed character curve"));
-    curveComBox->setCurrentIndex(0);
+        connect(curveComBox,
+                static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                [=](int index){
+            static int lastCurveComBoxIdx = -1;
+            if (index != lastCurveComBoxIdx)
+            {
+                lastCurveComBoxIdx = index;
+                //            quint32 startIdx = CfgMultiWashingDataE2Clz::getBasedIdx(index);
+                updateGraphDuringMultiplePlan(index);
+            }
+        });
 
-    connect(curveComBox,
-            static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            [=](int index){
-        static int lastCurveComBoxIdx = -1;
-        if (index != lastCurveComBoxIdx)
-        {
-            lastCurveComBoxIdx = index;
-//            quint32 startIdx = CfgMultiWashingDataE2Clz::getBasedIdx(index);
-            updateGraphDuringMultiplePlan(index);
-        }
-    });
+        actionCurve = curveToolBar->addWidget(curveComBox);
 
-    curveAction = curveToolBar->addWidget(curveComBox);
+        actionCurve->setVisible(true);
+        actionCurve->setEnabled(false);
+    }
 
-    curveAction->setVisible(true);
-    curveAction->setEnabled(false);
+    /* Add Export to PDF */
+    {
+        QToolBar *toolBarExportPDF = addToolBar(tr("ExportPDF"));
+        toolBarExportPDF->addSeparator();
+
+        const QIcon iconExportPDF = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+        actionExportPDF = new QAction(iconExportPDF, tr("&ExportPDF..."), this);
+        actionExportPDF->setStatusTip(tr("Export to PDF format"));
+        connect(actionExportPDF, &QAction::triggered, this, &ChartViewerWin::callbackOnActionExportPDF);
+        toolBarExportPDF->addAction(actionExportPDF);
+
+        toolBarExportPDF->setEnabled(true);
+
+    }
+    /* Add Export to CSV */
+    {
+        QToolBar *toolBarExportCSV = addToolBar(tr("ExportCSV"));
+        toolBarExportCSV->addSeparator();
+
+        const QIcon iconExportCSV = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+        actionExportCSV = new QAction(iconExportCSV, tr("&ExportPDF..."), this);
+        actionExportCSV->setStatusTip(tr("Export to PDF format"));
+        connect(actionExportCSV, &QAction::triggered, this, &ChartViewerWin::callbackOnActionExportCSV);
+        toolBarExportCSV->addAction(actionExportPDF);
+
+        toolBarExportCSV->setEnabled(true);
+
+    }
+
 }
 
 void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
 {
-    QCPAxisRect* rect = nullptr;
-    for (quint32 idx = 0; idx < customPlot->axisRectCount(); idx++){
-        rect = customPlot->axisRect(idx);
-        rect->axis(QCPAxis::atBottom)->grid()->setVisible(false);
-        rect->axis(QCPAxis::atBottom)->setVisible(false);
+    for (const QCPAxisRect* rect : customPlot->axisRects())
+    {
+//        foreach (QCPAxis *axis, rect->axes())
+//        {
+//            axis->setLayer("axes");
+//            axis->grid()->setLayer("grid");
+//        }
+        rect->axis(QCPAxis::atBottom)->setVisible(true);
+        rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     }
 
-    QCPAxisRect* lastRect = customPlot->axisRect(customPlot->axisRectCount() - 1);
-    if (lastRect){
-        lastRect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
-        lastRect->axis(QCPAxis::atBottom)->setVisible(true);
-        lastRect->axis(QCPAxis::atBottom)->setLabelFont(QFont("Dotum", 10, QFont::Bold));
-    }
+    customPlot->axisRects().constLast()->axis(QCPAxis::atBottom)->setVisible(true);
 }
 
 void ChartViewerWin::generateData(QSharedPointer<CfgWashingDataInf> cfgRawData, quint32 idx,
@@ -166,11 +221,17 @@ void ChartViewerWin::addRect()
 QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
 {
     QCPAxisRect *rect = new QCPAxisRect(customPlot);
-    rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
 
+    foreach (QCPAxis *axis, rect->axes())
+    {
+        axis->setLayer("axes");
+        axis->grid()->setLayer("grid");
+    }
+
+    rect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup); 
     rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     rect->axis(QCPAxis::atBottom)->setVisible(false);
-    //rect->axis(QCPAxis::atBottom)->setLabelFont(QFont("Dotum", 10));
+    rect->axis(QCPAxis::atBottom)->setLabelFont(QFont("Dotum", 9));
     //rect->axis(QCPAxis::atBottom)->setLabel(name + " - " + QString::number(motorIdx));
 
     rect->axis(QCPAxis::atLeft)->setLabelFont(QFont("Dotum", 10));
@@ -179,13 +240,10 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
     //
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
     //rect->setMargins(QMargins(0, 0, 0, 0));
-    foreach (QCPAxis *axis, rect->axes())
-    {
-        axis->setLayer("axes");
-        axis->grid()->setLayer("grid");
-    }
+
     //updateAxisAtBottomRect(ui->customPlot);
     customPlot->plotLayout()->addElement(rect);
+    customPlot->plotLayout()->simplify();
     //customPlot->replot();
     return rect;
 }
@@ -288,7 +346,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 
     QString xAxisName = sample_name.split(':').value(0);
     rect->axis(QCPAxis::atBottom)->setLabel(xAxisName);
-    rect->axis(QCPAxis::atBottom)->setVisible(false);
+    //rect->axis(QCPAxis::atBottom)->setVisible(false);
 
     ui->customPlot->replot();
 }
@@ -297,11 +355,11 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
 void ChartViewerWin::setupSignalAndSlot()
 {
     connect(this, &ChartViewerWin::testPlanChanged, [this](TestPlanEnum plan){
-        curveAction->setEnabled(false);
+        actionCurve->setEnabled(false);
 
         if (plan == TestPlanEnum::Multiplue)
         {
-            curveAction->setEnabled(true);
+            actionCurve->setEnabled(true);
             itemListIdx = 0;
         }
         else
@@ -330,6 +388,33 @@ void ChartViewerWin::releaseSignalAndSlot()
 quint32 ChartViewerWin::setupIdxMultipleTest(quint32 idx)
 {
     return (itemListIdx << 16 | idx);
+}
+
+void ChartViewerWin::saveCSV(const QString& filename)
+{
+    quint32 postfixNameToken = 0;
+
+    for (const QCPAxisRect* rect : ui->customPlot->axisRects())
+    {
+        QFile file(filename);
+
+        /*
+         *  -- NA --  --  Y01 -- -- Y02 --
+         *  -- X1 --  --  Y11 -- -- Y12 --
+         *  -- X2 --  --  Y22 -- -- Y22 --
+        */
+        //rect->graphs()
+        QStringList strListPerLine;
+
+        for(const QCPGraph* graph : m_assoRect->graphs())
+        {
+            for(int idx = 0; idx < graph->dataCount(); ++idx)
+            {
+                graph->dataMainKey(idx);
+                graph->dataMainValue(idx);
+            }
+        }
+    }
 }
 
 //void ChartViewerWin::clearGraphsExceptTitle()
@@ -424,6 +509,10 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
     {
         closeXX = (*it).mainKey();
     }
+    else
+    {
+        closeXX = closeX;
+    }
 
     double midX = (closeX + closeXX) / 2;
     if (x > midX)
@@ -468,6 +557,18 @@ void ChartViewerWin::showVLineItem(QMouseEvent *event)
                                                     yData);
 
             textTitle += formatGraph;
+//            {
+//                // add label for phase tracer:
+//                static QCPItemText *phaseTracerText = new QCPItemText(ui->customPlot);
+//                phaseTracerText->position->setType(QCPItemPosition::ptAxisRectRatio);
+//                phaseTracerText->setPositionAlignment(Qt::AlignRight|Qt::AlignBottom);
+//                phaseTracerText->position->setCoords( 1, 1); // lower right corner of axis rect
+//                phaseTracerText->setText("Points of fixed\nphase define\nphase velocity vp");
+//                phaseTracerText->setTextAlignment(Qt::AlignLeft);
+//                phaseTracerText->setFont(QFont(font().family(), 9));
+//                phaseTracerText->setPadding(QMargins(8, 0, 0, 0));
+
+//            }
         }
 
         // update the title

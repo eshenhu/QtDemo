@@ -67,8 +67,11 @@ public:
 
 private:
     Ui::ChartViewerWin *ui = nullptr;
-    QAction *openAct;
-    QAction* curveAction;
+    QAction *actionOpen;
+    QAction* actionCurve;
+    QAction* actionExportPDF;
+    QAction* actionExportCSV;
+
     quint32 itemListIdx = 0;
     //QSharedPointer<QCPTextElement> m_title;
     QCPTextElement* m_title;
@@ -99,7 +102,9 @@ private slots:
 //    void removeGraph(QCPAxisRect* rect);
     void clearGraphsExceptTitle();
     void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
-    void open_and_compare();
+    void callbackActionOpen2Cmp();
+    void callbackOnActionExportPDF();
+    void callbackOnActionExportCSV();
     void addRect();
     void showVLineItem(QMouseEvent *event);
     void contextMenuRequest(QPoint pos);
@@ -109,6 +114,7 @@ private slots:
 
 private:
     quint32 setupIdxMultipleTest(quint32 idx);
+    void saveCSV(const QString& filename);
 };
 
 #endif // CHARTVIEWERWIN_H
