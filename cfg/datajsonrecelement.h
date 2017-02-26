@@ -133,7 +133,7 @@ public:
     DataJsonRecElementFileReaderHandler();
 
     const QVector<DataJsonRecElement>& data();
-    void loadData(const QString filename);
+    void loadData(const QString filename, const QString fileToName = QStringLiteral(""));
 
 private:
     QString m_filename;

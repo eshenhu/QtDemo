@@ -34,8 +34,11 @@ public:
 
     CfgJsonRecElement getCfgParser() const;
 
+    QString getFullPathCSVName() const;
+
 private:
     //CfgWashingDataInf* m_csvDataHandler = nullptr;
+    QString m_fullPathCSVName;
     CfgJsonRecElement cfgParser;
     QSharedPointer<CfgWashingDataInf> m_csvDataHandler;
 };

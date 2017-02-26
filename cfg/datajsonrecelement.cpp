@@ -204,7 +204,7 @@ const QVector<DataJsonRecElement> &DataJsonRecElement::DataJsonRecElementFileRea
 /*
  * load data from the file named with filename to the m_data;
 */
-void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QString filename)
+void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QString filename,const QString fileToName)
 {
     QFile file(filename);
 
@@ -271,6 +271,11 @@ void DataJsonRecElement::DataJsonRecElementFileReaderHandler::loadData(const QSt
             element.setData(idx-1, data);
         }
         m_data.append(element);
+    }
+
+    if (!fileToName.isEmpty())
+    {
+        loadFile.copy(fileToName);
     }
 
     loadFile.remove();

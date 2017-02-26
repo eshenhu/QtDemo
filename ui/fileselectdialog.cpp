@@ -258,7 +258,7 @@ bool FileSelectDialog::openJsonFile(const QString& jsonFileName, quint32 locatio
             warningBox.exec();
             RETURN_WITH_NOK
         }
-
+        cfgElementList[location].cfgCsvFullPathName = reader.getFullPathCSVName();
         cfgElementList[location].cfgMetaData = reader.getCfgParser();
         cfgElementList[location].cfgRawData = reader.csvDataHandler();
 

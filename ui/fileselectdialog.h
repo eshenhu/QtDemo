@@ -27,6 +27,7 @@ public:
     }
 
 public:
+    QString cfgCsvFullPathName;
     CfgJsonRecElement cfgMetaData;
     QSharedPointer<CfgWashingDataInf> cfgRawData;
 };

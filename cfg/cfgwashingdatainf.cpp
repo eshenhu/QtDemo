@@ -1261,19 +1261,11 @@ void CfgMultiWashingDataE1Clz::generateData(quint32 composeIdx, QVector<QCPGraph
                 eleIdx++;
             }
 
-//            double* pX = xAsix.get();
-//            double* pY = yAsix.get();
-
-//            for (int x = 0; x < size; x++)
-//            {
-//                qDebug() << "cfgwashingdatainf x=" << *(pX+x) << "y=" << *(pY+x);
-//            }
-
             PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, &coefficients[0]);
 
             const quint32 trimSize = size < MAX_POINT_XASIX ? size : MAX_POINT_XASIX;
             double step = (xAsixCeil - xAsixFloor)/trimSize;
-            //step = (step == 0 ? 1 : step);
+
             for (double x = xAsixFloor; x < xAsixCeil; x+=step)
             {
                 double y = coefficients[5] * x * x * x * x * x
@@ -1282,11 +1274,7 @@ void CfgMultiWashingDataE1Clz::generateData(quint32 composeIdx, QVector<QCPGraph
                          + coefficients[2] * x * x
                          + coefficients[1] * x
                          + coefficients[0];
-//                double y = coefficients[4] * x * x * x * x
-//                         + coefficients[3] * x * x * x
-//                         + coefficients[2] * x * x
-//                         + coefficients[1] * x
-//                         + coefficients[0];
+
                 pairs.append(QCPGraphData((double)x, y));
                 //qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
             }
@@ -1297,6 +1285,116 @@ void CfgMultiWashingDataE1Clz::generateData(quint32 composeIdx, QVector<QCPGraph
         qWarning() << "Warning: out of size of array, request = " << idx << "size of container"
                    << itemList.size();
     }
+}
+
+bool CfgMultiWashingDataE1Clz::dump(const QString filename)
+{
+    /* loop all the basic type */
+    for (const QVector<CfgMultiWashingDataItem>& itemList : m_data)
+    {
+        quint32 idx = 0;
+        QVector<QVector<QCPGraphData>> pairsFull(itemList.size());
+
+        while (idx < (quint32)itemList.size())
+        {
+            QVector<QCPGraphData>& pairs = pairsFull[idx];
+
+            //int motorIdx = itemList[idx].motorIdx;
+            QString name = itemList[idx].XKey.str + "-" + itemList[idx].YValue.str;
+
+            const quint32 size = itemList[idx].data.size();
+
+            std::shared_ptr<double> xAsix(new double[size]);
+            std::shared_ptr<double> yAsix(new double[size]);
+
+            do {
+                const quint32 order = 5;
+                double coefficients[order+1]; // y = ax*x + bx + c;
+
+                double xAsixFloor = itemList[idx].data.first().key;
+                double xAsixCeil = itemList[idx].data.last().key;
+
+                if (xAsixFloor > xAsixCeil)
+                {
+                    double temp = xAsixFloor;
+                    xAsixFloor = xAsixCeil;
+                    xAsixCeil = temp;
+                }
+
+                quint32 eleIdx = 0;
+                for (const KV& ele : itemList[idx].data)
+                {
+                    double* xValue = xAsix.get();
+                    xValue[eleIdx] = ele.key;
+                    double* yValue = yAsix.get();
+                    yValue[eleIdx] = ele.value;
+
+                    eleIdx++;
+                }
+
+                PolyFitClz::plotfit(xAsix.get(), yAsix.get(), size, order, &coefficients[0]);
+
+                const quint32 trimSize = size < MAX_POINT_XASIX ? size : MAX_POINT_XASIX;
+                double step = (xAsixCeil - xAsixFloor)/trimSize;
+
+                for (double x = xAsixFloor; x < xAsixCeil; x+=step)
+                {
+                    double y = coefficients[5] * x * x * x * x * x
+                            + coefficients[4] * x * x * x * x
+                            + coefficients[3] * x * x * x
+                            + coefficients[2] * x * x
+                            + coefficients[1] * x
+                            + coefficients[0];
+
+                    pairs.append(QCPGraphData((double)x, y));
+                    //qDebug() << "plotfit insert x=" << x << "y=" << y << "step=" << step;
+                }
+            }while(0);
+            // incremental the idx;
+            ++idx;
+        }
+
+        // filename with .csv
+        int left = filename.size() - 4;
+        QString saveFileName =
+                filename.left(left) + QStringLiteral("_") + itemList.at(0).XKey.str;
+        saveFileName = saveFileName + QStringLiteral(".csv");
+
+        QFile file(saveFileName);
+        if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+            return false;
+
+        QTextStream out(&file);
+        /* write to the data to the same type of data*/
+        QStringList data;
+
+        // print headers
+        data << itemList.at(0).XKey.str;
+        for (const CfgMultiWashingDataItem& item : itemList)
+        {
+            data << item.YValue.str;
+        }
+        out << data.join(',') << QChar('\n');
+        data.clear();
+
+        // print data
+        int size = pairsFull.at(0).size();
+
+        for (int col = 0; col < size; ++col)
+        {
+            QStringList line;
+
+            line << QString::number(pairsFull.at(0).at(col).key);
+            for (int raw = 0; raw < pairsFull.size(); ++raw)
+            {
+                double value = pairsFull.at(raw).at(col).value;
+                line << QString::number(value);
+            }
+            out << line.join(',') << QChar('\n');
+        }
+        file.close();
+    }
+    return true;
 }
 
 /*
@@ -2513,6 +2611,11 @@ CfgWashingDataInf::CfgWashingDataInf(const CfgWashingTypeEnum type):
     m_type(type)
 {
 
+}
+
+bool CfgWashingDataInf::dump(const QString filename)
+{
+    return true;
 }
 
 CfgWashingTypeEnum CfgWashingDataInf::type() const

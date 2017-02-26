@@ -42,6 +42,7 @@ class CfgWashingDataInf
 public:
     explicit CfgWashingDataInf(const CfgWashingTypeEnum type);
     virtual ~CfgWashingDataInf() {}
+    virtual bool dump(const QString filename);
     virtual void wash(const QVector<DataJsonRecElement>&) = 0;
     virtual void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) = 0;
     virtual QVector<CfgMetaElement>& getGUIActionList(quint32) = 0;
@@ -361,6 +362,10 @@ public:
     void wash(const QVector<DataJsonRecElement>&) override;
 //    QVector<CfgMultiWashingDataItem>& data();
     void generateData(quint32 idx, QVector<QCPGraphData>& pairs, QString& name, quint8& motorIdx) override;
+
+    /* dump the all the data after processing to the file*/
+    bool dump(const QString filename) override;
+
     QVector<CfgMetaElement> &getGUIActionList(quint32 idx) override
     {
         if (idx < m_guiList.size())

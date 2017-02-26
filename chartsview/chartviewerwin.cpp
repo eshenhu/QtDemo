@@ -162,7 +162,7 @@ void ChartViewerWin::createActions()
         QToolBar *toolBarExportPDF = addToolBar(tr("ExportPDF"));
         toolBarExportPDF->addSeparator();
 
-        const QIcon iconExportPDF = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
+        const QIcon iconExportPDF = QIcon::fromTheme("document-open", QIcon(":/ui/ui/ExportPDF.png"));
         actionExportPDF = new QAction(iconExportPDF, tr("&ExportPDF..."), this);
         actionExportPDF->setStatusTip(tr("Export to PDF format"));
         connect(actionExportPDF, &QAction::triggered, this, &ChartViewerWin::callbackOnActionExportPDF);
@@ -176,14 +176,13 @@ void ChartViewerWin::createActions()
         QToolBar *toolBarExportCSV = addToolBar(tr("ExportCSV"));
         toolBarExportCSV->addSeparator();
 
-        const QIcon iconExportCSV = QIcon::fromTheme("document-open", QIcon(":/ui/ui/open.png"));
-        actionExportCSV = new QAction(iconExportCSV, tr("&ExportPDF..."), this);
-        actionExportCSV->setStatusTip(tr("Export to PDF format"));
+        const QIcon iconExportCSV = QIcon::fromTheme("document-open", QIcon(":/ui/ui/ExportCSV.png"));
+        actionExportCSV = new QAction(iconExportCSV, tr("&ExportCSV..."), this);
+        actionExportCSV->setStatusTip(tr("Export to CSV format"));
         connect(actionExportCSV, &QAction::triggered, this, &ChartViewerWin::callbackOnActionExportCSV);
-        toolBarExportCSV->addAction(actionExportPDF);
+        toolBarExportCSV->addAction(actionExportCSV);
 
         toolBarExportCSV->setEnabled(true);
-
     }
 
 }
@@ -192,11 +191,6 @@ void ChartViewerWin::updateAxisAtBottomRect(QCustomPlot *customPlot)
 {
     for (const QCPAxisRect* rect : customPlot->axisRects())
     {
-//        foreach (QCPAxis *axis, rect->axes())
-//        {
-//            axis->setLayer("axes");
-//            axis->grid()->setLayer("grid");
-//        }
         rect->axis(QCPAxis::atBottom)->setVisible(true);
         rect->axis(QCPAxis::atBottom)->grid()->setVisible(true);
     }
@@ -410,28 +404,27 @@ quint32 ChartViewerWin::setupIdxMultipleTest(quint32 idx)
 
 void ChartViewerWin::saveCSV(const QString& filename)
 {
-    quint32 postfixNameToken = 0;
-
-    for (const QCPAxisRect* rect : ui->customPlot->axisRects())
+    quint32 idx = 0;
+    for (const ChartViewCfgElement& ele : cfgElementList)
     {
-        QFile file(filename);
+        if (ele.cfgCsvFullPathName.isEmpty())
+            break;
 
-        /*
-         *  -- NA --  --  Y01 -- -- Y02 --
-         *  -- X1 --  --  Y11 -- -- Y12 --
-         *  -- X2 --  --  Y22 -- -- Y22 --
-        */
-        //rect->graphs()
-        QStringList strListPerLine;
+        QString leftFileName = filename.left(filename.size() - 4);
+        QStringList saveNameList({leftFileName, TestPlanStringMap[ele.cfgMetaData.plan()], QString::number(idx)});
+        QString saveName = saveNameList.join('_') + QStringLiteral(".csv");
 
-        for(const QCPGraph* graph : m_assoRect->graphs())
+        /* we simplely copy the src data file to here exclude the Multiplue test*/
+        if (ele.cfgMetaData.plan() != TestPlanEnum::Multiplue)
         {
-            for(int idx = 0; idx < graph->dataCount(); ++idx)
-            {
-                graph->dataMainKey(idx);
-                graph->dataMainValue(idx);
-            }
+            DataJsonRecElement::DataJsonRecElementFileReaderHandler handler;
+            handler.loadData(ele.cfgCsvFullPathName, saveName);
         }
+        else
+        {
+            ele.cfgRawData->dump(saveName);
+        }
+        ++idx;
     }
 }
 

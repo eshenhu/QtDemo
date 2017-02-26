@@ -30,6 +30,7 @@ bool DataJsonCfgReader::loadData(const QString &jsonFileName)
         qCWarning(TEXT_LOGGING) << "Corresponding csv file was not existed!";
         return false;
     }
+    m_fullPathCSVName = csvFullFileName;
 
     if (cfgParser.loadCfg(jsonFileName))
     {
@@ -171,4 +172,9 @@ bool DataJsonCfgReader::close()
 CfgJsonRecElement DataJsonCfgReader::getCfgParser() const
 {
     return cfgParser;
+}
+
+QString DataJsonCfgReader::getFullPathCSVName() const
+{
+    return m_fullPathCSVName;
 }

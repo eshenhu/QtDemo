@@ -145,6 +145,7 @@ void CompQChartWidget::createChartsView()
                                                       box->str().toLatin1().constData(),
                                                       box->unit().toLatin1().constData());
 
+                chart->setTitleFont(QFont("Dotum", 16));
                 chart->setTitle(titleComp);
                 //yaxis->setTitleText(box->unit());
                 yaxis->setLabelFormat(QStringLiteral("%d"));
