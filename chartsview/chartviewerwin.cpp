@@ -36,6 +36,7 @@ ChartViewerWin::ChartViewerWin(QWidget *parent) :
 
 ChartViewerWin::~ChartViewerWin()
 {
+    m_mapFromAxisToLegend.clear();
     delete ui;
 }
 
@@ -241,6 +242,9 @@ QCPAxisRect* ChartViewerWin::addRect(QCustomPlot *customPlot)
     rect->setAutoMargins(QCP::msLeft|QCP::msRight|QCP::msBottom|QCP::msTop);
     //rect->setMargins(QMargins(0, 0, 0, 0));
 
+    /* add QCPAxisRect to the QMAP */
+    m_mapFromAxisToLegend.insert(rect, setupLegend(rect));
+
     //updateAxisAtBottomRect(ui->customPlot);
     customPlot->plotLayout()->addElement(rect);
     customPlot->plotLayout()->simplify();
@@ -279,6 +283,8 @@ QCPGraph* ChartViewerWin::addGraph(QCPAxisRect* rect)
 {
     // create and configure plottables:
     QCPGraph *mainGraphCos = ui->customPlot->addGraph(rect->axis(QCPAxis::atBottom), rect->axis(QCPAxis::atLeft));
+    //m_mapFromAxisToLegend[rect]->addItem(mainGraphCos);
+    mainGraphCos->addToLegend(m_mapFromAxisToLegend[rect]);
     return mainGraphCos;
 }
 
@@ -331,7 +337,7 @@ void ChartViewerWin::updateGraph(QCPAxisRect* rect, quint32 selectedIdx)
             graph = rect->graphs().value(idxOfGraph, nullptr);
             if (!graph)
             {
-                graph = addGraph(rect);
+                graph = addGraph(rect);  
             }
             // prepare data:
             QVector<QCPGraphData> pair;
@@ -383,6 +389,18 @@ void ChartViewerWin::setupSignalAndSlot()
 void ChartViewerWin::releaseSignalAndSlot()
 {
     ui->customPlot->disconnect();
+}
+
+QCPLegend *ChartViewerWin::setupLegend(const QCPAxisRect * rect)
+{
+    QCPLegend* legend = new QCPLegend;
+    legend->setVisible(true);
+
+    rect->insetLayout()->addElement(legend, Qt::AlignRight|Qt::AlignTop);
+    rect->insetLayout()->setMargins(QMargins(12, 12, 12, 12));
+
+    legend->setLayer(QLatin1String("legend"));
+    return legend;
 }
 
 quint32 ChartViewerWin::setupIdxMultipleTest(quint32 idx)
@@ -459,6 +477,9 @@ void ChartViewerWin::removeGraph()
             qDebug() << "ui->customPlot select the rect " << graph->name();
             ui->customPlot->removeGraph(graph);
         }
+
+        delete m_mapFromAxisToLegend[m_assoRect];
+        m_mapFromAxisToLegend.remove(m_assoRect);
 
         ui->customPlot->plotLayout()->remove(m_assoRect);
         ui->customPlot->plotLayout()->simplify();

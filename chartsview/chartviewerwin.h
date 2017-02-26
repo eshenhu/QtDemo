@@ -78,6 +78,7 @@ private:
 
     QCPItemStraightLine* vCursor = nullptr;
 
+    QMap<QCPAxisRect*, QCPLegend*> m_mapFromAxisToLegend;
 
     QVector<ChartViewCfgElement> cfgElementList;
     CfgJsonRecElement cfgMetaData;
@@ -91,6 +92,9 @@ private:
     bool m_isCmpEnabled = false;
 //    QGraphicsScene* m_scene;
     //QVarChartView* m_view = nullptr;
+
+
+
 signals:
     //void leftFileOk(bool);
     void testPlanChanged(TestPlanEnum plan);
@@ -113,6 +117,10 @@ private slots:
     void releaseSignalAndSlot();    
 
 private:
+    /* --- Legend Relative --- */
+    QCPLegend* setupLegend(const QCPAxisRect*);
+    void addToLegend(QCPLegend*);
+
     quint32 setupIdxMultipleTest(quint32 idx);
     void saveCSV(const QString& filename);
 };
