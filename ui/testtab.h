@@ -15,7 +15,7 @@ class CfgResHandlerInf;
 class QGroupBox;
 class QLineEdit;
 class QFormLayout;
-
+class QSlider;
 class DistanceTstTab : public QWidget
 {
     Q_OBJECT
@@ -136,14 +136,18 @@ class ManualTstTab : public QWidget
 {
     Q_OBJECT
 private:
-    QSpinBox *m_throttle;
-    QDoubleSpinBox *m_voltage;
+    QSpinBox *m_spinbox_throttle;
+    QSpinBox *m_spinbox_voltage;
+    QSlider *m_throttle;
+    QSlider *m_voltage;
     QPushButton *m_set_btn;
     QPushButton *m_apply_btn;
 
 public:
     explicit ManualTstTab(QWidget *parent = 0);
     void enableWidgetInFront(bool doshine);
+private:
+    void emitValueChanged();
 
 Q_SIGNALS:
     void updateUserSelection(UiCompMeasData data);

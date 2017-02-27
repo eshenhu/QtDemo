@@ -826,37 +826,72 @@ ManualTstTab::ManualTstTab(QWidget *parent)
 {
     CfgResHandlerInf* pCfgResHdl = UniResLocation::getCfgResHdl();
     // series settings
-    m_throttle = new QSpinBox();
-    m_throttle->setMinimumWidth(70);
-    m_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_throttle->setRange(0, pCfgResHdl->max_throttle());
-    //m_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
-    m_throttle->setSingleStep(ConstValue::STEP_THR);
-    m_throttle->setValue(ConstValue::DEFAULT_THR);
+    m_spinbox_throttle = new QSpinBox();
+    m_spinbox_throttle->setMinimumWidth(70);
+    m_spinbox_throttle->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_spinbox_throttle->setRange(0, pCfgResHdl->max_throttle());
+    //m_spinbox_throttle->setRange(ConstValue::MIN_THR, ConstValue::MAX_THR);
+    m_spinbox_throttle->setSingleStep(ConstValue::STEP_THR);
+    m_spinbox_throttle->setValue(ConstValue::DEFAULT_THR);
+    connect(m_spinbox_throttle, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int value){
+       m_throttle->setValue(value);
+       emitValueChanged();
+    });
 
-    m_voltage = new QDoubleSpinBox();
-    m_voltage->setDecimals(1);
+    m_spinbox_voltage = new QSpinBox();
+    //m_spinbox_voltage->setDecimals(1);
+    m_spinbox_voltage->setMinimumWidth(70);
+    m_spinbox_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    m_spinbox_voltage->setRange(5, pCfgResHdl->max_vol());
+    //m_spinbox_voltage->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_spinbox_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_spinbox_voltage->setValue(ConstValue::DEFAULT_VOL);
+    connect(m_spinbox_voltage, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int value){
+       m_voltage->setValue(value);
+       emitValueChanged();
+    });
+
+    m_throttle = new QSlider(Qt::Orientation::Horizontal);
+    m_throttle->setMinimumWidth(70);
+    m_throttle->setFocusPolicy(Qt::StrongFocus);
+    m_throttle->setTickPosition(QSlider::TicksBothSides);
+    m_throttle->setTickInterval(10);
+    m_throttle->setSingleStep(ConstValue::STEP_THR);
+    m_throttle->setMinimum(0);
+    m_throttle->setMaximum(pCfgResHdl->max_throttle());
+    m_throttle->setValue(ConstValue::DEFAULT_THR);
+    connect(m_throttle, &QSlider::valueChanged, [this](int value){
+       m_spinbox_throttle->setValue(value);
+       emitValueChanged();
+    });
+
+    m_voltage = new QSlider(Qt::Orientation::Horizontal);
     m_voltage->setMinimumWidth(70);
-    m_voltage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    m_voltage->setRange(5.0, pCfgResHdl->max_vol());
-    //m_voltage_start->setRange(ConstValue::MIN_VOL, ConstValue::MAX_VOL);
+    m_voltage->setFocusPolicy(Qt::StrongFocus);
+    m_voltage->setTickPosition(QSlider::TicksBothSides);
+    m_voltage->setTickInterval(10);
     m_voltage->setSingleStep(ConstValue::STEP_VOL);
+    m_voltage->setMinimum(5);
+    m_voltage->setMaximum(pCfgResHdl->max_vol());
     m_voltage->setValue(ConstValue::DEFAULT_VOL);
+    connect(m_voltage, &QSlider::valueChanged, [this](int value){
+       m_spinbox_voltage->setValue(value);
+       emitValueChanged();
+    });
 
     m_apply_btn = new QPushButton(tr("Apply"));
-    m_set_btn = new QPushButton(tr("Set"));
+    //m_set_btn = new QPushButton(tr("Set"));
 
     QFormLayout *seriesSettingsLayout = new QFormLayout();
-    seriesSettingsLayout->addRow(tr("Thro (%)"), m_throttle);
-    seriesSettingsLayout->addRow(tr("Vol (V)"), m_voltage);
+    seriesSettingsLayout->addRow(tr("Thro (%)"), m_spinbox_throttle);
+    seriesSettingsLayout->addRow(m_throttle);
+    seriesSettingsLayout->addRow(tr("Vol (V)"), m_spinbox_voltage);
+    seriesSettingsLayout->addRow(m_voltage);
     seriesSettingsLayout->addRow(m_apply_btn);
-    seriesSettingsLayout->addRow(m_set_btn);
-
-    QFormLayout *outputListLayout = new QFormLayout();
+    //seriesSettingsLayout->addRow(m_set_btn);
 
     QHBoxLayout *horizonLayout = new QHBoxLayout();
     horizonLayout->addLayout(seriesSettingsLayout, 0);
-    horizonLayout->addLayout(outputListLayout, 1);
 
     setLayout(horizonLayout);
 
@@ -890,19 +925,24 @@ ManualTstTab::ManualTstTab(QWidget *parent)
         emit updateUserSelection(val);
     });
 
-    QObject::connect(m_set_btn, &QPushButton::clicked, [this](bool checked){
-        Q_UNUSED(checked)
+//    QObject::connect(m_set_btn, &QPushButton::clicked, [this](bool checked){
+//        Q_UNUSED(checked)
 
-        emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
-    });
+//        emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
+//    });
 }
 
 void ManualTstTab::enableWidgetInFront(bool doshine)
 {
     m_throttle->setEnabled(true);
     m_voltage->setEnabled(true);
-    m_set_btn->setEnabled(true);
+    //m_set_btn->setEnabled(true);
     m_apply_btn->setEnabled(doshine);
+}
+
+void ManualTstTab::emitValueChanged()
+{
+    emit syncDataDuringManual(m_voltage->value(), m_throttle->value());
 }
 
 
