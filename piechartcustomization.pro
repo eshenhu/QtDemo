@@ -143,6 +143,10 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../usr/loca
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../usr/local/lib/debug/ -L$$PWD
 else:unix: LIBS += -L$$PWD/../../../../../../usr/local/lib/
 
+macx {
+	QMAKE_MAC_SDK = macosx10.13
+}
+
 #INCLUDEPATH += $$PWD/../../../../../../usr/local/include/qtcsv
 #DEPENDPATH += $$PWD/../../../../../../usr/local/include/qtcsv
 
